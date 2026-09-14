@@ -1,4 +1,4 @@
-site_name = Trustworthy AI Evaluation
+site_name: Trustworthy AI Evaluation
 strict: true
 theme:
   name: mkdocs

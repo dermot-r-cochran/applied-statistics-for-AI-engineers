@@ -1,0 +1,10 @@
+README.md
+pyproject.toml
+src/trustworthy_ai_evaluation/__init__.py
+src/trustworthy_ai_evaluation/confidence.py
+src/trustworthy_ai_evaluation/project_frog_experiment.py
+src/trustworthy_ai_evaluation.egg-info/PKG-INFO
+src/trustworthy_ai_evaluation.egg-info/SOURCES.txt
+src/trustworthy_ai_evaluation.egg-info/dependency_links.txt
+src/trustworthy_ai_evaluation.egg-info/requires.txt
+src/trustworthy_ai_evaluation.egg-info/top_level.txt
