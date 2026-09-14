@@ -1,6 +1,5 @@
 site_name: Trustworthy AI Evaluation
 site_description: Book site for trustworthy AI evaluation, statistics, and decision-making.
-site_url: https://example.com/trustworthy-ai-evaluation/
 repo_url: https://github.com/dermot-r-cochran/applied-statistics-for-AI-engineers
 strict: true
 use_directory_urls: true
