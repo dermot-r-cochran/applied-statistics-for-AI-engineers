@@ -210,6 +210,8 @@ def bootstrap_metric(
     """
 
     cleaned = _clean_numeric(values, drop_missing=drop_missing, name="values")
+    if metric is not None and not callable(metric):
+        raise ValueError("metric must be callable")
     if n_resamples <= 0:
         raise ValueError("n_resamples must be positive")
     if not 0.0 < confidence_level < 1.0:
@@ -275,6 +277,8 @@ def cluster_bootstrap_metric(
     cluster_list = list(clusters)
     if len(value_list) != len(cluster_list):
         raise ValueError("values and clusters must have equal length")
+    if metric is not None and not callable(metric):
+        raise ValueError("metric must be callable")
     paired: list[tuple[float, object]] = []
     for value, cluster in zip(value_list, cluster_list):
         if _is_missing(value) or _is_missing(cluster):
@@ -446,8 +450,8 @@ def compare_independent_proportions(
         p_value = math.erfc(abs(z_score) / math.sqrt(2.0))
     interval_a = _wilson_interval(successes_a, total_a, confidence_level)
     interval_b = _wilson_interval(successes_b, total_b, confidence_level)
-    lower = difference - math.sqrt((proportion_a - interval_a[0]) ** 2 + (interval_b[1] - proportion_b) ** 2)
-    upper = difference + math.sqrt((interval_a[1] - proportion_a) ** 2 + (proportion_b - interval_b[0]) ** 2)
+    lower = difference - math.sqrt((proportion_a - interval_a[0]) ** 2 + (proportion_b - interval_b[0]) ** 2)
+    upper = difference + math.sqrt((interval_a[1] - proportion_a) ** 2 + (interval_b[1] - proportion_b) ** 2)
     return IndependentProportionComparison(
         proportion_a=proportion_a,
         proportion_b=proportion_b,
@@ -540,6 +544,8 @@ def minimum_detectable_effect(
         True
     """
 
+    if sample_size_per_group <= 0:
+        raise ValueError("sample_size_per_group must be positive")
     _validate_planning_inputs(baseline_rate, alpha, power, design_effect, direction)
     upper_bound = 1.0 - baseline_rate if direction == "increase" else baseline_rate
     extreme_rate = baseline_rate + upper_bound if direction == "increase" else baseline_rate - upper_bound

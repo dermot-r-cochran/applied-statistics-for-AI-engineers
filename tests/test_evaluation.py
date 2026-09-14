@@ -42,6 +42,10 @@ class BootstrapMetricTests(unittest.TestCase):
         result = bootstrap_metric([1, None, 0], seed=1, drop_missing=True, n_resamples=100)
         self.assertAlmostEqual(result.estimate, 0.5)
 
+    def test_bootstrap_accepts_custom_metric(self):
+        result = bootstrap_metric([1, 0, 1], metric=sum, seed=1, n_resamples=100)
+        self.assertEqual(result.estimate, 2.0)
+
 
 class ClusterBootstrapMetricTests(unittest.TestCase):
     def test_cluster_bootstrap_reproducible_with_seed(self):
@@ -73,6 +77,10 @@ class ClusterBootstrapMetricTests(unittest.TestCase):
 
     def test_cluster_bootstrap_can_drop_missing(self):
         result = cluster_bootstrap_metric([1, None, 0], ["a", "b", "c"], seed=1, drop_missing=True, n_resamples=50)
+        self.assertAlmostEqual(result.estimate, 0.5)
+
+    def test_cluster_bootstrap_accepts_custom_metric(self):
+        result = cluster_bootstrap_metric([1, 1, 0], ["a", "a", "b"], metric=max, seed=1, n_resamples=50)
         self.assertAlmostEqual(result.estimate, 0.5)
 
 
@@ -140,6 +148,12 @@ class PlanningTests(unittest.TestCase):
             required_sample_size(1.0, 0.05)
         with self.assertRaises(ValueError):
             required_sample_size(0.8, 0.05, design_effect=0.0)
+
+    def test_planning_helpers_support_decrease_direction(self):
+        n = required_sample_size(0.8, 0.05, direction="decrease")
+        mde = minimum_detectable_effect(0.8, n, direction="decrease")
+        self.assertGreater(n, 0)
+        self.assertLessEqual(mde, 0.051)
 
 
 class ComparabilityTests(unittest.TestCase):
