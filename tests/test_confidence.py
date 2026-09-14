@@ -21,6 +21,11 @@ def test_expected_calibration_error_known_value() -> None:
     assert math.isclose(ece, 0.1)
 
 
+def test_expected_calibration_error_quantile_path() -> None:
+    ece = expected_calibration_error([0, 1, 1, 0], [0.1, 0.8, 0.6, 0.2], n_bins=2, strategy="quantile")
+    assert math.isclose(ece, 0.225)
+
+
 def test_brier_score_summary_single_class_sample() -> None:
     summary = brier_score_summary([1, 1, 1], [0.9, 0.8, 0.7])
     assert summary["base_rate"] == 1.0

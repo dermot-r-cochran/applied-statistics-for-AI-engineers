@@ -95,7 +95,7 @@ def test_compare_paired_predictions_all_agree() -> None:
 def test_compare_independent_proportions_small_samples() -> None:
     result = compare_independent_proportions(1, 2, 0, 2)
     assert math.isclose(result["difference"], 0.5)
-    assert math.isclose(result["p_value"], 0.15729920705028522)
+    assert math.isclose(result["p_value"], 0.24821307898992373)
 
 
 @pytest.mark.parametrize("confidence_level", [0.0, 1.0])

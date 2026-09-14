@@ -310,7 +310,9 @@ def compare_independent_proportions(
 
     Assumptions:
         * Group A and group B are independent samples.
-        * The interval uses a large-sample approximation and is weakest for tiny samples.
+        * The confidence interval uses an unpooled large-sample approximation.
+        * The p-value uses the pooled null distribution for a standard two-proportion z-test.
+        * Both summaries are weakest for tiny samples.
 
     Examples:
         >>> result = compare_independent_proportions(88, 100, 84, 100)
@@ -336,7 +338,9 @@ def compare_independent_proportions(
     z_value = norm.ppf(0.5 + confidence_level / 2.0)
     lower = difference - z_value * se
     upper = difference + z_value * se
-    z_stat = 0.0 if se == 0.0 else difference / se
+    pooled = (successes_a + successes_b) / (trials_a + trials_b)
+    pooled_se = sqrt(pooled * (1.0 - pooled) * ((1.0 / trials_a) + (1.0 / trials_b)))
+    z_stat = 0.0 if pooled_se == 0.0 else difference / pooled_se
     p_value = 2.0 * (1.0 - norm.cdf(abs(z_stat)))
     return {
         "rate_a": float(p_a),
@@ -386,7 +390,7 @@ def minimum_detectable_effect(
         )
         return delta - (z_alpha + z_beta) * se
 
-    upper_bound = min(1.0 - baseline_rate - 1e-6, 0.5)
+    upper_bound = 1.0 - baseline_rate - 1e-6
     if upper_bound <= 0.0:
         raise ValueError("baseline_rate leaves no room for a positive detectable effect.")
     return float(brentq(objective, 1e-6, upper_bound))
