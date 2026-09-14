@@ -62,8 +62,7 @@ label {
 }
 
 textarea,
-input:not([type]),
-input[type="text"] {
+input:not([type="radio"]):not([type="checkbox"]):not([type="button"]):not([type="submit"]) {
   width: 100%;
   margin: 0.3rem 0 0.8rem;
   padding: 0.45rem;

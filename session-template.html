@@ -14,21 +14,21 @@
 
   <section class="card">
     <label for="core">Core principle</label>
-    <input id="core" placeholder="e.g., Point estimates require uncertainty quantification">
+    <input id="core" type="text" placeholder="e.g., Point estimates require uncertainty quantification">
 
     <label for="frg">FRG application</label>
-    <input id="frg" placeholder="e.g., Report row-level accuracy with Wilson interval per verdict class">
+    <input id="frg" type="text" placeholder="e.g., Report row-level accuracy with Wilson interval per verdict class">
 
     <label for="assumption">Assumption to check</label>
-    <input id="assumption" placeholder="e.g., Independence across rows within a document is unlikely">
+    <input id="assumption" type="text" placeholder="e.g., Independence across rows within a document is unlikely">
 
     <label for="task">One practice task</label>
-    <input id="task" placeholder="e.g., Choose paired vs unpaired comparison for two FRG runs">
+    <input id="task" type="text" placeholder="e.g., Choose paired vs unpaired comparison for two FRG runs">
 
     <label for="guide">Suggested note for statistical interpretation guide</label>
     <textarea id="guide" rows="4" placeholder="e.g., Do not adjust observed accuracy upward for small samples; report interval and limitations."></textarea>
 
-    <button onclick="buildSessionSummary()">Generate output</button>
+    <button type="button" onclick="buildSessionSummary()">Generate output</button>
   </section>
 
   <section class="card">
