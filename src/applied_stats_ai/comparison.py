@@ -22,7 +22,10 @@ def compare_two_models(
     """Compare two classifiers on the same labeled examples.
 
     The function reports accuracy for each model, the observed difference in accuracy,
-    a bootstrap confidence interval for the paired difference, and a McNemar test p-value.
+    a paired-difference confidence interval, and a McNemar test p-value. Use
+    ``interval_method="exact"`` for a sign-test-style exact interval based on
+    discordant pairs or ``interval_method="bootstrap"`` for a percentile bootstrap
+    interval on the paired differences.
 
     Examples:
         >>> y_true = [1, 0, 1, 1]
@@ -67,7 +70,12 @@ def compare_two_models(
     use_exact = discordant < 25
     p_value = float(mcnemar(table, exact=use_exact, correction=not use_exact).pvalue)
     if interval_method == "exact" and discordant == 0:
-        interval = (0.0, 0.0)
+        _, upper = clopper_pearson_interval(
+            0,
+            len(y),
+            confidence_level=confidence_level,
+        )
+        interval = (-upper, upper)
     elif interval_method == "exact":
         lower_q, upper_q = clopper_pearson_interval(
             b_only,
