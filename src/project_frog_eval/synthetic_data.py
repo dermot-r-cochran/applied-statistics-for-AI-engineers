@@ -186,7 +186,8 @@ def metric_interval_report(
     inserted to remind readers that rows are treated as exchangeable and that
     dependent data may require a smaller effective sample size. When callers
     pass an explicit sequence, including an empty tuple, that input is
-    preserved as-is.
+    preserved as-is. Raises `ValueError` when `metric_name` is empty after
+    trimming or when forwarded interval arguments fail validation.
     """
     normalized_metric_name = metric_name.strip()
     if not normalized_metric_name:
