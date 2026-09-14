@@ -41,6 +41,10 @@ button {
   cursor: pointer;
 }
 
+a:focus,
+button:focus,
+input:focus,
+textarea:focus,
 a:focus-visible,
 button:focus-visible,
 input:focus-visible,
