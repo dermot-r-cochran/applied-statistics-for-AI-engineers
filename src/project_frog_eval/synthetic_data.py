@@ -176,7 +176,8 @@ def metric_interval_report(
     assumptions: Sequence[str] | None = None,
 ) -> MetricIntervalReport:
     """Package an observed metric with interval metadata and assumptions."""
-    if not metric_name.strip():
+    normalized_metric_name = metric_name.strip()
+    if not normalized_metric_name:
         raise ValueError("metric_name must not be empty")
 
     interval = wilson_interval(
@@ -187,7 +188,7 @@ def metric_interval_report(
     )
 
     return MetricIntervalReport(
-        metric_name=metric_name,
+        metric_name=normalized_metric_name,
         successes=successes,
         total=total,
         interval=interval,

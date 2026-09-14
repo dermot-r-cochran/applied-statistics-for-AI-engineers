@@ -83,7 +83,7 @@ class SyntheticDataTests(unittest.TestCase):
 
     def test_interval_report_carries_assumptions(self) -> None:
         report = metric_interval_report(
-            metric_name="accuracy",
+            metric_name=" accuracy ",
             successes=89,
             total=100,
             assumptions=("Synthetic amphibian sightings are treated as independent rows.",),
