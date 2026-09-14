@@ -3,11 +3,11 @@
 from __future__ import annotations
 
 from math import ceil, sqrt
-from typing import Callable, Sequence
+from typing import Callable, Literal, Sequence
 
 import numpy as np
 from scipy.optimize import brentq
-from scipy.stats import beta, binomtest, norm
+from scipy.stats import beta, binomtest, fisher_exact, norm
 
 
 ArrayLike = Sequence[float] | np.ndarray
@@ -311,7 +311,8 @@ def compare_independent_proportions(
     Assumptions:
         * Group A and group B are independent samples.
         * The confidence interval uses an unpooled large-sample approximation.
-        * The p-value uses the pooled null distribution for a standard two-proportion z-test.
+        * The p-value uses Fisher's exact test for boundary-rate small samples and a pooled
+          null distribution otherwise.
         * Both summaries are weakest for tiny samples.
 
     Examples:
@@ -340,15 +341,25 @@ def compare_independent_proportions(
     upper = difference + z_value * se
     pooled = (successes_a + successes_b) / (trials_a + trials_b)
     pooled_se = sqrt(pooled * (1.0 - pooled) * ((1.0 / trials_a) + (1.0 / trials_b)))
-    z_stat = 0.0 if pooled_se == 0.0 else difference / pooled_se
-    p_value = 2.0 * (1.0 - norm.cdf(abs(z_stat)))
+    uses_exact_test = pooled_se == 0.0 or p_a in {0.0, 1.0} or p_b in {0.0, 1.0}
+    if uses_exact_test:
+        contingency = np.array(
+            [
+                [successes_a, trials_a - successes_a],
+                [successes_b, trials_b - successes_b],
+            ]
+        )
+        p_value = float(fisher_exact(contingency, alternative="two-sided").pvalue)
+    else:
+        z_stat = difference / pooled_se
+        p_value = float(2.0 * (1.0 - norm.cdf(abs(z_stat))))
     return {
         "rate_a": float(p_a),
         "rate_b": float(p_b),
         "difference": float(difference),
         "lower": float(lower),
         "upper": float(upper),
-        "p_value": float(p_value),
+        "p_value": p_value,
     }
 
 
@@ -401,6 +412,7 @@ def required_sample_size(
     minimum_effect: float,
     power: float = 0.8,
     alpha: float = 0.05,
+    direction: Literal["increase", "decrease"] = "increase",
 ) -> int:
     """Approximate required sample size per group for two independent proportions.
 
@@ -421,10 +433,17 @@ def required_sample_size(
         raise ValueError("power must be between 0 and 1.")
     if not 0.0 < alpha < 1.0:
         raise ValueError("alpha must be between 0 and 1.")
+    if direction not in {"increase", "decrease"}:
+        raise ValueError("direction must be 'increase' or 'decrease'.")
 
-    target_rate = baseline_rate + minimum_effect
-    if target_rate >= 1.0:
-        raise ValueError("baseline_rate + minimum_effect must be less than 1.")
+    if direction == "increase":
+        target_rate = baseline_rate + minimum_effect
+        if target_rate >= 1.0:
+            raise ValueError("baseline_rate + minimum_effect must be less than 1.")
+    else:
+        target_rate = baseline_rate - minimum_effect
+        if target_rate <= 0.0:
+            raise ValueError("baseline_rate - minimum_effect must be greater than 0.")
 
     z_alpha = norm.ppf(1.0 - alpha / 2.0)
     z_beta = norm.ppf(power)

@@ -95,7 +95,7 @@ def test_compare_paired_predictions_all_agree() -> None:
 def test_compare_independent_proportions_small_samples() -> None:
     result = compare_independent_proportions(1, 2, 0, 2)
     assert math.isclose(result["difference"], 0.5)
-    assert math.isclose(result["p_value"], 0.24821307898992373)
+    assert math.isclose(result["p_value"], 1.0)
 
 
 @pytest.mark.parametrize("confidence_level", [0.0, 1.0])
@@ -107,6 +107,12 @@ def test_compare_independent_proportions_rejects_invalid_confidence_level(confid
 def test_compare_independent_proportions_rejects_invalid_successes() -> None:
     with pytest.raises(ValueError):
         compare_independent_proportions(3, 2, 1, 2)
+
+
+def test_compare_independent_proportions_uses_exact_fallback_when_zero_variance() -> None:
+    result = compare_independent_proportions(1, 1, 0, 1)
+    assert math.isclose(result["difference"], 1.0)
+    assert math.isclose(result["p_value"], 1.0)
 
 
 def test_minimum_detectable_effect_and_required_sample_size_are_positive() -> None:
@@ -125,3 +131,7 @@ def test_required_sample_size_rejects_invalid_probability_inputs(kwargs: dict[st
 def test_required_sample_size_rejects_impossible_target_rate() -> None:
     with pytest.raises(ValueError):
         required_sample_size(0.98, 0.03)
+
+
+def test_required_sample_size_supports_decreases() -> None:
+    assert required_sample_size(0.88, 0.03, direction="decrease") > 0

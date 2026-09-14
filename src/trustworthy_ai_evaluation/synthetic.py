@@ -78,7 +78,8 @@ def generate_project_frog_data(
     unknown_components = sorted(set(selected_components).difference(COMPONENTS))
     if unknown_components:
         raise ValueError(f"Unknown component names: {unknown_components}")
-    profiles = [profile for profile in _COMPONENT_PROFILES if profile.name in selected_components]
+    profile_lookup = {profile.name: profile for profile in _COMPONENT_PROFILES}
+    profiles = [profile_lookup[name] for name in selected_components]
     if not profiles:
         raise ValueError("At least one known component must be selected.")
 

@@ -157,7 +157,7 @@ def subgroup_metric_report(
         raise ValueError("frame contains missing values in required columns.")
 
     rows = []
-    for group_value, subset in frame.groupby(group_column, dropna=False):
+    for group_value, subset in frame.groupby(group_column, dropna=False, sort=False):
         y_true = subset[outcome_column].astype(int).to_numpy()
         y_prob = subset[probability_column].astype(float).to_numpy()
         curve = calibration_curve_data(y_true, y_prob, n_bins=max(1, min(n_bins, len(subset))))
@@ -172,4 +172,4 @@ def subgroup_metric_report(
                 "brier_score": float(np.mean((y_prob - y_true) ** 2)),
             }
         )
-    return pd.DataFrame(rows).sort_values("group").reset_index(drop=True)
+    return pd.DataFrame(rows).reset_index(drop=True)
