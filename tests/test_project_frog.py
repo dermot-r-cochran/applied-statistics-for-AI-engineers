@@ -1,3 +1,5 @@
+import pytest
+
 from applied_stats_ai import ProjectFrogScenario, generate_project_frog_evaluation
 
 
@@ -12,6 +14,23 @@ def test_generate_project_frog_evaluation_shape_and_label() -> None:
 
 
 def test_generate_project_frog_evaluation_is_reproducible() -> None:
-    left = generate_project_frog_evaluation(ProjectFrogScenario(sample_size=10), random_state=42)
-    right = generate_project_frog_evaluation(ProjectFrogScenario(sample_size=10), random_state=42)
+    scenario = ProjectFrogScenario(sample_size=10, project_count=10)
+    left = generate_project_frog_evaluation(scenario, random_state=42)
+    right = generate_project_frog_evaluation(scenario, random_state=42)
     assert left.equals(right)
+
+
+@pytest.mark.parametrize(
+    "scenario",
+    [
+        ProjectFrogScenario(sample_size=0),
+        ProjectFrogScenario(sample_size=4, project_count=5),
+        ProjectFrogScenario(baseline_accuracy=0.0),
+        ProjectFrogScenario(comparison_accuracy=1.0),
+    ],
+)
+def test_generate_project_frog_evaluation_validates_inputs(
+    scenario: ProjectFrogScenario,
+) -> None:
+    with pytest.raises(ValueError):
+        generate_project_frog_evaluation(scenario)

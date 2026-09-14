@@ -47,6 +47,8 @@ def generate_project_frog_evaluation(
         raise ValueError('sample_size must be positive')
     if scenario.project_count <= 0:
         raise ValueError('project_count must be positive')
+    if scenario.project_count > scenario.sample_size:
+        raise ValueError('project_count cannot exceed sample_size')
     if not 0 < scenario.baseline_accuracy < 1:
         raise ValueError('baseline_accuracy must be between 0 and 1')
     if not 0 < scenario.comparison_accuracy < 1:

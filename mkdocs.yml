@@ -29,6 +29,10 @@ theme:
 
 plugins:
   - search
+  - mkdocs-jupyter:
+      execute: false
+      include_source: true
+      ignore_h1_titles: true
 
 markdown_extensions:
   - admonition
@@ -85,7 +89,7 @@ nav:
       - 19. Monitoring under uncertainty: 19_monitoring_under_uncertainty.md
   - Practical workshops:
       - Tutorials overview: workshops.md
-      - Confidence-interval notebook: confidence_intervals_notebook.md
+      - Confidence-interval notebook: workshops/confidence_intervals_for_accuracy.ipynb
       - Project Frog case studies: case_studies/index.md
       - Case study 1 · The Shrinking Pond: case_studies/01_the_shrinking_pond.md
       - Case study 2 · Frog Leap: case_studies/02_frog_leap.md

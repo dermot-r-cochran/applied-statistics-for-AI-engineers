@@ -10,12 +10,13 @@ The tutorials keep the book operational. They provide notebook-first and scenari
 
 ## Recommended sequence
 
-1. Start with the confidence-interval notebook.
+1. Start with the rendered confidence-interval notebook in this site.
 2. Read the case studies and write down your decision before checking the chapter material.
 3. Use the `applied_stats_ai` helpers to reproduce the calculations in code.
 
-## Repository links
+## Useful links
 
+- [Rendered notebook page](./workshops/confidence_intervals_for_accuracy.ipynb)
 - [Notebook source](https://github.com/dermot-r-cochran/applied-statistics-for-AI-engineers/blob/main/tutorials/confidence_intervals/confidence_intervals_for_accuracy.ipynb)
 - [Tutorial directory](https://github.com/dermot-r-cochran/applied-statistics-for-AI-engineers/tree/main/tutorials)
 - [Examples directory](https://github.com/dermot-r-cochran/applied-statistics-for-AI-engineers/tree/main/examples)

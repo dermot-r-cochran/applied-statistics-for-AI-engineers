@@ -42,12 +42,10 @@ def compare_two_models(
     accuracy_b = float(correct_b.mean())
     difference = accuracy_b - accuracy_a
 
-    both = int(np.sum((correct_a == 1) & (correct_b == 1)))
     a_only = int(np.sum((correct_a == 1) & (correct_b == 0)))
     b_only = int(np.sum((correct_a == 0) & (correct_b == 1)))
-    neither = int(np.sum((correct_a == 0) & (correct_b == 0)))
 
-    table = [[both, a_only], [b_only, neither]]
+    table = [[0, a_only], [b_only, 0]]
     p_value = float(mcnemar(table, exact=False, correction=True).pvalue)
 
     discordant = a_only + b_only
