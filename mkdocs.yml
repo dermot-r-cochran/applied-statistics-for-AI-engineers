@@ -4,23 +4,8 @@ site_url: https://dermot-r-cochran.github.io/applied-statistics-for-AI-engineers
 repo_url: https://github.com/dermot-r-cochran/applied-statistics-for-AI-engineers
 repo_name: dermot-r-cochran/applied-statistics-for-AI-engineers
 edit_uri: edit/main/
-docs_dir: .
+docs_dir: docs
 site_dir: site
-exclude_docs: |
-  .git/**
-  .github/agents/**
-  .venv/**
-  __pycache__/**
-  src/**
-  tests/**
-  examples/**
-  notebooks/**
-  uv.lock
-  .python-version
-  .gitignore
-  README.md
-  pyproject.toml
-  CONTRIBUTING.md
 use_directory_urls: true
 copyright: Copyright 2026 Dermot R. Cochran
 
@@ -44,11 +29,6 @@ theme:
 
 plugins:
   - search
-  - mkdocs-jupyter:
-      execute: false
-      include_source: true
-      ignore_h1_titles: true
-      allow_errors: false
 
 markdown_extensions:
   - admonition
@@ -72,44 +52,44 @@ markdown_extensions:
       custom_checkbox: true
 
 extra_css:
-  - docs/assets/stylesheets/extra.css
+  - assets/stylesheets/extra.css
 
 nav:
-  - Home: docs/index.md
+  - Home: index.md
   - Orientation:
-      - Why this book exists: docs/introduction.md
-      - Project Frog: docs/project_frog.md
-      - How to use the repository: docs/using_the_repository.md
+      - Why this book exists: introduction.md
+      - Project Frog: project_frog.md
+      - How to use the repository: using_the_repository.md
   - Part I · Statistical foundations:
-      - 1. Probability foundations: docs/01_probability_foundations.md
-      - 2. Sampling and variation: docs/02_sampling_and_variation.md
-      - 3. Confidence intervals: docs/03_confidence_intervals.md
-      - 4. Hypothesis testing: docs/04_hypothesis_testing.md
-      - 5. Effect size: docs/05_effect_size.md
-      - 6. Statistical power: docs/06_statistical_power.md
-      - 7. Bootstrap methods: docs/07_bootstrap_methods.md
-      - 8. Bayesian reasoning: docs/08_bayesian_reasoning.md
+      - 1. Probability foundations: 01_probability_foundations.md
+      - 2. Sampling and variation: 02_sampling_and_variation.md
+      - 3. Confidence intervals: 03_confidence_intervals.md
+      - 4. Hypothesis testing: 04_hypothesis_testing.md
+      - 5. Effect size: 05_effect_size.md
+      - 6. Statistical power: 06_statistical_power.md
+      - 7. Bootstrap methods: 07_bootstrap_methods.md
+      - 8. Bayesian reasoning: 08_bayesian_reasoning.md
   - Part II · Metrics and comparison:
-      - 9. Classification metrics: docs/09_classification_metrics.md
-      - 10. Metric uncertainty: docs/10_metric_uncertainty.md
-      - 11. Model comparison: docs/11_model_comparison.md
+      - 9. Classification metrics: 09_classification_metrics.md
+      - 10. Metric uncertainty: 10_metric_uncertainty.md
+      - 11. Model comparison: 11_model_comparison.md
   - Part III · Evaluation design:
-      - 12. Experimental design: docs/12_experimental_design.md
-      - 13. A/B testing: docs/13_ab_testing.md
-      - 14. Test set design: docs/14_test_set_design.md
-      - 15. Sampling bias: docs/15_sampling_bias.md
-      - 16. Data leakage: docs/16_data_leakage.md
+      - 12. Experimental design: 12_experimental_design.md
+      - 13. A/B testing: 13_ab_testing.md
+      - 14. Test set design: 14_test_set_design.md
+      - 15. Sampling bias: 15_sampling_bias.md
+      - 16. Data leakage: 16_data_leakage.md
   - Part IV · Decisions and monitoring:
-      - 17. Measurement theory: docs/17_measurement_theory.md
-      - 18. Decision theory: docs/18_decision_theory.md
-      - 19. Monitoring under uncertainty: docs/19_monitoring_under_uncertainty.md
+      - 17. Measurement theory: 17_measurement_theory.md
+      - 18. Decision theory: 18_decision_theory.md
+      - 19. Monitoring under uncertainty: 19_monitoring_under_uncertainty.md
   - Practical workshops:
-      - Tutorials overview: tutorials/README.md
-      - Accuracy interval notebook: tutorials/confidence_intervals/confidence_intervals_for_accuracy.ipynb
-      - Project Frog case studies: tutorials/project_frog_case_studies/README.md
-      - Case study 1 · The Shrinking Pond: tutorials/project_frog_case_studies/01_the_shrinking_pond.md
-      - Case study 2 · Frog Leap: tutorials/project_frog_case_studies/02_frog_leap.md
-      - Case study 3 · Different Pond: tutorials/project_frog_case_studies/03_different_pond.md
-      - Case study 4 · The Tadpole Problem: tutorials/project_frog_case_studies/04_the_tadpole_problem.md
-      - Case study 5 · Release Readiness: tutorials/project_frog_case_studies/05_release_readiness.md
-  - Contributing and local development: docs/developer_guide.md
+      - Tutorials overview: workshops.md
+      - Confidence-interval notebook: confidence_intervals_notebook.md
+      - Project Frog case studies: case_studies/index.md
+      - Case study 1 · The Shrinking Pond: case_studies/01_the_shrinking_pond.md
+      - Case study 2 · Frog Leap: case_studies/02_frog_leap.md
+      - Case study 3 · Different Pond: case_studies/03_different_pond.md
+      - Case study 4 · The Tadpole Problem: case_studies/04_the_tadpole_problem.md
+      - Case study 5 · Release Readiness: case_studies/05_release_readiness.md
+  - Contributing and local development: developer_guide.md

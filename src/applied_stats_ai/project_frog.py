@@ -22,8 +22,11 @@ class ProjectFrogScenario:
     project_count: int = 12
 
 
+DEFAULT_PROJECT_FROG_SCENARIO = ProjectFrogScenario()
+
+
 def generate_project_frog_evaluation(
-    scenario: ProjectFrogScenario = ProjectFrogScenario(),
+    scenario: ProjectFrogScenario | None = None,
     *,
     random_state: int | None = None,
 ) -> pd.DataFrame:
@@ -32,10 +35,14 @@ def generate_project_frog_evaluation(
     The dataset is fictional and intended for examples, notebooks, and tests.
 
     Examples:
-        >>> df = generate_project_frog_evaluation(ProjectFrogScenario(sample_size=8), random_state=0)
+        >>> df = generate_project_frog_evaluation(
+        ...     ProjectFrogScenario(sample_size=8),
+        ...     random_state=0,
+        ... )
         >>> sorted(df.columns)[:4]
         ['baseline_prediction', 'comparison_prediction', 'complexity', 'confidence_like_score']
     """
+    scenario = scenario or DEFAULT_PROJECT_FROG_SCENARIO
     if scenario.sample_size <= 0:
         raise ValueError('sample_size must be positive')
     if scenario.project_count <= 0:
@@ -58,12 +65,20 @@ def generate_project_frog_evaluation(
     comparison_prediction = np.where(comparison_correct == 1, truth, 1 - truth)
 
     evidence_quality = np.clip(
-        rng.normal(loc=0.72 + 0.08 * baseline_correct, scale=0.08, size=scenario.sample_size),
+        rng.normal(
+            loc=0.72 + 0.08 * baseline_correct,
+            scale=0.08,
+            size=scenario.sample_size,
+        ),
         0,
         1,
     )
     confidence_like_score = np.clip(
-        rng.normal(loc=0.62 + 0.2 * baseline_correct, scale=0.1, size=scenario.sample_size),
+        rng.normal(
+            loc=0.62 + 0.2 * baseline_correct,
+            scale=0.1,
+            size=scenario.sample_size,
+        ),
         0,
         1,
     )
@@ -77,7 +92,10 @@ def generate_project_frog_evaluation(
         ),
         1,
     )
-    processing_cost = np.round(0.0025 + latency_ms / 100_000 + rng.uniform(0, 0.0015, size=scenario.sample_size), 5)
+    processing_cost = np.round(
+        0.0025 + latency_ms / 100_000 + rng.uniform(0, 0.0015, size=scenario.sample_size),
+        5,
+    )
 
     return pd.DataFrame(
         {
