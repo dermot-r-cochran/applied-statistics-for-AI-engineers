@@ -16,3 +16,8 @@ def test_power_analysis_and_mde_are_positive() -> None:
     mde = minimum_detectable_effect(0.85, 500)
     assert 0.0 < power < 1.0
     assert 0.0 < mde < 0.5
+
+
+def test_minimum_detectable_effect_handles_near_boundary_baselines() -> None:
+    mde = minimum_detectable_effect(0.98, 2_000)
+    assert 0.0 < mde < 0.02

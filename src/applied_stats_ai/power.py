@@ -42,7 +42,7 @@ def minimum_detectable_effect(
     target_power: float = 0.8,
     alpha: float = 0.05,
 ) -> float:
-    """Return the minimum absolute lift detectable with the requested power.
+    """Return the minimum absolute rate change detectable with the requested power.
 
     Examples:
         >>> round(minimum_detectable_effect(0.85, 500), 3)
@@ -59,21 +59,38 @@ def minimum_detectable_effect(
 
     analysis = NormalIndPower()
 
-    def objective(delta: float) -> float:
-        treatment = min(max(baseline_rate + delta, 1e-6), 1 - 1e-6)
-        effect_size = proportion_effectsize(treatment, baseline_rate)
-        return (
-            analysis.power(
-                effect_size=effect_size,
-                nobs1=sample_size_per_group,
-                alpha=alpha,
-            )
-            - target_power
+    def solve_for_direction(direction: int) -> float | None:
+        upper_bound = (
+            1 - baseline_rate - 1e-6
+            if direction > 0
+            else baseline_rate - 1e-6
         )
+        if upper_bound <= 1e-6:
+            return None
 
-    upper_bound = min(1 - baseline_rate - 1e-6, 0.499999)
-    if objective(upper_bound) < 0:
+        def objective(delta: float) -> float:
+            treatment = baseline_rate + direction * delta
+            effect_size = abs(proportion_effectsize(treatment, baseline_rate))
+            return (
+                analysis.power(
+                    effect_size=effect_size,
+                    nobs1=sample_size_per_group,
+                    alpha=alpha,
+                )
+                - target_power
+            )
+
+        if objective(upper_bound) < 0:
+            return None
+        return float(brentq(objective, 1e-6, upper_bound))
+
+    candidates = [
+        value
+        for value in (solve_for_direction(1), solve_for_direction(-1))
+        if value is not None
+    ]
+    if not candidates:
         raise ValueError(
             "sample size is too small to reach target_power within valid proportion bounds",
         )
-    return float(brentq(objective, 1e-6, upper_bound))
+    return min(candidates)

@@ -51,18 +51,28 @@ def confusion_matrix_uncertainty(
 
     def metric_from_pairs(
         metric_func: Callable[[np.ndarray, np.ndarray], float],
+        name: str,
     ) -> Callable[[np.ndarray], float]:
-        return lambda sample: float(metric_func(sample[:, 0], sample[:, 1]))
+        def metric(sample: np.ndarray) -> float:
+            return float(metric_func(sample[:, 0], sample[:, 1]))
+
+        metric.__name__ = f"bootstrap_{name}"
+        return metric
 
     metrics = {
-        "accuracy": metric_from_pairs(accuracy_score),
+        "accuracy": metric_from_pairs(accuracy_score, "accuracy"),
         "precision": metric_from_pairs(
             lambda yt, yp: precision_score(yt, yp, zero_division=0),
+            "precision",
         ),
         "recall": metric_from_pairs(
             lambda yt, yp: recall_score(yt, yp, zero_division=0),
+            "recall",
         ),
-        "f1": metric_from_pairs(lambda yt, yp: f1_score(yt, yp, zero_division=0)),
+        "f1": metric_from_pairs(
+            lambda yt, yp: f1_score(yt, yp, zero_division=0),
+            "f1",
+        ),
     }
 
     metric_results = {
