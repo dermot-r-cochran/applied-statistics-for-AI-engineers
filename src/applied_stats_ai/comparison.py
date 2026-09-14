@@ -1,10 +1,10 @@
 from __future__ import annotations
 
 import numpy as np
-from scipy.stats import norm
 from statsmodels.stats.contingency_tables import mcnemar
 
 from ._typing import ArrayLike
+from .bootstrap import bootstrap_metric
 
 
 def compare_two_models(
@@ -12,11 +12,14 @@ def compare_two_models(
     predictions_a: ArrayLike,
     predictions_b: ArrayLike,
     confidence_level: float = 0.95,
+    n_resamples: int = 2_000,
+    random_state: int | None = 0,
 ) -> dict[str, float | bool | tuple[float, float]]:
     """Compare two classifiers on the same labeled examples.
 
     The function reports accuracy for each model, the observed difference in accuracy,
-    a confidence interval for the difference, and a paired McNemar test p-value.
+    a paired bootstrap confidence interval for the difference, and a paired McNemar test
+    p-value.
 
     Examples:
         >>> y_true = [1, 0, 1, 1]
@@ -35,34 +38,41 @@ def compare_two_models(
         raise ValueError("inputs must not be empty")
     if not 0 < confidence_level < 1:
         raise ValueError("confidence_level must be between 0 and 1")
+    if n_resamples <= 0:
+        raise ValueError("n_resamples must be positive")
 
     correct_a = (a == y).astype(int)
     correct_b = (b == y).astype(int)
     accuracy_a = float(correct_a.mean())
     accuracy_b = float(correct_b.mean())
-    difference = accuracy_b - accuracy_a
+    paired_differences = correct_b - correct_a
+    difference = float(paired_differences.mean())
 
-    both = int(np.sum((correct_a == 1) & (correct_b == 1)))
+    both_correct = int(np.sum((correct_a == 1) & (correct_b == 1)))
     a_only = int(np.sum((correct_a == 1) & (correct_b == 0)))
     b_only = int(np.sum((correct_a == 0) & (correct_b == 1)))
-    neither = int(np.sum((correct_a == 0) & (correct_b == 0)))
+    both_wrong = int(np.sum((correct_a == 0) & (correct_b == 0)))
 
-    table = [[both, a_only], [b_only, neither]]
+    table = np.array([[both_correct, a_only], [b_only, both_wrong]], dtype=int)
     p_value = float(mcnemar(table, exact=False, correction=True).pvalue)
 
-    discordant = a_only + b_only
-    z_value = norm.ppf(0.5 + confidence_level / 2)
-    if discordant == 0:
-        interval = (difference, difference)
-    else:
-        margin = z_value * np.sqrt(discordant / (len(y) ** 2))
-        interval = (difference - margin, difference + margin)
+    bootstrap_result = bootstrap_metric(
+        paired_differences,
+        np.mean,
+        n_resamples=n_resamples,
+        confidence_level=confidence_level,
+        random_state=random_state,
+    )
+    interval = (
+        float(bootstrap_result["lower"]),
+        float(bootstrap_result["upper"]),
+    )
 
     return {
         "accuracy_a": accuracy_a,
         "accuracy_b": accuracy_b,
-        "difference": float(difference),
-        "confidence_interval": (float(interval[0]), float(interval[1])),
+        "difference": difference,
+        "confidence_interval": interval,
         "p_value": p_value,
         "same_sample": True,
     }

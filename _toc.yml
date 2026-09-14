@@ -39,6 +39,8 @@ parts:
       - file: tutorials/README
         sections:
           - file: tutorials/confidence_intervals/README
+            sections:
+              - file: tutorials/confidence_intervals/confidence_intervals_for_accuracy
           - file: tutorials/bootstrap/README
           - file: tutorials/classification_metrics/README
           - file: tutorials/test_set_design/README
