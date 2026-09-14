@@ -839,7 +839,7 @@ if (typeof document !== "undefined") (function page(){
         else if(key==="example") body = md(l.example)+renderCalc(l);
         else body = md(l[key]);
         return `<section id="part-${i+1}"><h3>${i+1}. ${esc(p[1])}</h3>${body}</section>`; }).join("");
-      return `<p class="mute">Lesson ${l.id} of ${LESSONS.length}</p><h2>${l.id}. ${esc(l.title)}</h2><ul class="parts">${PARTS.map((p,i)=>`<li><a href="#/lesson/${l.id}#part-${i+1}">${i+1}. ${esc(p[1])}</a></li>`).join("")}</ul>${parts}<p><button type="button" id="mark-done">Mark this lesson read</button> <span class="mute" id="done-msg"></span></p>${nav(l)}`; }
+      return `<p class="mute">Lesson ${l.id} · ${LESSONS.indexOf(l)+1} of ${LESSONS.length}</p><h2>${l.id}. ${esc(l.title)}</h2><ul class="parts">${PARTS.map((p,i)=>`<li><a href="#/lesson/${l.id}#part-${i+1}">${i+1}. ${esc(p[1])}</a></li>`).join("")}</ul>${parts}<p><button type="button" id="mark-done">Mark this lesson read</button> <span class="mute" id="done-msg"></span></p>${nav(l)}`; }
   };
 
   const route = () => {
