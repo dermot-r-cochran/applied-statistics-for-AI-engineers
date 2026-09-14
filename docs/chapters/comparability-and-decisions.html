@@ -34,8 +34,16 @@
             <li>Use the same evaluation slice definitions.</li>
             <li>Keep label policy fixed.</li>
             <li>Apply the same routing threshold or compare across a threshold sweep.</li>
-            <li>Record uncertainty so small observed differences do not masquerade as real improvements.</li>
+            <li>Record the observed metric with an interval and assumptions so small differences do not masquerade as real improvements.</li>
           </ul>
+        </section>
+
+        <section class="card">
+          <h2>Reporting habit</h2>
+          <p>
+            Evaluation reporting should present the observed metric together with an interval estimate and the assumptions behind it.
+            If the test set is smaller, the interval should widen; if rows are clustered or otherwise dependent, the uncertainty treatment may need to widen again.
+          </p>
         </section>
 
         <section class="chapter-grid">

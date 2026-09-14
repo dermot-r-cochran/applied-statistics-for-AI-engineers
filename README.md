@@ -14,7 +14,7 @@ All examples in this repository are synthetic and fictional under the Project Fr
 ## Repository layout
 
 - `docs/` - static GitHub Pages site with book-style navigation and interactive lesson pages
-- `src/project_frog_eval/` - small Python utilities for synthetic evaluation data and summaries
+- `src/project_frog_eval/` - small Python utilities for synthetic evaluation data, summaries, and interval-aware metric reporting
 - `tests/` - unit tests for the supporting utilities
 
 ## Local preview

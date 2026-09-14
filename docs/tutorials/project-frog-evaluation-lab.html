@@ -67,6 +67,7 @@
             <div class="step-label">Step 4</div>
             <h2>Compare runs with the same yardstick</h2>
             <p>When you compare model A and model B, keep the test set, label policy, and routing threshold fixed. Otherwise the comparison is confounded.</p>
+            <p class="callout">Report the observed metric with an interval and assumptions. A smaller test set should usually widen the uncertainty interval instead of making the point estimate look equally stable.</p>
           </article>
 
           <article class="step-card" data-step-card hidden>
@@ -96,6 +97,32 @@
         </section>
 
         <section class="table-card">
+          <h2>Large-sample versus small-sample readout</h2>
+          <table>
+            <thead>
+              <tr>
+                <th scope="col">Synthetic Project Frog result</th>
+                <th scope="col">Observed accuracy</th>
+                <th scope="col">95% interval</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>890 correct out of 1,000 fictional sightings</td>
+                <td>89%</td>
+                <td>86.9% to 90.8%</td>
+              </tr>
+              <tr>
+                <td>89 correct out of 100 fictional sightings</td>
+                <td>89%</td>
+                <td>81.4% to 93.8%</td>
+              </tr>
+            </tbody>
+          </table>
+          <p>Same point estimate, different uncertainty width. The smaller evaluation set deserves the wider band.</p>
+        </section>
+
+        <section class="table-card">
           <h2>Evidence checklist</h2>
           <table>
             <thead>
@@ -116,6 +143,10 @@
               <tr>
                 <td>Is the comparison apples-to-apples?</td>
                 <td>Comparing different datasets or label policies can create fake wins.</td>
+              </tr>
+              <tr>
+                <td>Are intervals reported with assumptions?</td>
+                <td>Point estimates alone can hide how much sample size and dependence affect uncertainty.</td>
               </tr>
             </tbody>
           </table>
