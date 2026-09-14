@@ -68,7 +68,7 @@ def minimum_detectable_effect(
         )
         return power - target_power
 
-    upper_bound = min(1 - baseline_rate - 1e-6, 0.499999)
+    upper_bound = 1 - baseline_rate - 1e-6
     if objective(upper_bound) < 0:
         raise ValueError(
             "sample size is too small to reach target_power within valid proportion bounds"

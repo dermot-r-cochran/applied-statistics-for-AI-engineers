@@ -40,6 +40,6 @@ def test_compare_two_models_reports_mcnemar_p_value() -> None:
     predictions_b = [1, 1, 1, 0, 1, 0]
     result = compare_two_models(y_true, predictions_a, predictions_b)
 
-    table = [[2, 2], [2, 0]]
-    expected_p_value = float(mcnemar(table, exact=False, correction=True).pvalue)
+    table = [[2, 1], [3, 0]]
+    expected_p_value = float(mcnemar(table, exact=True, correction=False).pvalue)
     assert isclose(result["p_value"], expected_p_value)

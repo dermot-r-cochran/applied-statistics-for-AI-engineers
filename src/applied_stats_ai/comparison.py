@@ -48,9 +48,14 @@ def compare_two_models(
     both_wrong = int(np.sum((correct_a == 0) & (correct_b == 0)))
 
     table = [[both_correct, a_only], [b_only, both_wrong]]
-    p_value = float(mcnemar(table, exact=False, correction=True).pvalue)
-
     discordant = a_only + b_only
+    p_value = float(
+        mcnemar(
+            table,
+            exact=discordant < 25,
+            correction=discordant >= 25,
+        ).pvalue
+    )
     z_value = norm.ppf(0.5 + confidence_level / 2)
     if discordant == 0:
         interval = (difference, difference)

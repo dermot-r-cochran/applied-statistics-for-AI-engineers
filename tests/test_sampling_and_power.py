@@ -21,3 +21,8 @@ def test_power_analysis_and_mde_are_positive() -> None:
     mde = minimum_detectable_effect(0.85, 500)
     assert 0.0 < power < 1.0
     assert 0.0 < mde < 0.5
+
+
+def test_minimum_detectable_effect_uses_full_feasible_interval() -> None:
+    value = minimum_detectable_effect(0.05, 20, target_power=0.99)
+    assert 0.5 < value < 0.95
