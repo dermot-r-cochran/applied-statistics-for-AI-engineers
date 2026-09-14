@@ -39,7 +39,7 @@ Project Frog runs a synthetic composition experiment in which numerically plausi
 
 - [Chapter 13: Calibration](13-calibration.md)
 - [Chapter 15: System-Level Trust Is Not the Average of Component Confidence](15-system-level-trust-is-not-the-average-of-component-confidence.md)
-- [Confidence semantics reference](../appendices/confidence-reference.md)
+- [Confidence-related reference material](../appendices/confidence-reference.md)
 
 
 ## Summary
