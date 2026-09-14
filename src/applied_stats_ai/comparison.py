@@ -55,9 +55,7 @@ def compare_two_models(
     if discordant == 0:
         p_value = 1.0
     elif discordant < 25:
-        p_value = float(
-            binomtest(k=min(a_only, b_only), n=discordant, p=0.5).pvalue,
-        )
+        p_value = float(binomtest(k=b_only, n=discordant, p=0.5).pvalue)
     else:
         statistic = (abs(a_only - b_only) - 1) ** 2 / discordant
         p_value = float(chi2.sf(statistic, df=1))

@@ -1,8 +1,7 @@
 from __future__ import annotations
 
 from scipy.optimize import brentq
-from statsmodels.stats.power import NormalIndPower
-from statsmodels.stats.proportion import proportion_effectsize
+from statsmodels.stats.proportion import power_proportions_2indep
 
 
 def power_analysis(
@@ -15,7 +14,7 @@ def power_analysis(
 
     Examples:
         >>> round(power_analysis(0.84, 0.88, 400), 3)
-        0.475
+        0.371
     """
     if not 0 < baseline_rate < 1 or not 0 < treatment_rate < 1:
         raise ValueError("rates must be between 0 and 1")
@@ -24,16 +23,15 @@ def power_analysis(
     if not 0 < alpha < 1:
         raise ValueError("alpha must be between 0 and 1")
 
-    effect_size = proportion_effectsize(treatment_rate, baseline_rate)
-    analysis = NormalIndPower()
-    return float(
-        analysis.power(
-            effect_size=effect_size,
-            nobs1=sample_size_per_group,
-            alpha=alpha,
-            ratio=1.0,
-        )
+    result = power_proportions_2indep(
+        diff=treatment_rate - baseline_rate,
+        prop2=baseline_rate,
+        nobs1=sample_size_per_group,
+        ratio=1,
+        alpha=alpha,
+        alternative="two-sided",
     )
+    return float(result.power)
 
 
 def minimum_detectable_effect(
@@ -46,7 +44,7 @@ def minimum_detectable_effect(
 
     Examples:
         >>> round(minimum_detectable_effect(0.85, 500), 3)
-        0.066
+        0.075
     """
     if not 0 < baseline_rate < 1:
         raise ValueError("baseline_rate must be between 0 and 1")
@@ -56,8 +54,6 @@ def minimum_detectable_effect(
         raise ValueError("target_power must be between 0 and 1")
     if not 0 < alpha < 1:
         raise ValueError("alpha must be between 0 and 1")
-
-    analysis = NormalIndPower()
 
     def solve_for_direction(direction: int) -> float | None:
         upper_bound = (
@@ -69,16 +65,15 @@ def minimum_detectable_effect(
             return None
 
         def objective(delta: float) -> float:
-            treatment = baseline_rate + direction * delta
-            effect_size = abs(proportion_effectsize(treatment, baseline_rate))
-            return (
-                analysis.power(
-                    effect_size=effect_size,
-                    nobs1=sample_size_per_group,
-                    alpha=alpha,
-                )
-                - target_power
+            result = power_proportions_2indep(
+                diff=direction * delta,
+                prop2=baseline_rate,
+                nobs1=sample_size_per_group,
+                ratio=1,
+                alpha=alpha,
+                alternative="two-sided",
             )
+            return float(result.power) - target_power
 
         lower_bound = 1e-6
         lower_value = objective(lower_bound)
