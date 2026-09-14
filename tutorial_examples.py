@@ -202,14 +202,18 @@ def release_recommendation(
     Example:
         >>> release_recommendation(0.93, (0.91, 0.96), target=0.90)
         'Evidence supports release'
+
+    A caveated release requires the observed accuracy to meet the target while
+    the lower bound still falls short. A high upper bound alone is not treated
+    as positive release evidence.
     """
 
     lower, upper = interval
     if lower >= target:
         return "Evidence supports release"
-    if accuracy >= target or upper >= target:
+    if accuracy >= target:
         return "Evidence supports release with caveats"
-    if accuracy >= target - 0.05:
+    if upper >= target or accuracy >= target - 0.05:
         return "Evidence is insufficient"
     return "Evidence indicates release risk"
 

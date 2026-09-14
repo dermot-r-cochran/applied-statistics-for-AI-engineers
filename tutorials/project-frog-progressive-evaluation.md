@@ -117,14 +117,14 @@ Now connect the metric back to the operational question.
 ```python
 from tutorial_examples import release_recommendation
 
-print(release_recommendation(accuracy=accuracy, interval=interval, target=0.90))
+print(release_recommendation(accuracy=accuracy, interval=interval, target=0.85))
 ```
 
 For this tutorial slice, the synthetic recommendation is **Evidence supports release with caveats**.
 
 Why not a stronger claim?
 
-- the point estimate is close to the target but below it,
+- the point estimate clears a modest pilot target,
 - the lower bound leaves room for materially weaker performance,
 - the hardest cases are clearly less reliable.
 
