@@ -23,7 +23,7 @@
 
   <section class="card">
     <h2>3) Essential mathematics</h2>
-    <p>For binary outcomes \(X_i \in \{0,1\}\), \(\hat{p}=\frac{1}{n}\sum_i X_i\), with \(\operatorname{Var}(\hat{p}) \approx \frac{p(1-p)}{n}\). Replacing \(p\) with \(\hat{p}\) gives:</p>
+    <p>For binary outcomes Xi in {0,1}, p-hat = (1/n) * sum(Xi), with Var(p-hat) ≈ p(1-p)/n. Replacing p with p-hat gives:</p>
     <p><code>SE(\hat{p}) ≈ sqrt( p̂(1-p̂)/n )</code></p>
     <p>A rough 95% interval under normal approximation is <code>p̂ ± 1.96×SE</code>.</p>
   </section>
@@ -63,10 +63,12 @@
 
   <section class="card">
     <h2>8) One diagnostic question</h2>
-    <p>Which statement is correct?</p>
-    <label><input type="radio" name="diag" value="a"> Small sample size implies measured accuracy is upward biased.</label>
-    <label><input type="radio" name="diag" value="b"> Small sample size mainly increases uncertainty around the observed estimate.</label>
-    <label><input type="radio" name="diag" value="c"> Smaller samples remove the need for confidence intervals.</label>
+    <fieldset>
+      <legend>Which statement is correct?</legend>
+      <label><input type="radio" name="diag" value="a"> Small sample size implies measured accuracy is upward biased.</label>
+      <label><input type="radio" name="diag" value="b"> Small sample size mainly increases uncertainty around the observed estimate.</label>
+      <label><input type="radio" name="diag" value="c"> Smaller samples remove the need for confidence intervals.</label>
+    </fieldset>
     <button class="secondary" onclick="checkDiagnostic()">Check answer</button>
     <p id="diag-result"></p>
   </section>

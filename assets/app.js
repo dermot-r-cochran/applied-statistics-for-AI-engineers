@@ -16,12 +16,18 @@ function checkDiagnostic() {
 }
 
 function buildSessionSummary() {
-  const core = document.getElementById("core").value.trim();
-  const frg = document.getElementById("frg").value.trim();
-  const assumption = document.getElementById("assumption").value.trim();
-  const task = document.getElementById("task").value.trim();
-  const guide = document.getElementById("guide").value.trim();
+  const coreEl = document.getElementById("core");
+  const frgEl = document.getElementById("frg");
+  const assumptionEl = document.getElementById("assumption");
+  const taskEl = document.getElementById("task");
+  const guideEl = document.getElementById("guide");
   const out = document.getElementById("session-output");
+  if (!coreEl || !frgEl || !assumptionEl || !taskEl || !guideEl || !out) return;
+  const core = coreEl.value.trim();
+  const frg = frgEl.value.trim();
+  const assumption = assumptionEl.value.trim();
+  const task = taskEl.value.trim();
+  const guide = guideEl.value.trim();
   out.textContent =
 `Core principle
 - ${core}
