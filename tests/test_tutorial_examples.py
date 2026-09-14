@@ -95,6 +95,8 @@ class TutorialExampleTests(unittest.TestCase):
             release_recommendation(0.9, (0.95, 0.9), target=0.9)
         with self.assertRaises(ValueError):
             release_recommendation(0.9, (-0.1, 0.9), target=0.9)
+        with self.assertRaises(ValueError):
+            release_recommendation(0.9, (0.85, 0.95), target=0.9, insufficient_margin=-0.01)
 
     def test_allocate_counts_handles_zero_total(self) -> None:
         self.assertEqual(_allocate_counts(0, {"a": 0.5, "b": 0.5}), {"a": 0, "b": 0})
