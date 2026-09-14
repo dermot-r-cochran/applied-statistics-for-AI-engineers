@@ -8,7 +8,7 @@ The package lives at `trustworthy_ai_evaluation`.
 Ordinary bootstrap for exchangeable rows. Use for unclustered samples when row-level resampling is defensible.
 
 ### `cluster_bootstrap_metric`
-Cluster bootstrap for repeated observations within documents, projects, or other grouped units. The default estimand is the **average cluster-level metric**, not the row-weighted aggregate.
+Cluster bootstrap for repeated observations within documents, projects, or other grouped units. The default estimand is the **average cluster-level metric**, not the row-weighted aggregate, so the point estimate itself can change when cluster sizes differ.
 
 ## Comparisons
 

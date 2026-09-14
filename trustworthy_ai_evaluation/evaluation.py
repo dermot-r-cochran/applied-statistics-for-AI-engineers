@@ -260,7 +260,9 @@ def cluster_bootstrap_metric(
             are removed before resampling.
 
     Returns:
-        ``BootstrapResult`` summarizing a cluster-level metric estimate.
+        ``BootstrapResult`` summarizing a cluster-level metric estimate. When
+        cluster sizes differ, the returned point estimate can differ from the
+        ordinary row-weighted mean because each cluster contributes equally.
 
     Assumptions:
         Clusters are the resampling unit and the estimand is the average
@@ -364,7 +366,7 @@ def compare_paired_predictions(
     discordant = [difference for difference in differences if difference != 0.0]
     if not discordant:
         p_value = 1.0
-    elif len(discordant) <= 20:
+    elif len(discordant) <= 16:
         extreme = 0
         total = 2 ** len(discordant)
         observed_sum = abs(sum(discordant))
