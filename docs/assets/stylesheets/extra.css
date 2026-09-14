@@ -1,0 +1,8 @@
+:root {
+  --md-typeset-a-color: #0b6bcb;
+}
+
+.chapter-summary {
+  border-left: 0.2rem solid #0b6bcb;
+  padding-left: 1rem;
+}

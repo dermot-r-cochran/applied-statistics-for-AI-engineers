@@ -1,0 +1,45 @@
+site_name: Trustworthy AI Evaluation
+site_description: Synthetic, reproducible examples for AI evaluation decisions
+repo_name: dermot-r-cochran/applied-statistics-for-AI-engineers
+repo_url: https://github.com/dermot-r-cochran/applied-statistics-for-AI-engineers
+strict: true
+use_directory_urls: false
+markdown_extensions:
+  - admonition
+  - attr_list
+  - tables
+  - toc:
+      permalink: true
+  - pymdownx.details
+  - pymdownx.superfences
+  - pymdownx.arithmatex:
+      generic: true
+extra_javascript:
+  - https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js
+extra_css:
+  - assets/stylesheets/extra.css
+nav:
+  - Home: index.md
+  - First reading path:
+      - Chapter 16 · Start with the Decision: chapters/start-with-the-decision.md
+      - Chapter 1 · The Metric Is Not the System: chapters/the-metric-is-not-the-system.md
+      - Chapter 4 · The Shrinking Pond: chapters/the-shrinking-pond.md
+      - Chapter 8 · Accuracy and Its Discontents: chapters/accuracy-and-its-discontents.md
+      - Chapter 12 · What Does Confidence Mean?: chapters/what-does-confidence-mean.md
+      - Chapter 14 · Combining Confidence Scores: chapters/combining-confidence-scores.md
+      - Chapter 21 · Release Readiness Under Uncertainty: chapters/release-readiness-under-uncertainty.md
+  - Reference:
+      - Glossary: glossary.md
+      - Project Frog synthetic data: reference/project-frog-data.md
+      - Confidence semantics card: reference/confidence-semantics-card.md
+      - Experiment protocol template: reference/experiment-protocol-template.md
+      - Test-set manifest template: reference/test-set-manifest-template.md
+      - Evaluation comparability checklist: reference/evaluation-comparability-checklist.md
+      - Evaluation dataset review checklist: reference/evaluation-dataset-review-checklist.md
+      - Metric comparison report: reference/metric-comparison-report.md
+      - Minimum meaningful effect statement: reference/minimum-meaningful-effect-statement.md
+      - Sample-size planning worksheet: reference/sample-size-planning-worksheet.md
+validation:
+  omitted_files: warn
+  absolute_links: relative_to_docs
+  anchors: warn
