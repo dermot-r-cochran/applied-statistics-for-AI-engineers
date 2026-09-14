@@ -116,7 +116,6 @@ def generate_project_frog_data(
         prediction_correct = rng.binomial(1, calibrated_probability).astype(bool)
 
         incorrect_offsets = rng.integers(1, len(PROJECT_CLASSES), size=n_cases)
-        reference_indices = np.searchsorted(predicted_class_options, reference_class, sorter=np.argsort(predicted_class_options))
         reference_indices = np.array([PROJECT_CLASSES.index(label) for label in reference_class])
         predicted_indices = np.where(
             prediction_correct,

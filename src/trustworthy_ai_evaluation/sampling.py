@@ -206,7 +206,6 @@ def cluster_bootstrap_metric(
 
     for idx in range(n_resamples):
         sampled_clusters = rng.choice(unique_clusters, size=unique_clusters.size, replace=True)
-        mask = np.isin(cluster_array, sampled_clusters)
         resampled_rows = []
         for cluster in sampled_clusters:
             cluster_values = sample[cluster_array == cluster]
@@ -252,7 +251,8 @@ def compare_paired_predictions(
         raise ValueError("Paired inputs must have the same length.")
     if truth.size == 0:
         raise ValueError("Paired inputs must not be empty.")
-    if any(pd is None for pd in truth) or any(pd is None for pd in first) or any(pd is None for pd in second):
+    arrays = (truth, first, second)
+    if any(value is None or (isinstance(value, float) and np.isnan(value)) for array in arrays for value in array):
         raise ValueError("Paired inputs contain missing values.")
 
     correct_a = first == truth
@@ -393,6 +393,10 @@ def required_sample_size(
         raise ValueError("baseline_rate must be between 0 and 1.")
     if not 0.0 < minimum_effect < 1.0:
         raise ValueError("minimum_effect must be between 0 and 1.")
+    if not 0.0 < power < 1.0:
+        raise ValueError("power must be between 0 and 1.")
+    if not 0.0 < alpha < 1.0:
+        raise ValueError("alpha must be between 0 and 1.")
 
     target_rate = baseline_rate + minimum_effect
     if target_rate >= 1.0:

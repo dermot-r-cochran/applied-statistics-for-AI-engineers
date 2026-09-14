@@ -70,6 +70,11 @@ def test_compare_paired_predictions_rejects_unequal_lengths() -> None:
         compare_paired_predictions([1, 0], [1, 0], [1])
 
 
+def test_compare_paired_predictions_rejects_nan_values() -> None:
+    with pytest.raises(ValueError):
+        compare_paired_predictions([1, 0, np.nan], [1, 0, 1], [1, 0, 1])
+
+
 def test_compare_paired_predictions_all_agree() -> None:
     result = compare_paired_predictions([1, 0, 1], [1, 0, 1], [1, 0, 1])
     assert result["p_value"] == 1.0
@@ -86,3 +91,14 @@ def test_minimum_detectable_effect_and_required_sample_size_are_positive() -> No
     needed = required_sample_size(0.88, 0.03)
     assert mde > 0.0
     assert needed > 0
+
+
+@pytest.mark.parametrize("kwargs", [{"power": 1.2}, {"alpha": 0.0}])
+def test_required_sample_size_rejects_invalid_probability_inputs(kwargs: dict[str, float]) -> None:
+    with pytest.raises(ValueError):
+        required_sample_size(0.88, 0.03, **kwargs)
+
+
+def test_required_sample_size_rejects_impossible_target_rate() -> None:
+    with pytest.raises(ValueError):
+        required_sample_size(0.98, 0.03)
