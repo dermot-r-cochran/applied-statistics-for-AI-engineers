@@ -1,5 +1,5 @@
-site_name = "Trustworthy AI Evaluation"
-site_description = "Experimental Design, Metrics, Confidence, and Decision-Making for AI Engineers"
+site_name: "Trustworthy AI Evaluation"
+site_description: "Experimental Design, Metrics, Confidence, and Decision-Making for AI Engineers"
 strict: true
 use_directory_urls: true
 markdown_extensions:
@@ -14,12 +14,12 @@ extra_javascript:
   - https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js
 nav:
   - Home: index.md
-  - Part II: Samples, Test Sets, and Generalization:
+  - "Part II: Samples, Test Sets, and Generalization":
       - 4. The Shrinking Pond: part-ii/04-the-shrinking-pond.md
       - 5. Is the Pond Representative?: part-ii/05-is-the-pond-representative.md
       - 6. The Tadpole Problem: part-ii/06-the-tadpole-problem.md
       - 7. Test-Set Governance: part-ii/07-test-set-governance.md
-  - Part V: Experimental Design:
+  - "Part V: Experimental Design":
       - 16. Start with the Decision: part-v/16-start-with-the-decision.md
       - 17. Fair Model Comparisons: part-v/17-fair-model-comparisons.md
       - 18. Effect Size Before Significance: part-v/18-effect-size-before-significance.md
