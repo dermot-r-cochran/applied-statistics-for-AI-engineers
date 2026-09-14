@@ -1,0 +1,31 @@
+[build-system]
+requires = ["setuptools>=69", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "trustworthy-ai-evaluation"
+version = "0.1.0"
+description = "Synthetic teaching materials and utilities for the Trustworthy AI Evaluation book"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+  "numpy==2.1.1",
+  "scikit-learn==1.5.2",
+  "matplotlib==3.9.2",
+  "mkdocs==1.6.1",
+]
+
+[project.optional-dependencies]
+dev = [
+  "pytest==8.3.3",
+]
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]
