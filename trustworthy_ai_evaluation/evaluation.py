@@ -483,6 +483,23 @@ def _power_for_difference(
     return upper_tail + lower_tail
 
 
+def _validate_planning_inputs(
+    baseline_rate: float,
+    alpha: float,
+    power: float,
+    design_effect: float,
+    direction: str,
+) -> None:
+    if not 0.0 < baseline_rate < 1.0:
+        raise ValueError("baseline_rate must be between 0 and 1")
+    if not 0.0 < alpha < 1.0 or not 0.0 < power < 1.0:
+        raise ValueError("alpha and power must be between 0 and 1")
+    if design_effect <= 0.0:
+        raise ValueError("design_effect must be positive")
+    if direction not in {"increase", "decrease"}:
+        raise ValueError("direction must be 'increase' or 'decrease'")
+
+
 def minimum_detectable_effect(
     baseline_rate: float,
     sample_size_per_group: int,
@@ -518,15 +535,19 @@ def minimum_detectable_effect(
         True
     """
 
-    if not 0.0 < baseline_rate < 1.0:
-        raise ValueError("baseline_rate must be between 0 and 1")
-    if not 0.0 < alpha < 1.0 or not 0.0 < power < 1.0:
-        raise ValueError("alpha and power must be between 0 and 1")
-    if design_effect <= 0.0:
-        raise ValueError("design_effect must be positive")
-    if direction not in {"increase", "decrease"}:
-        raise ValueError("direction must be 'increase' or 'decrease'")
+    _validate_planning_inputs(baseline_rate, alpha, power, design_effect, direction)
     upper_bound = 1.0 - baseline_rate if direction == "increase" else baseline_rate
+    extreme_rate = baseline_rate + upper_bound if direction == "increase" else baseline_rate - upper_bound
+    max_power = _power_for_difference(
+        baseline_rate,
+        extreme_rate,
+        sample_size_per_group,
+        alpha=alpha,
+        two_sided=two_sided,
+        design_effect=design_effect,
+    )
+    if max_power < power:
+        raise ValueError("requested power is unattainable for the given sample size and baseline rate")
     low, high = 0.0, upper_bound
     for _ in range(60):
         midpoint = (low + high) / 2.0
@@ -580,8 +601,7 @@ def required_sample_size(
 
     if minimum_effect <= 0.0:
         raise ValueError("minimum_effect must be positive")
-    if direction not in {"increase", "decrease"}:
-        raise ValueError("direction must be 'increase' or 'decrease'")
+    _validate_planning_inputs(baseline_rate, alpha, power, design_effect, direction)
     alternative_rate = baseline_rate + minimum_effect if direction == "increase" else baseline_rate - minimum_effect
     if not 0.0 < alternative_rate < 1.0:
         raise ValueError("minimum_effect is incompatible with baseline_rate and direction")

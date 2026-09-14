@@ -125,6 +125,16 @@ class PlanningTests(unittest.TestCase):
         with_clusters = required_sample_size(0.8, 0.05, design_effect=2.0)
         self.assertGreater(with_clusters, without_clusters)
 
+    def test_minimum_detectable_effect_raises_when_target_power_is_unattainable(self):
+        with self.assertRaises(ValueError):
+            minimum_detectable_effect(0.99, 2, power=0.999, alpha=0.05)
+
+    def test_required_sample_size_validates_inputs(self):
+        with self.assertRaises(ValueError):
+            required_sample_size(1.0, 0.05)
+        with self.assertRaises(ValueError):
+            required_sample_size(0.8, 0.05, design_effect=0.0)
+
 
 class ComparabilityTests(unittest.TestCase):
     def test_directly_comparable(self):
