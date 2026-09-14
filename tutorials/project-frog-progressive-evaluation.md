@@ -56,6 +56,11 @@ A strong answer mentions the sample composition, the cost of specific mistakes, 
 All examples on this page are synthetic, fictional, and reproducible. They use a fixed random seed for repeatability, but that does **not** remove sampling uncertainty.
 
 ```{code-cell} python3
+import sys
+from pathlib import Path
+
+sys.path.append(str(Path().resolve().parent))
+
 from tutorial_examples import difficulty_summary, generate_project_frog_cases
 
 cases = generate_project_frog_cases(seed=7, n=36)
