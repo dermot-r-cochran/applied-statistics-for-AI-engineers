@@ -164,6 +164,12 @@ def _clean_pairs(
 
 
 def _percentile_interval(samples: Sequence[float], confidence_level: float) -> tuple[float, float]:
+    """Return a percentile interval using inclusive order-statistic indexing.
+
+    The lower endpoint uses ``floor(q * (n - 1))`` and the upper endpoint uses
+    ``ceil(q * (n - 1))`` on the sorted bootstrap draws, where ``q`` is the
+    relevant tail probability.
+    """
     ordered = sorted(samples)
     alpha = 1.0 - confidence_level
     lower_index = max(0, min(len(ordered) - 1, int(math.floor((alpha / 2) * (len(ordered) - 1)))))
@@ -550,18 +556,24 @@ def minimum_detectable_effect(
         raise ValueError("sample_size_per_group must be positive")
     _validate_planning_inputs(baseline_rate, alpha, power, design_effect, direction)
     upper_bound = 1.0 - baseline_rate if direction == "increase" else baseline_rate
-    extreme_rate = baseline_rate + upper_bound if direction == "increase" else baseline_rate - upper_bound
-    max_power = _power_for_difference(
-        baseline_rate,
-        extreme_rate,
-        sample_size_per_group,
-        alpha=alpha,
-        two_sided=two_sided,
-        design_effect=design_effect,
-    )
-    if max_power < power:
+    grid_size = 512
+    effects = [upper_bound * index / grid_size for index in range(grid_size + 1)]
+    powers = [
+        _power_for_difference(
+            baseline_rate,
+            baseline_rate + effect if direction == "increase" else baseline_rate - effect,
+            sample_size_per_group,
+            alpha=alpha,
+            two_sided=two_sided,
+            design_effect=design_effect,
+        )
+        for effect in effects
+    ]
+    if max(powers) < power:
         raise ValueError("requested power is unattainable for the given sample size and baseline rate")
-    low, high = 0.0, upper_bound
+    crossing_index = next(index for index, candidate_power in enumerate(powers) if candidate_power >= power)
+    low = effects[max(0, crossing_index - 1)]
+    high = effects[crossing_index]
     for _ in range(60):
         midpoint = (low + high) / 2.0
         alternative_rate = baseline_rate + midpoint if direction == "increase" else baseline_rate - midpoint

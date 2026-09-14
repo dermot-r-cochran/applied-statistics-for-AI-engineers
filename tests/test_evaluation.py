@@ -154,6 +154,10 @@ class PlanningTests(unittest.TestCase):
         self.assertGreater(n, 0)
         self.assertLessEqual(mde, 0.051)
 
+    def test_minimum_detectable_effect_accepts_high_baseline_two_sided_case(self):
+        effect = minimum_detectable_effect(0.95, 600, power=0.8, alpha=0.05, two_sided=True)
+        self.assertGreater(effect, 0.0)
+
 
 class ComparabilityTests(unittest.TestCase):
     def test_directly_comparable(self):
