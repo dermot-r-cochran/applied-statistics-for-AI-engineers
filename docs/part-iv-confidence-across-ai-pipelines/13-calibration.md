@@ -39,7 +39,7 @@ Project Frog uses synthetic components with intentionally different calibration 
 
 - [Chapter 12: What Does Confidence Mean?](12-what-does-confidence-mean.md)
 - [Chapter 14: Combining Confidence Scores](14-combining-confidence-scores.md)
-- [Confidence-interval selection guide](../appendices/confidence-interval-selection-guide.md)
+- [Confidence-related reference material](../appendices/confidence-reference.md)
 
 
 ## Summary
