@@ -2,7 +2,15 @@
 
 from __future__ import annotations
 
-from typing import Any
+from typing import TypedDict
+
+
+class MetricComparabilityResult(TypedDict):
+    """Typed return value for metric comparability checks."""
+
+    classification: str
+    passed: dict[str, bool]
+    limitations: list[str]
 
 
 def metric_comparability_check(
@@ -14,7 +22,7 @@ def metric_comparability_check(
     same_thresholds: bool,
     same_preprocessing: bool,
     same_operating_conditions: bool,
-) -> dict[str, Any]:
+) -> MetricComparabilityResult:
     """Classify whether two evaluation results are directly comparable.
 
     Assumptions:

@@ -55,6 +55,11 @@ def test_bootstrap_metric_rejects_missing_values() -> None:
         bootstrap_metric([1.0, np.nan, 0.0])
 
 
+def test_bootstrap_metric_rejects_non_scalar_metric() -> None:
+    with pytest.raises(ValueError):
+        bootstrap_metric([1.0, 0.0], metric=lambda values: values)
+
+
 def test_cluster_bootstrap_handles_clustered_inputs() -> None:
     result = cluster_bootstrap_metric([1, 0, 1, 1, 0], ["a", "a", "b", "c", "c"], seed=5, n_resamples=250)
     assert 0.0 <= result["lower"] <= result["upper"] <= 1.0
@@ -63,6 +68,12 @@ def test_cluster_bootstrap_handles_clustered_inputs() -> None:
 def test_cluster_bootstrap_rejects_empty_cluster_labels() -> None:
     with pytest.raises(ValueError):
         cluster_bootstrap_metric([1, 0], ["", "b"])
+
+
+@pytest.mark.parametrize("kwargs", [{"n_resamples": 0}, {"confidence_level": 1.0}])
+def test_cluster_bootstrap_rejects_invalid_resampling_args(kwargs: dict[str, float | int]) -> None:
+    with pytest.raises(ValueError):
+        cluster_bootstrap_metric([1, 0], ["a", "b"], **kwargs)
 
 
 def test_compare_paired_predictions_rejects_unequal_lengths() -> None:
@@ -84,6 +95,17 @@ def test_compare_paired_predictions_all_agree() -> None:
 def test_compare_independent_proportions_small_samples() -> None:
     result = compare_independent_proportions(1, 2, 0, 2)
     assert -1.0 <= result["lower"] <= result["upper"] <= 1.5
+
+
+@pytest.mark.parametrize("confidence_level", [0.0, 1.0])
+def test_compare_independent_proportions_rejects_invalid_confidence_level(confidence_level: float) -> None:
+    with pytest.raises(ValueError):
+        compare_independent_proportions(1, 2, 0, 2, confidence_level=confidence_level)
+
+
+def test_compare_independent_proportions_rejects_invalid_successes() -> None:
+    with pytest.raises(ValueError):
+        compare_independent_proportions(3, 2, 1, 2)
 
 
 def test_minimum_detectable_effect_and_required_sample_size_are_positive() -> None:

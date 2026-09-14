@@ -13,13 +13,12 @@ from scipy.stats import beta, binomtest, norm
 ArrayLike = Sequence[float] | np.ndarray
 
 
-def _as_bool_array(values: Sequence[bool] | np.ndarray, name: str) -> np.ndarray:
-    array = np.asarray(values)
-    if array.size == 0:
-        raise ValueError(f"{name} must not be empty.")
-    if np.isnan(array.astype(float)).any():
-        raise ValueError(f"{name} contains missing values.")
-    return array.astype(bool)
+def _scalar_metric_value(metric: Callable[[np.ndarray], float], values: np.ndarray) -> float:
+    result = metric(values)
+    scalar = np.asarray(result)
+    if scalar.ndim != 0:
+        raise ValueError("metric must return a scalar value.")
+    return float(scalar)
 
 
 def standard_error_proportion(successes: int, trials: int) -> float:
@@ -127,15 +126,16 @@ def bootstrap_metric(
         raise ValueError("confidence_level must be between 0 and 1.")
 
     metric_fn = metric or (lambda arr: float(np.mean(arr)))
+    estimate = _scalar_metric_value(metric_fn, sample)
     rng = np.random.default_rng(seed)
     draws = np.empty(n_resamples, dtype=float)
     for idx in range(n_resamples):
         resample = rng.choice(sample, size=sample.size, replace=True)
-        draws[idx] = metric_fn(resample)
+        draws[idx] = _scalar_metric_value(metric_fn, resample)
 
     alpha = 1.0 - confidence_level
     return {
-        "estimate": float(metric_fn(sample)),
+        "estimate": estimate,
         "lower": float(np.quantile(draws, alpha / 2.0)),
         "upper": float(np.quantile(draws, 1.0 - alpha / 2.0)),
         "samples": draws,
@@ -198,8 +198,13 @@ def cluster_bootstrap_metric(
         raise ValueError("values contains missing values.")
     if any(cluster in (None, "") for cluster in cluster_array):
         raise ValueError("clusters contains an empty cluster label.")
+    if n_resamples <= 0:
+        raise ValueError("n_resamples must be positive.")
+    if not 0.0 < confidence_level < 1.0:
+        raise ValueError("confidence_level must be between 0 and 1.")
 
     metric_fn = metric or (lambda arr: float(np.mean(arr)))
+    estimate = _scalar_metric_value(metric_fn, sample)
     unique_clusters = np.unique(cluster_array)
     rng = np.random.default_rng(seed)
     draws = np.empty(n_resamples, dtype=float)
@@ -211,11 +216,11 @@ def cluster_bootstrap_metric(
             cluster_values = sample[cluster_array == cluster]
             resampled_rows.append(cluster_values)
         combined = np.concatenate(resampled_rows)
-        draws[idx] = metric_fn(combined)
+        draws[idx] = _scalar_metric_value(metric_fn, combined)
 
     alpha = 1.0 - confidence_level
     return {
-        "estimate": float(metric_fn(sample)),
+        "estimate": estimate,
         "lower": float(np.quantile(draws, alpha / 2.0)),
         "upper": float(np.quantile(draws, 1.0 - alpha / 2.0)),
         "samples": draws,
@@ -227,6 +232,8 @@ def compare_paired_predictions(
     pred_a: Sequence[object],
     pred_b: Sequence[object],
     confidence_level: float = 0.95,
+    *,
+    seed: int | None = None,
 ) -> dict[str, float | int | tuple[float, float]]:
     """Compare two systems evaluated on the same examples.
 
@@ -266,7 +273,11 @@ def compare_paired_predictions(
         p_value = binomtest(min(a_only, b_only), n=discordant, p=0.5, alternative="two-sided").pvalue
 
     diff = float(np.mean(correct_a) - np.mean(correct_b))
-    ci = bootstrap_interval((correct_a.astype(float) - correct_b.astype(float)), confidence_level=confidence_level, seed=11)
+    ci = bootstrap_interval(
+        (correct_a.astype(float) - correct_b.astype(float)),
+        confidence_level=confidence_level,
+        seed=seed,
+    )
     return {
         "n": int(truth.size),
         "accuracy_a": float(np.mean(correct_a)),
@@ -306,6 +317,8 @@ def compare_independent_proportions(
             raise ValueError(f"trials_{name.lower()} must be positive.")
         if successes < 0 or successes > trials:
             raise ValueError(f"successes_{name.lower()} must be between 0 and trials_{name.lower()}.")
+    if not 0.0 < confidence_level < 1.0:
+        raise ValueError("confidence_level must be between 0 and 1.")
 
     p_a = successes_a / trials_a
     p_b = successes_b / trials_b
