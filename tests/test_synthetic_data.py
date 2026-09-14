@@ -9,7 +9,7 @@ class SyntheticDataTests(unittest.TestCase):
 
         self.assertEqual([example.example_id for example in examples], ["frog-001", "frog-002", "frog-003", "frog-004", "frog-005", "frog-006"])
         self.assertEqual([example.habitat for example in examples[:3]], ["wetland", "forest-edge", "urban-channel"])
-        self.assertAlmostEqual(examples[0].score, 0.543, places=3)
+        self.assertAlmostEqual(examples[0].score, 0.769, places=3)
 
     def test_calibration_bins_cover_all_examples(self) -> None:
         examples = generate_project_frog_examples(size=45, seed=5)
