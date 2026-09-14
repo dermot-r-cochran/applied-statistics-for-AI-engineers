@@ -219,10 +219,19 @@ def release_recommendation(
 
 
 def _allocate_counts(total: int, weights: dict[str, float]) -> dict[str, int]:
-    raw = {label: total * weight for label, weight in weights.items()}
+    if total < 0:
+        raise ValueError("total must be non-negative")
+    if not weights:
+        raise ValueError("weights must not be empty")
+    total_weight = sum(weights.values())
+    if total_weight <= 0:
+        raise ValueError("weights must sum to a positive value")
+
+    normalized = {label: weight / total_weight for label, weight in weights.items()}
+    raw = {label: total * weight for label, weight in normalized.items()}
     base = {label: int(value) for label, value in raw.items()}
     remainder = total - sum(base.values())
-    ranked = sorted(weights, key=lambda label: raw[label] - base[label], reverse=True)
+    ranked = sorted(normalized, key=lambda label: raw[label] - base[label], reverse=True)
     for label in ranked[:remainder]:
         base[label] += 1
     return base
