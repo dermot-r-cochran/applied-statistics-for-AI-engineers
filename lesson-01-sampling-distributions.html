@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Lesson A — Sampling Distributions and Standard Error</title>
+  <link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+<main>
+  <p><a href="index.html">← Back to roadmap</a></p>
+  <h1>Lesson A: Sampling distributions and standard error</h1>
+
+  <section class="card">
+    <h2>1) Engineering question</h2>
+    <p>You observed FRG row-level exact-match accuracy drop from 0.84 to 0.81. Is this likely a true regression or sampling variation?</p>
+  </section>
+
+  <section class="card">
+    <h2>2) Core statistical principle</h2>
+    <p>A metric computed on a finite sample is a random variable. Repeated re-sampling gives a sampling distribution. Its spread is summarized by the standard error (SE).</p>
+  </section>
+
+  <section class="card">
+    <h2>3) Essential mathematics</h2>
+    <p>For binary outcomes \(X_i \in \{0,1\}\), \(\hat{p}=\frac{1}{n}\sum_i X_i\), with \(\operatorname{Var}(\hat{p}) \approx \frac{p(1-p)}{n}\). Replacing \(p\) with \(\hat{p}\) gives:</p>
+    <p><code>SE(\hat{p}) ≈ sqrt( p̂(1-p̂)/n )</code></p>
+    <p>A rough 95% interval under normal approximation is <code>p̂ ± 1.96×SE</code>.</p>
+  </section>
+
+  <section class="card">
+    <h2>4) Assumptions</h2>
+    <button onclick="toggleById('assumptions')">Toggle assumptions</button>
+    <ul id="assumptions" class="hidden">
+      <li>Examples are approximately independent.</li>
+      <li>Ground truth and metric definition are unchanged between runs.</li>
+      <li>Comparison is like-for-like (same thresholding and scenario definition).</li>
+      <li>Test set represents the intended population.</li>
+    </ul>
+  </section>
+
+  <section class="card">
+    <h2>5) Worked AI-evaluation example (synthetic)</h2>
+    <p><strong>Synthetic data:</strong> Run A has 420/500 exact matches (0.84). Run B has 405/500 (0.81).</p>
+    <p>For Run A, <code>SE ≈ sqrt(0.84×0.16/500)=0.0164</code>. For Run B, <code>SE ≈ sqrt(0.81×0.19/500)=0.0175</code>.</p>
+    <p>The observed difference is 0.03. This is about 1.2 pooled SEs, so evidence is weak for a true shift without stronger design (for example paired comparison on same examples).</p>
+  </section>
+
+  <section class="card">
+    <h2>6) Common interpretation error</h2>
+    <p>“The test set is small, so we should adjust accuracy upward.”</p>
+    <p>Correction: smaller n increases uncertainty; it does not justify changing the point estimate.</p>
+  </section>
+
+  <section class="card">
+    <h2>7) FRG application</h2>
+    <ul>
+      <li>Report row-level point estimate and uncertainty together.</li>
+      <li>State unit of analysis (cell/row/document/project) before interpreting variance.</li>
+      <li>Check for clustering by document/project before treating n as effective sample size.</li>
+    </ul>
+  </section>
+
+  <section class="card">
+    <h2>8) One diagnostic question</h2>
+    <p>Which statement is correct?</p>
+    <label><input type="radio" name="diag" value="a"> Small sample size implies measured accuracy is upward biased.</label>
+    <label><input type="radio" name="diag" value="b"> Small sample size mainly increases uncertainty around the observed estimate.</label>
+    <label><input type="radio" name="diag" value="c"> Smaller samples remove the need for confidence intervals.</label>
+    <button class="secondary" onclick="checkDiagnostic()">Check answer</button>
+    <p id="diag-result"></p>
+  </section>
+
+  <section class="card">
+    <h2>9) One small applied exercise</h2>
+    <p>Given a synthetic FRG verdict-pass rate of 92/120, compute a Wilson 95% interval and explain whether a drop to 88/120 in the next run is distinguishable without paired data.</p>
+    <button class="secondary" onclick="toggleById('exercise-hint')">Toggle hint</button>
+    <p id="exercise-hint" class="hidden">Use Wilson for proportion intervals in moderate n. Then compare intervals and discuss overlap limits and pairing requirements.</p>
+  </section>
+
+  <section class="card">
+    <h2>Python reproducibility snippet</h2>
+    <pre><code>import math
+p1, n1 = 420/500, 500
+p2, n2 = 405/500, 500
+se1 = math.sqrt(p1*(1-p1)/n1)
+se2 = math.sqrt(p2*(1-p2)/n2)
+print("Run A:", p1, se1)
+print("Run B:", p2, se2)
+print("Observed difference:", p1-p2)</code></pre>
+    <p>The output quantifies both estimates and uncertainty, making clear that the observed gap must be interpreted with design assumptions, not just raw point values.</p>
+  </section>
+
+  <script src="assets/app.js"></script>
+</main>
+</body>
+</html>
