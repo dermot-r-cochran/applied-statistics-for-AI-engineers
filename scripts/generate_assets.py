@@ -140,7 +140,10 @@ def plot_combining_confidence(data: pd.DataFrame) -> None:
         }
     )
     plt.figure(figsize=(7.2, 4.4))
-    plt.boxplot([methods[column] for column in methods.columns], labels=[column.replace("_", " ") for column in methods.columns])
+    plt.boxplot(
+        [methods[column] for column in methods.columns],
+        tick_labels=[column.replace("_", " ") for column in methods.columns],
+    )
     plt.ylabel("Aggregate score")
     plt.title("Different composition rules create different scales and meanings")
     _save_figure("combining_confidence_scores.png")

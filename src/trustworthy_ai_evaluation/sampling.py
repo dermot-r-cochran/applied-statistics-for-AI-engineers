@@ -263,8 +263,7 @@ def compare_paired_predictions(
     if discordant == 0:
         p_value = 1.0
     else:
-        p_value = binomtest(min(a_only, b_only), n=discordant, p=0.5, alternative="two-sided").pvalue * 2.0
-        p_value = min(1.0, p_value)
+        p_value = binomtest(min(a_only, b_only), n=discordant, p=0.5, alternative="two-sided").pvalue
 
     diff = float(np.mean(correct_a) - np.mean(correct_b))
     ci = bootstrap_interval((correct_a.astype(float) - correct_b.astype(float)), confidence_level=confidence_level, seed=11)

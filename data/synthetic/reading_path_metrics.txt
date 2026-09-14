@@ -1,0 +1,3 @@
+Synthetic metrics for chapter examples
+Baseline vs later independent difference: 0.0400 (95% approx CI -0.0450, 0.1250)
+Later bootstrap interval: (0.7600, 0.9200)
