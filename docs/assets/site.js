@@ -58,13 +58,13 @@ const setupDecisionDemo = () => {
     }
 
     if (passes && reliable) {
-      status.textContent = "The case is high risk and the estimate is stable across repeated samples.";
+      status.textContent = "Stable decision: the case is high risk and the estimate is stable across repeated samples.";
       status.className = "result-good";
     } else if (passes || reliable) {
-      status.textContent = "The case is borderline: collect more labeled data before changing policy.";
+      status.textContent = "Borderline decision: collect more labeled data before changing policy.";
       status.className = "result-warn";
     } else {
-      status.textContent = "The case is low risk and confidence is weak, so keep the current workflow but continue monitoring.";
+      status.textContent = "Monitor decision: the case is low risk and confidence is weak, so keep the current workflow but continue monitoring.";
       status.className = "";
     }
   };
