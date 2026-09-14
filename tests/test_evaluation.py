@@ -127,7 +127,6 @@ class IndependentProportionTests(unittest.TestCase):
         self.assertAlmostEqual(result.difference, 1.0)
         self.assertTrue(result.confidence_interval[0] <= result.confidence_interval[1])
 
-
 class PlanningTests(unittest.TestCase):
     def test_required_sample_size_and_mde_are_consistent(self):
         n = required_sample_size(0.8, 0.05, power=0.8, alpha=0.05)

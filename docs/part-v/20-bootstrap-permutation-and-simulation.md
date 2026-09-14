@@ -35,7 +35,13 @@ clusters = ["doc-1", "doc-1", "doc-1", "doc-2", "doc-2", "doc-3", "doc-3", "doc-
 
 ordinary = bootstrap_metric(rows, seed=3, n_resamples=1000)
 clustered = cluster_bootstrap_metric(rows, clusters, seed=3, n_resamples=1000)
-paired = compare_paired_predictions([1, 0, 1, 1], [1, 0, 1, 0], [1, 1, 1, 0], seed=3)
+paired = compare_paired_predictions(
+    [1, 0, 1, 1],
+    [1, 0, 1, 0],
+    [1, 1, 1, 0],
+    seed=3,
+    n_permutations=500,
+)
 
 print(ordinary.confidence_interval)
 print(clustered.confidence_interval)

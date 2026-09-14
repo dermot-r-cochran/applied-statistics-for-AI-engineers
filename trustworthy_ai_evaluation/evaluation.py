@@ -444,14 +444,14 @@ def compare_independent_proportions(
     pooled = (successes_a + successes_b) / (total_a + total_b)
     variance = pooled * (1.0 - pooled) * ((1.0 / total_a) + (1.0 / total_b))
     if variance == 0.0:
-        p_value = 1.0 if difference == 0.0 else 0.0
+        p_value = 1.0
     else:
         z_score = difference / math.sqrt(variance)
         p_value = math.erfc(abs(z_score) / math.sqrt(2.0))
     interval_a = _wilson_interval(successes_a, total_a, confidence_level)
     interval_b = _wilson_interval(successes_b, total_b, confidence_level)
-    lower = difference - math.sqrt((proportion_a - interval_a[0]) ** 2 + (proportion_b - interval_b[0]) ** 2)
-    upper = difference + math.sqrt((interval_a[1] - proportion_a) ** 2 + (interval_b[1] - proportion_b) ** 2)
+    lower = interval_a[0] - interval_b[1]
+    upper = interval_a[1] - interval_b[0]
     return IndependentProportionComparison(
         proportion_a=proportion_a,
         proportion_b=proportion_b,
