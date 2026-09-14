@@ -129,6 +129,12 @@ class SyntheticDataTests(unittest.TestCase):
             wilson_interval(successes=9, total=10, effective_sample_size=0.5)
 
         with self.assertRaises(ValueError):
+            wilson_interval(successes=9, total=10, effective_sample_size=float("nan"))
+
+        with self.assertRaises(ValueError):
+            wilson_interval(successes=9, total=10, effective_sample_size=float("inf"))
+
+        with self.assertRaises(ValueError):
             wilson_interval(successes=9, total=10, confidence_level=0)
 
         with self.assertRaises(ValueError):

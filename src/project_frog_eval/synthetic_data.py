@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from math import sqrt
+from math import isfinite, sqrt
 from random import Random
 from statistics import NormalDist
 from typing import Sequence, TypedDict
@@ -140,6 +140,8 @@ def wilson_interval(
         raise ValueError("confidence_level must be between 0 and 1")
 
     n = float(total if effective_sample_size is None else effective_sample_size)
+    if not isfinite(n):
+        raise ValueError("effective_sample_size must be finite")
     if n < 1 or n > total:
         raise ValueError("effective_sample_size must be at least 1 and no larger than total")
 
