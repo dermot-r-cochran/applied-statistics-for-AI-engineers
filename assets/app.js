@@ -1,7 +1,11 @@
-function toggleById(id) {
+function toggleById(id, trigger) {
   const el = document.getElementById(id);
   if (!el) return;
   el.classList.toggle("hidden");
+  if (trigger) {
+    const expanded = !el.classList.contains("hidden");
+    trigger.setAttribute("aria-expanded", String(expanded));
+  }
 }
 
 function checkDiagnostic() {

@@ -69,6 +69,7 @@ textarea, input {
   border-radius: 6px;
   background: #0f162a;
   color: #e6eaf2;
+  box-sizing: border-box;
 }
 
 code {

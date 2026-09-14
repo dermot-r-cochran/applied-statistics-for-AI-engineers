@@ -30,7 +30,7 @@
 
   <section class="card">
     <h2>4) Assumptions</h2>
-    <button onclick="toggleById('assumptions')">Toggle assumptions</button>
+    <button aria-expanded="false" aria-controls="assumptions" onclick="toggleById('assumptions', this)">Toggle assumptions</button>
     <ul id="assumptions" class="hidden">
       <li>Examples are approximately independent.</li>
       <li>Ground truth and metric definition are unchanged between runs.</li>
@@ -76,7 +76,7 @@
   <section class="card">
     <h2>9) One small applied exercise</h2>
     <p>Given a synthetic FRG verdict-pass rate of 92/120, compute a Wilson 95% interval and explain whether a drop to 88/120 in the next run is distinguishable without paired data.</p>
-    <button class="secondary" onclick="toggleById('exercise-hint')">Toggle hint</button>
+    <button class="secondary" aria-expanded="false" aria-controls="exercise-hint" onclick="toggleById('exercise-hint', this)">Toggle hint</button>
     <p id="exercise-hint" class="hidden">Use Wilson for proportion intervals in moderate n. Then compare intervals and discuss overlap limits and pairing requirements.</p>
   </section>
 
