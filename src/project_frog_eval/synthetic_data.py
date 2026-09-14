@@ -187,18 +187,17 @@ def metric_interval_report(
         effective_sample_size=effective_sample_size,
     )
 
+    default_assumptions = (
+        "Rows are treated as exchangeable observations from the target evaluation set.",
+        "If rows are clustered or dependent, the effective sample size should be reduced.",
+    )
+
     return MetricIntervalReport(
         metric_name=normalized_metric_name,
         successes=successes,
         total=total,
         interval=interval,
-        assumptions=tuple(
-            assumptions
-            or (
-                "Rows are treated as exchangeable observations from the target evaluation set.",
-                "If rows are clustered or dependent, the effective sample size should be reduced.",
-            )
-        ),
+        assumptions=default_assumptions if assumptions is None else tuple(assumptions),
     )
 
 

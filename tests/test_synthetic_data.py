@@ -97,6 +97,24 @@ class SyntheticDataTests(unittest.TestCase):
             ("Synthetic amphibian sightings are treated as independent rows.",),
         )
 
+    def test_interval_report_defaults_and_preserves_empty_assumptions(self) -> None:
+        defaulted = metric_interval_report(metric_name="accuracy", successes=89, total=100)
+        explicit_empty = metric_interval_report(
+            metric_name="accuracy",
+            successes=89,
+            total=100,
+            assumptions=(),
+        )
+
+        self.assertEqual(
+            defaulted.assumptions,
+            (
+                "Rows are treated as exchangeable observations from the target evaluation set.",
+                "If rows are clustered or dependent, the effective sample size should be reduced.",
+            ),
+        )
+        self.assertEqual(explicit_empty.assumptions, ())
+
     def test_interval_helpers_reject_invalid_inputs(self) -> None:
         with self.assertRaises(ValueError):
             wilson_interval(successes=9, total=0)
