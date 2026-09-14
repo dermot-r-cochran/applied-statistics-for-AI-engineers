@@ -20,7 +20,13 @@ def effective_sample_size(
     Examples:
         >>> round(effective_sample_size(weights=[1, 1, 2, 2]), 2)
         3.6
-        >>> round(effective_sample_size(cluster_ids=[1, 1, 2, 2, 3, 3], intra_cluster_correlation=0.2), 2)
+        >>> round(
+        ...     effective_sample_size(
+        ...         cluster_ids=[1, 1, 2, 2, 3, 3],
+        ...         intra_cluster_correlation=0.2,
+        ...     ),
+        ...     2,
+        ... )
         5.0
     """
     if weights is not None:
@@ -34,7 +40,9 @@ def effective_sample_size(
         if clusters.size == 0:
             raise ValueError("cluster_ids must not be empty")
         if intra_cluster_correlation is None:
-            raise ValueError("intra_cluster_correlation is required when cluster_ids are provided")
+            raise ValueError(
+                "intra_cluster_correlation is required when cluster_ids are provided",
+            )
         if not 0 <= intra_cluster_correlation < 1:
             raise ValueError("intra_cluster_correlation must be between 0 and 1")
         _, counts = np.unique(clusters, return_counts=True)

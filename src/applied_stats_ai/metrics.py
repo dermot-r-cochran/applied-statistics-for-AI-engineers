@@ -3,7 +3,13 @@ from __future__ import annotations
 from collections.abc import Callable
 
 import numpy as np
-from sklearn.metrics import accuracy_score, confusion_matrix, f1_score, precision_score, recall_score
+from sklearn.metrics import (
+    accuracy_score,
+    confusion_matrix,
+    f1_score,
+    precision_score,
+    recall_score,
+)
 
 from ._typing import ArrayLike
 from .bootstrap import bootstrap_metric
@@ -19,7 +25,12 @@ def confusion_matrix_uncertainty(
     """Return confusion matrix counts with bootstrap uncertainty for common metrics.
 
     Examples:
-        >>> result = confusion_matrix_uncertainty([1, 0, 1], [1, 0, 0], n_resamples=100, random_state=0)
+        >>> result = confusion_matrix_uncertainty(
+        ...     [1, 0, 1],
+        ...     [1, 0, 0],
+        ...     n_resamples=100,
+        ...     random_state=0,
+        ... )
         >>> sorted(result["metrics"].keys())
         ['accuracy', 'f1', 'precision', 'recall']
     """
@@ -32,13 +43,19 @@ def confusion_matrix_uncertainty(
 
     pairs = np.column_stack((y_true_array, y_pred_array))
 
-    def metric_from_pairs(metric_func: Callable[[np.ndarray, np.ndarray], float]) -> Callable[[np.ndarray], float]:
+    def metric_from_pairs(
+        metric_func: Callable[[np.ndarray, np.ndarray], float],
+    ) -> Callable[[np.ndarray], float]:
         return lambda sample: float(metric_func(sample[:, 0], sample[:, 1]))
 
     metrics = {
         "accuracy": metric_from_pairs(accuracy_score),
-        "precision": metric_from_pairs(lambda yt, yp: precision_score(yt, yp, zero_division=0)),
-        "recall": metric_from_pairs(lambda yt, yp: recall_score(yt, yp, zero_division=0)),
+        "precision": metric_from_pairs(
+            lambda yt, yp: precision_score(yt, yp, zero_division=0),
+        ),
+        "recall": metric_from_pairs(
+            lambda yt, yp: recall_score(yt, yp, zero_division=0),
+        ),
         "f1": metric_from_pairs(lambda yt, yp: f1_score(yt, yp, zero_division=0)),
     }
 
