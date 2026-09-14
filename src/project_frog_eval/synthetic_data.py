@@ -81,8 +81,8 @@ def calibration_bins(examples: list[FrogExample], bins: int = 5) -> list[Calibra
         observed_rate = sum(example.label for example in bucket) / len(bucket)
         output.append(
             CalibrationBin(
-                lower=round(index * bucket_width, 2),
-                upper=round((index + 1) * bucket_width, 2),
+                lower=index * bucket_width,
+                upper=(index + 1) * bucket_width,
                 count=len(bucket),
                 average_score=round(average_score, 3),
                 observed_rate=round(observed_rate, 3),

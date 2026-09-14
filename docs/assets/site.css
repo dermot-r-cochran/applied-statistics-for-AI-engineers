@@ -217,8 +217,7 @@ pre {
   white-space: pre-wrap;
 }
 
-.result-good {
-  color: var(--success);
+.result-strong {
   font-weight: 600;
 }
 

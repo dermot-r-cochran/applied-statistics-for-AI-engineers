@@ -29,6 +29,13 @@ class SyntheticDataTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             calibration_bins(generate_project_frog_examples(size=5, seed=2), bins=0)
 
+    def test_calibration_bins_keep_high_resolution_boundaries(self) -> None:
+        examples = generate_project_frog_examples(size=60, seed=9)
+        bins = calibration_bins(examples, bins=200)
+
+        self.assertTrue(all(bucket.lower < bucket.upper for bucket in bins))
+        self.assertTrue(any((bucket.upper - bucket.lower) < 0.01 for bucket in bins))
+
     def test_slice_summary_groups_by_habitat(self) -> None:
         examples = generate_project_frog_examples(size=9, seed=3)
         summary = slice_summary(examples)
