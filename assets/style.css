@@ -61,8 +61,13 @@ button.secondary {
   display: none;
 }
 
-label {
+.field-label,
+.choice-label {
   display: block;
+}
+
+.choice-label {
+  margin: 0.35rem 0;
 }
 
 textarea,

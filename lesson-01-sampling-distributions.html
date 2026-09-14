@@ -31,7 +31,7 @@
   <section class="card">
     <h2>4) Assumptions</h2>
     <button type="button" aria-expanded="false" aria-controls="assumptions" onclick="toggleById('assumptions', this)">Toggle assumptions</button>
-    <ul id="assumptions" class="hidden">
+    <ul id="assumptions" hidden>
       <li>Examples are approximately independent.</li>
       <li>Ground truth and metric definition are unchanged between runs.</li>
       <li>Comparison is like-for-like (same thresholding and scenario definition).</li>
@@ -65,9 +65,9 @@
     <h2>8) One diagnostic question</h2>
     <fieldset>
       <legend>Which statement is correct?</legend>
-      <label><input type="radio" name="diag" value="a"> Small sample size implies measured accuracy is upward biased.</label>
-      <label><input type="radio" name="diag" value="b"> Small sample size mainly increases uncertainty around the observed estimate.</label>
-      <label><input type="radio" name="diag" value="c"> Smaller samples remove the need for confidence intervals.</label>
+      <label class="choice-label"><input type="radio" name="diag" value="a"> Small sample size implies measured accuracy is upward biased.</label>
+      <label class="choice-label"><input type="radio" name="diag" value="b"> Small sample size mainly increases uncertainty around the observed estimate.</label>
+      <label class="choice-label"><input type="radio" name="diag" value="c"> Smaller samples remove the need for confidence intervals.</label>
     </fieldset>
     <button type="button" class="secondary" onclick="checkDiagnostic()">Check answer</button>
     <p id="diag-result" role="status" aria-live="polite"></p>
@@ -77,7 +77,7 @@
     <h2>9) One small applied exercise</h2>
     <p>Given a synthetic FRG verdict-pass rate of 92/120, compute a Wilson 95% interval and explain whether a drop to 88/120 in the next run is distinguishable without paired data.</p>
     <button type="button" class="secondary" aria-expanded="false" aria-controls="exercise-hint" onclick="toggleById('exercise-hint', this)">Toggle hint</button>
-    <p id="exercise-hint" class="hidden">Use Wilson for proportion intervals in moderate n. Then compare intervals and discuss overlap limits and pairing requirements.</p>
+    <p id="exercise-hint" hidden>Use Wilson for proportion intervals in moderate n. Then compare intervals and discuss overlap limits and pairing requirements.</p>
   </section>
 
   <section class="card">

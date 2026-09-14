@@ -1,9 +1,9 @@
 function toggleById(id, trigger) {
   const el = document.getElementById(id);
   if (!el) return;
-  el.classList.toggle("hidden");
+  el.hidden = !el.hidden;
   if (trigger) {
-    const expanded = !el.classList.contains("hidden");
+    const expanded = !el.hidden;
     trigger.setAttribute("aria-expanded", String(expanded));
   }
 }
