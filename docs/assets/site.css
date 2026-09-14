@@ -131,6 +131,13 @@ button {
   cursor: pointer;
 }
 
+.button-link:focus-visible,
+button:focus-visible,
+input[type="range"]:focus-visible {
+  outline: 3px solid var(--accent);
+  outline-offset: 3px;
+}
+
 .button-link.primary,
 button.primary {
   background: var(--accent);

@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from random import Random
+from typing import TypedDict
 
 
 @dataclass(frozen=True)
@@ -20,6 +21,12 @@ class CalibrationBin:
     count: int
     average_score: float
     observed_rate: float
+
+
+class SliceSummary(TypedDict):
+    count: int
+    positive_rate: float
+    average_score: float
 
 
 def generate_project_frog_examples(size: int = 120, seed: int = 7) -> list[FrogExample]:
@@ -85,7 +92,7 @@ def calibration_bins(examples: list[FrogExample], bins: int = 5) -> list[Calibra
     return output
 
 
-def slice_summary(examples: list[FrogExample]) -> dict[str, dict[str, float]]:
+def slice_summary(examples: list[FrogExample]) -> dict[str, SliceSummary]:
     if not examples:
         return {}
 
