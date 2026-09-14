@@ -79,6 +79,14 @@ class TutorialExampleTests(unittest.TestCase):
             "Evidence indicates release risk",
         )
 
+    def test_release_recommendation_rejects_invalid_inputs(self) -> None:
+        with self.assertRaises(ValueError):
+            release_recommendation(1.1, (0.9, 0.95), target=0.9)
+        with self.assertRaises(ValueError):
+            release_recommendation(0.9, (0.95, 0.9), target=0.9)
+        with self.assertRaises(ValueError):
+            release_recommendation(0.9, (-0.1, 0.9), target=0.9)
+
 
 if __name__ == "__main__":
     unittest.main()

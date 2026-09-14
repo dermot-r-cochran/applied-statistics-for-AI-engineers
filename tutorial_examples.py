@@ -209,6 +209,15 @@ def release_recommendation(
     """
 
     lower, upper = interval
+    if not 0.0 <= lower <= 1.0 or not 0.0 <= upper <= 1.0:
+        raise ValueError("interval bounds must be between 0 and 1")
+    if lower > upper:
+        raise ValueError("interval must be ordered as (lower, upper)")
+    if not 0.0 <= accuracy <= 1.0:
+        raise ValueError("accuracy must be between 0 and 1")
+    if not 0.0 <= target <= 1.0:
+        raise ValueError("target must be between 0 and 1")
+
     if lower >= target:
         return "Evidence supports release"
     if accuracy >= target:
@@ -223,6 +232,8 @@ def _allocate_counts(total: int, weights: dict[str, float]) -> dict[str, int]:
         raise ValueError("total must be non-negative")
     if not weights:
         raise ValueError("weights must not be empty")
+    if any(weight < 0 for weight in weights.values()):
+        raise ValueError("weights must be non-negative")
     total_weight = sum(weights.values())
     if total_weight <= 0:
         raise ValueError("weights must sum to a positive value")
