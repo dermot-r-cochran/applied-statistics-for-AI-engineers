@@ -164,17 +164,24 @@ def _clean_pairs(
 
 
 def _percentile_interval(samples: Sequence[float], confidence_level: float) -> tuple[float, float]:
-    """Return a percentile interval using inclusive order-statistic indexing.
-
-    The lower endpoint uses ``floor(q * (n - 1))`` and the upper endpoint uses
-    ``ceil(q * (n - 1))`` on the sorted bootstrap draws, where ``q`` is the
-    relevant tail probability.
-    """
+    """Return a percentile interval using linear interpolation on sorted draws."""
     ordered = sorted(samples)
     alpha = 1.0 - confidence_level
-    lower_index = max(0, min(len(ordered) - 1, int(math.floor((alpha / 2) * (len(ordered) - 1)))))
-    upper_index = max(0, min(len(ordered) - 1, int(math.ceil((1 - alpha / 2) * (len(ordered) - 1)))))
-    return (ordered[lower_index], ordered[upper_index])
+    return (_quantile(ordered, alpha / 2), _quantile(ordered, 1 - alpha / 2))
+
+
+def _quantile(sorted_values: Sequence[float], probability: float) -> float:
+    if not 0.0 <= probability <= 1.0:
+        raise ValueError("probability must be between 0 and 1")
+    if not sorted_values:
+        raise ValueError("sorted_values must not be empty")
+    position = probability * (len(sorted_values) - 1)
+    lower_index = int(math.floor(position))
+    upper_index = int(math.ceil(position))
+    if lower_index == upper_index:
+        return sorted_values[lower_index]
+    weight = position - lower_index
+    return sorted_values[lower_index] * (1.0 - weight) + sorted_values[upper_index] * weight
 
 
 def _default_metric(values: Sequence[float]) -> float:
@@ -487,16 +494,19 @@ def _power_for_difference(
         raise ValueError("design_effect must be positive")
     delta = alternative_rate - baseline_rate
     pbar = (baseline_rate + alternative_rate) / 2.0
-    threshold = _normal_ppf(1.0 - alpha / (2.0 if two_sided else 1.0)) * math.sqrt(
+    null_standard_error = math.sqrt(
         max(1e-12, 2.0 * pbar * (1.0 - pbar) / effective_n)
     )
-    standard_error = math.sqrt(
+    alternative_standard_error = math.sqrt(
         max(1e-12, (baseline_rate * (1.0 - baseline_rate) + alternative_rate * (1.0 - alternative_rate)) / effective_n)
     )
-    upper_tail = 1.0 - _normal_cdf((threshold - delta) / standard_error)
+    critical_value = _normal_ppf(1.0 - alpha / (2.0 if two_sided else 1.0))
+    mean_z = delta / null_standard_error
+    standard_deviation_z = alternative_standard_error / null_standard_error
+    upper_tail = 1.0 - _normal_cdf((critical_value - mean_z) / standard_deviation_z)
     if not two_sided:
         return upper_tail
-    lower_tail = _normal_cdf((-threshold - delta) / standard_error)
+    lower_tail = _normal_cdf((-critical_value - mean_z) / standard_deviation_z)
     return upper_tail + lower_tail
 
 

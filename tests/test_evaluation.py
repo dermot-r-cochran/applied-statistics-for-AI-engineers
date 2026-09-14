@@ -122,10 +122,20 @@ class IndependentProportionTests(unittest.TestCase):
         self.assertEqual(result.difference, 0.0)
         self.assertEqual(result.p_value, 1.0)
 
+    def test_independent_proportion_all_failure_boundary(self):
+        result = compare_independent_proportions(0, 10, 0, 10)
+        self.assertEqual(result.difference, 0.0)
+        self.assertEqual(result.p_value, 1.0)
+
     def test_independent_proportion_very_small_samples(self):
         result = compare_independent_proportions(1, 1, 0, 1)
         self.assertAlmostEqual(result.difference, 1.0)
         self.assertTrue(result.confidence_interval[0] <= result.confidence_interval[1])
+
+    def test_independent_proportion_extreme_opposite_groups(self):
+        result = compare_independent_proportions(10, 10, 0, 10)
+        self.assertAlmostEqual(result.difference, 1.0)
+        self.assertLess(result.confidence_interval[0], result.confidence_interval[1])
 
 class PlanningTests(unittest.TestCase):
     def test_required_sample_size_and_mde_are_consistent(self):
