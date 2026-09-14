@@ -1,6 +1,12 @@
 import unittest
 
-from project_frog_eval.synthetic_data import calibration_bins, generate_project_frog_examples, slice_summary
+from project_frog_eval.synthetic_data import (
+    calibration_bins,
+    generate_project_frog_examples,
+    metric_interval_report,
+    slice_summary,
+    wilson_interval,
+)
 
 
 class SyntheticDataTests(unittest.TestCase):
@@ -46,6 +52,54 @@ class SyntheticDataTests(unittest.TestCase):
 
     def test_slice_summary_returns_empty_dict_for_no_examples(self) -> None:
         self.assertEqual(slice_summary([]), {})
+
+    def test_wilson_interval_widens_when_sample_is_smaller(self) -> None:
+        smaller = wilson_interval(successes=89, total=100)
+        larger = wilson_interval(successes=890, total=1000)
+
+        smaller_width = round(smaller.upper - smaller.lower, 4)
+        larger_width = round(larger.upper - larger.lower, 4)
+
+        self.assertEqual(smaller.point_estimate, larger.point_estimate)
+        self.assertGreater(smaller_width, larger_width)
+
+    def test_wilson_interval_can_widen_for_clustered_rows(self) -> None:
+        row_count_interval = wilson_interval(successes=89, total=100)
+        clustered_interval = wilson_interval(successes=89, total=100, effective_sample_size=40)
+
+        row_count_width = round(row_count_interval.upper - row_count_interval.lower, 4)
+        clustered_width = round(clustered_interval.upper - clustered_interval.lower, 4)
+
+        self.assertGreater(clustered_width, row_count_width)
+
+    def test_interval_report_carries_assumptions(self) -> None:
+        report = metric_interval_report(
+            metric_name="accuracy",
+            successes=89,
+            total=100,
+            assumptions=("Synthetic amphibian sightings are treated as independent rows.",),
+        )
+
+        self.assertEqual(report.metric_name, "accuracy")
+        self.assertEqual(report.total, 100)
+        self.assertEqual(report.interval.method, "Wilson")
+        self.assertEqual(
+            report.assumptions,
+            ("Synthetic amphibian sightings are treated as independent rows.",),
+        )
+
+    def test_interval_helpers_reject_invalid_inputs(self) -> None:
+        with self.assertRaises(ValueError):
+            wilson_interval(successes=9, total=0)
+
+        with self.assertRaises(ValueError):
+            wilson_interval(successes=12, total=10)
+
+        with self.assertRaises(ValueError):
+            wilson_interval(successes=9, total=10, effective_sample_size=12)
+
+        with self.assertRaises(ValueError):
+            metric_interval_report(metric_name=" ", successes=9, total=10)
 
 
 if __name__ == "__main__":

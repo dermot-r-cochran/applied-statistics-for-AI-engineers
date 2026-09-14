@@ -38,6 +38,17 @@
           </ol>
         </section>
 
+        <section class="card">
+          <h2>Interval width is part of test-set quality</h2>
+          <p>
+            A small test set should widen the uncertainty band rather than encouraging the same interpretation of the point estimate.
+            Treating 89% on 100 cases as equally stable to 89% on 1,000 cases hides real measurement uncertainty.
+          </p>
+          <p>
+            Sample size is not the only design choice that matters. If evaluation rows come from the same pond visit, camera, or labeling batch, row-count-based intervals may still be too narrow because the observations are partly dependent.
+          </p>
+        </section>
+
         <section class="table-card">
           <h2>Project Frog sample strata</h2>
           <table>
@@ -64,9 +75,39 @@
           </table>
         </section>
 
+        <section class="table-card">
+          <h2>How design changes the uncertainty story</h2>
+          <table>
+            <thead>
+              <tr>
+                <th scope="col">Synthetic scenario</th>
+                <th scope="col">Observed accuracy</th>
+                <th scope="col">Interval treatment</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>1,000 independent fictional sightings with 89% observed accuracy</td>
+                <td>89%</td>
+                <td>Use a relatively narrower interval because repeated samples would vary less.</td>
+              </tr>
+              <tr>
+                <td>100 independent fictional sightings with 89% observed accuracy</td>
+                <td>89%</td>
+                <td>Use a wider interval because the same point estimate is less stable on fewer cases.</td>
+              </tr>
+              <tr>
+                <td>100 rows collected from a few repeated pond visits</td>
+                <td>89%</td>
+                <td>Consider an even wider interval or a reduced effective sample size because rows are not fully independent.</td>
+              </tr>
+            </tbody>
+          </table>
+        </section>
+
         <section class="card">
           <h2>Decision habit</h2>
-          <p>Never report a single top-line metric without stating what population it estimates and what cases were excluded from measurement.</p>
+          <p>Never report a single top-line metric without stating what population it estimates, which assumptions justify the interval, and what cases were excluded from measurement.</p>
         </section>
       </main>
     </div>

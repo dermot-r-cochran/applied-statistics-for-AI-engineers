@@ -1,8 +1,10 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+from math import sqrt
 from random import Random
-from typing import TypedDict
+from statistics import NormalDist
+from typing import Sequence, TypedDict
 
 
 @dataclass(frozen=True)
@@ -21,6 +23,26 @@ class CalibrationBin:
     count: int
     average_score: float
     observed_rate: float
+
+
+@dataclass(frozen=True)
+class ProportionInterval:
+    lower: float
+    upper: float
+    point_estimate: float
+    sample_size: int
+    effective_sample_size: float
+    confidence_level: float
+    method: str
+
+
+@dataclass(frozen=True)
+class MetricIntervalReport:
+    metric_name: str
+    successes: int
+    total: int
+    interval: ProportionInterval
+    assumptions: tuple[str, ...]
 
 
 class SliceSummary(TypedDict):
@@ -90,6 +112,78 @@ def calibration_bins(examples: list[FrogExample], bins: int = 5) -> list[Calibra
         )
 
     return output
+
+
+def wilson_interval(
+    successes: int,
+    total: int,
+    confidence_level: float = 0.95,
+    effective_sample_size: float | None = None,
+) -> ProportionInterval:
+    if total <= 0:
+        raise ValueError("total must be positive")
+    if successes < 0 or successes > total:
+        raise ValueError("successes must be between 0 and total")
+    if confidence_level <= 0 or confidence_level >= 1:
+        raise ValueError("confidence_level must be between 0 and 1")
+
+    n = float(total if effective_sample_size is None else effective_sample_size)
+    if n <= 0 or n > total:
+        raise ValueError("effective_sample_size must be positive and no larger than total")
+
+    point_estimate = successes / total
+    z_score = NormalDist().inv_cdf(0.5 + (confidence_level / 2))
+    z_squared = z_score**2
+    denominator = 1 + (z_squared / n)
+    adjusted_center = (point_estimate + (z_squared / (2 * n))) / denominator
+    adjusted_margin = (
+        z_score
+        * sqrt((point_estimate * (1 - point_estimate) / n) + (z_squared / (4 * n**2)))
+        / denominator
+    )
+
+    return ProportionInterval(
+        lower=round(max(0.0, adjusted_center - adjusted_margin), 4),
+        upper=round(min(1.0, adjusted_center + adjusted_margin), 4),
+        point_estimate=round(point_estimate, 4),
+        sample_size=total,
+        effective_sample_size=round(n, 2),
+        confidence_level=round(confidence_level, 4),
+        method="Wilson",
+    )
+
+
+def metric_interval_report(
+    metric_name: str,
+    successes: int,
+    total: int,
+    confidence_level: float = 0.95,
+    effective_sample_size: float | None = None,
+    assumptions: Sequence[str] | None = None,
+) -> MetricIntervalReport:
+    if not metric_name.strip():
+        raise ValueError("metric_name must not be empty")
+
+    interval = wilson_interval(
+        successes=successes,
+        total=total,
+        confidence_level=confidence_level,
+        effective_sample_size=effective_sample_size,
+    )
+
+    return MetricIntervalReport(
+        metric_name=metric_name,
+        successes=successes,
+        total=total,
+        interval=interval,
+        assumptions=tuple(
+            assumptions
+            or (
+                "Rows are treated as exchangeable observations from the target evaluation set.",
+                "If rows are clustered or dependent, the effective sample size should be reduced.",
+            )
+        ),
+    )
 
 
 def slice_summary(examples: list[FrogExample]) -> dict[str, SliceSummary]:
