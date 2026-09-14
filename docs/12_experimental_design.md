@@ -24,8 +24,17 @@ Mistakes include changing the outcome midstream, mixing rollout and measurement 
 ## 7. AI Engineering Applications
 Use design principles for experiments, annotation studies, prompt evaluations, and tooling trials. Strong design often saves more time than extra analysis after the fact.
 
-## 8. Exercises
+
+## 8. Trust Checkpoint
+Before trusting an observed Project Frog metric in this setting, write down:
+- the metric definition and unit of analysis
+- the uncertainty estimate and how it was computed
+- the population or slice the result is supposed to represent
+- the assumptions required for the estimate to be interpretable
+- the decision that would change if the result moved
+
+## 9. Exercises
 Choose the right experimental unit for a Project Frog feature that affects both document-level and project-level behavior. Explain what could go wrong if assignment happens at the wrong level.
 
-## 9. Further Reading
+## 10. Further Reading
 Further reading should include causal inference for practitioners, randomized experiment design, and validity checklists.

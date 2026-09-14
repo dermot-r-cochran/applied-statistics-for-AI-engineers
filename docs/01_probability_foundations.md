@@ -24,8 +24,17 @@ Common mistakes include confusing probability with certainty, ignoring the base 
 ## 7. AI Engineering Applications
 Use probability to reason about classifier outputs, human-review sampling, alert thresholds, and escalation costs. It also supports better discussions about monitoring, test coverage, and policy risk.
 
-## 8. Exercises
+
+## 8. Trust Checkpoint
+Before trusting an observed Project Frog metric in this setting, write down:
+- the metric definition and unit of analysis
+- the uncertainty estimate and how it was computed
+- the population or slice the result is supposed to represent
+- the assumptions required for the estimate to be interpretable
+- the decision that would change if the result moved
+
+## 9. Exercises
 Estimate the chance of a correct compliance decision under different case mixes. Explain how the interpretation changes when the event is conditioned on complex cases only.
 
-## 9. Further Reading
+## 10. Further Reading
 Read practical introductions to probability for engineers, Bernoulli processes, and calibration. Follow up with documentation for NumPy random sampling and basic probability sections in an applied statistics text.

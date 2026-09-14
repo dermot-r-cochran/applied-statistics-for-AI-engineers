@@ -1,128 +1,70 @@
-# Applied Statistics for AI Engineers
+# Trustworthy AI Evaluation
 
-Applied Statistics for AI Engineers is a practical Python repository for software engineers, ML engineers, AI engineers, data scientists, and technical leads who need stronger statistical judgment when evaluating AI systems.
+**Experimental Design, Metrics, Confidence, and Decision-Making for AI Engineers**
 
-The repository teaches how to reason about uncertainty, sampling, measurement, experimentation, monitoring, and evidence-based release decisions. The emphasis is engineering decision making rather than academic derivations.
+Trustworthy AI Evaluation is a book-style GitHub Pages site and Python repository for engineers who need to decide when an observed AI metric is strong enough to support action.
 
-## Why this repository exists
+> **Central question:** When should an engineer trust an observed AI metric?
+>
+> **Central thesis:** An AI metric is useful only when its meaning, uncertainty, population, assumptions, and relationship to a decision are understood.
 
-AI engineers routinely look at dashboards, offline evaluations, online experiments, and model comparisons that appear precise but often hide uncertainty. A metric can move because of noise, bias, sampling changes, leakage, measurement drift, or a genuine product change. This repository is designed to help readers answer the recurring question:
+The repository preserves the original Applied Statistics for AI Engineers direction while reorganizing it into a coherent technical book with runnable code, tests, notebooks, examples, and a lightweight GitHub Pages workflow.
 
-**When should an engineer trust an observed metric?**
+## What is in the repository?
 
-## Audience
-
-This material is for readers who already know programming and basic machine learning, but want better statistical intuition for:
-
-- deciding whether a metric change is noise or signal
-- understanding what an estimate does and does not prove
-- designing better evaluations and experiments
-- communicating uncertainty to stakeholders
-- making deployment decisions with incomplete evidence
-
-## Teaching approach
-
-Every chapter starts by answering **“Why does an AI engineer need to understand this?”** before introducing formulas. Throughout the repository, examples stay synthetic and fictional. The goal is to generalize the lesson, not the implementation.
+- **Book chapters** in `docs/` covering probability, sampling, intervals, testing, effect size, power, bootstrap, Bayesian reasoning, classification metrics, experimental design, measurement, decision theory, and monitoring.
+- **Project Frog tutorials** in `tutorials/`, including case studies and a notebook on confidence intervals for accuracy.
+- **Reusable utilities** in `src/applied_stats_ai/` for interval estimation, bootstrap uncertainty, paired model comparison, power analysis, effective sample size, and synthetic Project Frog data generation.
+- **Tests** in `tests/` so the educational material stays executable and trustworthy.
 
 ## Project Frog
 
-The repository uses a recurring fictional environment called **Project Frog**.
+Project Frog is the repository's continuous fictional case study: an AI-assisted document analysis and decision-support platform built entirely from synthetic examples. It may report accuracy, precision, recall, F1/F-beta, agreement rate, coverage, evidence quality, text similarity, latency, processing cost, and confidence-like component scores.
 
-Project Frog is an AI-assisted document analysis and decision-support platform. It processes documents, projects, classifications, evidence, recommendations, explanations, and compliance decisions. It reports synthetic metrics such as:
+All Project Frog data in this repository is synthetic and programmatically generated.
 
-- accuracy
-- precision
-- recall
-- F1
-- agreement rate
-- coverage
-- evidence quality
-- latency
-- processing cost
+## Local setup
 
-Project Frog is intentionally fictional so the repository can focus on transferable statistical reasoning instead of any proprietary workflow or dataset.
-
-## Learning outcomes
-
-By working through the material, a senior engineer should be able to decide:
-
-- what a reported metric means
-- what it does not mean
-- which assumptions support the conclusion
-- whether two evaluations are actually comparable
-- whether observed differences are likely due to noise, bias, leakage, or true change
-- whether current evidence supports a deployment or rollback decision
-- what additional evidence would reduce uncertainty
-
-## Repository structure
-
-```text
-.
-├── README.md
-├── docs/
-├── tutorials/
-├── notebooks/
-├── examples/
-├── src/applied_stats_ai/
-└── tests/
-```
-
-### Core content
-
-- `docs/`: short, engineering-focused chapters covering the statistical concepts behind trustworthy AI evaluation.
-- `tutorials/`: hands-on walkthroughs and Project Frog case studies.
-- `examples/`: small synthetic examples that use the package.
-- `src/applied_stats_ai/`: reusable Python utilities for uncertainty estimation, model comparison, and experimental design.
-- `tests/`: pytest coverage for the public library functions.
-
-## Chapter map
-
-1. Probability foundations  
-2. Sampling and variation  
-3. Confidence intervals  
-4. Hypothesis testing  
-5. Effect size  
-6. Statistical power  
-7. Bootstrap methods  
-8. Bayesian reasoning  
-9. Classification metrics  
-10. Metric uncertainty  
-11. Model comparison  
-12. Experimental design  
-13. A/B testing  
-14. Test set design  
-15. Sampling bias  
-16. Data leakage  
-17. Measurement theory  
-18. Decision theory  
-19. Monitoring under uncertainty
-
-## Getting started
-
-This repository targets **Python 3.12+** and uses **uv** for project management.
+This repository targets **Python 3.12+** and uses **uv**.
 
 ```bash
 uv sync
-uv run ruff check .
-uv run pytest
 ```
 
-To explore the first tutorial notebook:
+## Run the checks
 
 ```bash
-uv run jupyter lab tutorials/confidence_intervals/confidence_intervals_for_accuracy.ipynb
+uv run ruff check .
+uv run pytest
+uv run mkdocs build --strict
 ```
 
-## First places to start
+## Preview the book locally
 
-- Read `docs/03_confidence_intervals.md` to understand interval estimates for Project Frog accuracy.
-- Work through `tutorials/confidence_intervals/confidence_intervals_for_accuracy.ipynb`.
-- Use the Project Frog case studies in `tutorials/project_frog_case_studies/` to practice making release decisions under uncertainty.
+```bash
+uv run mkdocs serve
+```
 
-## Development principles
+## Repository map
 
-- Educational only
-- Synthetic examples only
-- Practical engineering decisions over abstract mathematics
-- Clear assumptions before conclusions
-- Reproducible analysis in Python
+```text
+.
+├── docs/
+├── tutorials/
+├── examples/
+├── src/applied_stats_ai/
+├── tests/
+├── mkdocs.yml
+└── .github/workflows/pages.yml
+```
+
+## Suggested reading path
+
+1. Start at `docs/index.md` or the published GitHub Pages site.
+2. Read Parts I-IV in order if you want the full narrative.
+3. Jump to `tutorials/confidence_intervals/confidence_intervals_for_accuracy.ipynb` if you want a notebook-first entry point.
+4. Use the Project Frog case studies to practice making evidence-based release decisions.
+
+## Contributor notes
+
+See `CONTRIBUTING.md` for concise setup, preview, and validation instructions.

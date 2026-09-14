@@ -24,8 +24,17 @@ Common mistakes include equating non-significant with no effect, ignoring multip
 ## 7. AI Engineering Applications
 Use testing for model comparison, rollback analysis, experiment readouts, and audit sampling. In all cases, tie statistical evidence back to product impact.
 
-## 8. Exercises
+
+## 8. Trust Checkpoint
+Before trusting an observed Project Frog metric in this setting, write down:
+- the metric definition and unit of analysis
+- the uncertainty estimate and how it was computed
+- the population or slice the result is supposed to represent
+- the assumptions required for the estimate to be interpretable
+- the decision that would change if the result moved
+
+## 9. Exercises
 Write a null and alternative hypothesis for a Project Frog comparison where the new release increases recall but may reduce precision. Explain which test design assumptions matter most.
 
-## 9. Further Reading
+## 10. Further Reading
 Further reading should include practical texts on test interpretation and resources comparing p-values with estimation-based workflows.

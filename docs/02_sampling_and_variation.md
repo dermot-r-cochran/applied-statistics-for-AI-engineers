@@ -24,8 +24,17 @@ Mistakes include assuming one sample is representative by default, treating bigg
 ## 7. AI Engineering Applications
 Use sampling reasoning for offline test sets, human-annotation audits, canary rollouts, and incident reviews. It is foundational for later chapters on confidence intervals and power.
 
-## 8. Exercises
+
+## 8. Trust Checkpoint
+Before trusting an observed Project Frog metric in this setting, write down:
+- the metric definition and unit of analysis
+- the uncertainty estimate and how it was computed
+- the population or slice the result is supposed to represent
+- the assumptions required for the estimate to be interpretable
+- the decision that would change if the result moved
+
+## 9. Exercises
 Design two synthetic Project Frog sampling plans and predict which one produces more stable latency estimates. Explain why stability alone does not guarantee representativeness.
 
-## 9. Further Reading
+## 10. Further Reading
 Further reading should include applied discussions of estimator variance, sampling plans, and simulation-based intuition building.

@@ -24,8 +24,17 @@ Mistakes include comparing models across different datasets, overusing leaderboa
 ## 7. AI Engineering Applications
 Use comparison methods for model selection, regression analysis, champion-challenger evaluations, and release sign-off.
 
-## 8. Exercises
+
+## 8. Trust Checkpoint
+Before trusting an observed Project Frog metric in this setting, write down:
+- the metric definition and unit of analysis
+- the uncertainty estimate and how it was computed
+- the population or slice the result is supposed to represent
+- the assumptions required for the estimate to be interpretable
+- the decision that would change if the result moved
+
+## 9. Exercises
 Design a comparison for Project Frog where one model is cheaper but slightly less accurate. State what additional metrics must accompany the accuracy result.
 
-## 9. Further Reading
+## 10. Further Reading
 Further reading should include matched comparisons, practical benchmarking, and responsible leaderboard interpretation.

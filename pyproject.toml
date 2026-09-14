@@ -1,7 +1,7 @@
 [project]
 name = "applied-statistics-for-ai-engineers"
 version = "0.1.0"
-description = "Practical statistical utilities and educational materials for AI engineers."
+description = "Practical statistical utilities and educational materials for trustworthy AI evaluation."
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
@@ -20,6 +20,11 @@ dev = [
     "jupyterlab>=4.3",
     "pytest>=8.3",
     "ruff>=0.6",
+]
+docs = [
+    "mkdocs==1.6.1",
+    "mkdocs-jupyter==0.26.3",
+    "mkdocs-material==9.7.7",
 ]
 
 [build-system]
@@ -42,4 +47,4 @@ testpaths = ["tests"]
 addopts = "-q"
 
 [tool.uv]
-default-groups = ["dev"]
+default-groups = ["dev", "docs"]

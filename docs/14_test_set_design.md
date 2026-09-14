@@ -24,8 +24,17 @@ Mistakes include using convenience examples, leaking training artifacts into eva
 ## 7. AI Engineering Applications
 Use test-set design for release gates, benchmarking, safety reviews, and high-risk slice analysis. Good design improves both fairness and reliability of conclusions.
 
-## 8. Exercises
+
+## 8. Trust Checkpoint
+Before trusting an observed Project Frog metric in this setting, write down:
+- the metric definition and unit of analysis
+- the uncertainty estimate and how it was computed
+- the population or slice the result is supposed to represent
+- the assumptions required for the estimate to be interpretable
+- the decision that would change if the result moved
+
+## 9. Exercises
 Draft a test-set specification for a Project Frog release that must balance typical traffic and rare critical cases. Explain how weighting or stratification supports that goal.
 
-## 9. Further Reading
+## 10. Further Reading
 Further reading should include benchmark design, dataset documentation, and slice-based evaluation practice.

@@ -24,8 +24,17 @@ Common mistakes include ranking models by tiny metric differences, ignoring subg
 ## 7. AI Engineering Applications
 Use metric uncertainty for dashboards, incident triage, fairness-style slice reviews, and prioritizing new data collection.
 
-## 8. Exercises
+
+## 8. Trust Checkpoint
+Before trusting an observed Project Frog metric in this setting, write down:
+- the metric definition and unit of analysis
+- the uncertainty estimate and how it was computed
+- the population or slice the result is supposed to represent
+- the assumptions required for the estimate to be interpretable
+- the decision that would change if the result moved
+
+## 9. Exercises
 Pick two Project Frog slices with the same point precision but different support counts. Explain which one should drive stakeholder concern and why.
 
-## 9. Further Reading
+## 10. Further Reading
 Further reading should include uncertainty estimation for classification metrics and resampling-based interval methods.

@@ -24,8 +24,17 @@ Mistakes include optimizing a metric without checking whether it matches the dep
 ## 7. AI Engineering Applications
 Use these metrics for model selection, alerting, audit programs, and communication with reviewers. Good measurement starts by choosing the right summary for the decision.
 
-## 8. Exercises
+
+## 8. Trust Checkpoint
+Before trusting an observed Project Frog metric in this setting, write down:
+- the metric definition and unit of analysis
+- the uncertainty estimate and how it was computed
+- the population or slice the result is supposed to represent
+- the assumptions required for the estimate to be interpretable
+- the decision that would change if the result moved
+
+## 9. Exercises
 Create two synthetic confusion matrices with similar accuracy but different review cost implications. Explain which metric tells the more decision-relevant story.
 
-## 9. Further Reading
+## 10. Further Reading
 Further reading should cover metric selection under imbalance, threshold analysis, and calibration-aware evaluation.

@@ -24,8 +24,17 @@ Mistakes include assuming a metric is self-justifying, mixing incompatible label
 ## 7. AI Engineering Applications
 Use measurement theory when defining new dashboards, human review protocols, evidence-quality scales, and governance criteria.
 
-## 8. Exercises
+
+## 8. Trust Checkpoint
+Before trusting an observed Project Frog metric in this setting, write down:
+- the metric definition and unit of analysis
+- the uncertainty estimate and how it was computed
+- the population or slice the result is supposed to represent
+- the assumptions required for the estimate to be interpretable
+- the decision that would change if the result moved
+
+## 9. Exercises
 Choose one Project Frog construct such as explanation usefulness and propose an operational measurement approach. Then list the main validity threats.
 
-## 9. Further Reading
+## 10. Further Reading
 Further reading should include measurement validity, inter-rater agreement, and construct-focused evaluation.

@@ -24,8 +24,17 @@ Mistakes include random row-level splitting when project-level grouping matters,
 ## 7. AI Engineering Applications
 Use leakage checks in feature engineering, benchmark maintenance, notebook experimentation, and release readiness reviews. Leakage prevention is part of trustworthy measurement.
 
-## 8. Exercises
+
+## 8. Trust Checkpoint
+Before trusting an observed Project Frog metric in this setting, write down:
+- the metric definition and unit of analysis
+- the uncertainty estimate and how it was computed
+- the population or slice the result is supposed to represent
+- the assumptions required for the estimate to be interpretable
+- the decision that would change if the result moved
+
+## 9. Exercises
 Describe a Project Frog scenario where document-level splitting would leak project context. Explain how the unit of inference determines the correct split strategy.
 
-## 9. Further Reading
+## 10. Further Reading
 Further reading should include practical leakage case studies and validation checklists.

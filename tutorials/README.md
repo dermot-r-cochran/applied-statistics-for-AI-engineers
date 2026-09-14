@@ -1,10 +1,21 @@
-# Tutorials
+# Tutorials and workshops
 
-Hands-on tutorials use synthetic Project Frog scenarios to connect statistical ideas to engineering decisions.
+These tutorials translate the book into runnable, synthetic Project Frog exercises.
 
-- `confidence_intervals/`: interval estimation for accuracy and related metrics.
-- `bootstrap/`: resampling intuition and uncertainty estimation.
-- `classification_metrics/`: interpreting metric trade-offs.
-- `test_set_design/`: building representative evaluations.
-- `power_analysis/`: planning studies before running them.
-- `project_frog_case_studies/`: scenario-based decision exercises.
+## What is here
+
+- `confidence_intervals/`: notebook-driven interval estimation for accuracy and related metrics.
+- `bootstrap/`: resampling intuition for unstable metrics.
+- `classification_metrics/`: practical metric interpretation.
+- `test_set_design/`: representativeness and coverage design.
+- `power_analysis/`: planning studies before collecting evidence.
+- `project_frog_case_studies/`: scenario-based release and evaluation decisions.
+
+## Recommended workshop sequence
+
+1. Confidence intervals for accuracy
+2. Bootstrap methods for derived metrics
+3. Project Frog case studies
+4. Test set design and power planning
+
+All scenarios are synthetic and fictional.

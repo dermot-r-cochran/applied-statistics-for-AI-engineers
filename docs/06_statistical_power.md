@@ -24,8 +24,17 @@ Mistakes include selecting sample size after seeing the result, defining effect 
 ## 7. AI Engineering Applications
 Use power analysis to plan offline evaluations, manual audits, A/B tests, and red-team studies. It helps teams spend evaluation budget where it changes decisions.
 
-## 8. Exercises
+
+## 8. Trust Checkpoint
+Before trusting an observed Project Frog metric in this setting, write down:
+- the metric definition and unit of analysis
+- the uncertainty estimate and how it was computed
+- the population or slice the result is supposed to represent
+- the assumptions required for the estimate to be interpretable
+- the decision that would change if the result moved
+
+## 9. Exercises
 Choose a target effect for Project Frog accuracy and estimate how many examples are needed for 80% power. Then explain how the answer changes if the unit of inference becomes project-level instead of document-level.
 
-## 9. Further Reading
+## 10. Further Reading
 Further reading should include practical experiment design resources and applied power analysis references.

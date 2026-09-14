@@ -24,8 +24,17 @@ Mistakes include reporting only percent change without the baseline, cherry-pick
 ## 7. AI Engineering Applications
 Effect size matters in release gates, ranking model candidates, and setting minimum practical improvements for experimentation. It is the missing link between metric math and operational value.
 
-## 8. Exercises
+
+## 8. Trust Checkpoint
+Before trusting an observed Project Frog metric in this setting, write down:
+- the metric definition and unit of analysis
+- the uncertainty estimate and how it was computed
+- the population or slice the result is supposed to represent
+- the assumptions required for the estimate to be interpretable
+- the decision that would change if the result moved
+
+## 9. Exercises
 Define a minimum meaningful effect for evidence quality and justify it from a synthetic stakeholder perspective. Then explain how the answer would change if latency costs doubled.
 
-## 9. Further Reading
+## 10. Further Reading
 Further reading should cover practical significance, equivalence thinking, and interpretable effect measures for proportions.

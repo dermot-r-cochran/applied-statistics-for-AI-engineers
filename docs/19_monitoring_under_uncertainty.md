@@ -24,8 +24,17 @@ Common mistakes include comparing incomparable windows, ignoring delayed labels,
 ## 7. AI Engineering Applications
 Use these ideas for release monitoring, slice health checks, alert thresholds, and incident response playbooks. The goal is reliable escalation under noisy evidence.
 
-## 8. Exercises
+
+## 8. Trust Checkpoint
+Before trusting an observed Project Frog metric in this setting, write down:
+- the metric definition and unit of analysis
+- the uncertainty estimate and how it was computed
+- the population or slice the result is supposed to represent
+- the assumptions required for the estimate to be interpretable
+- the decision that would change if the result moved
+
+## 9. Exercises
 Design a Project Frog monitoring rule for accuracy and latency that accounts for low-volume slices. Explain what extra context responders should inspect before escalating.
 
-## 9. Further Reading
+## 10. Further Reading
 Further reading should include applied monitoring, statistical process thinking, and drift analysis resources.

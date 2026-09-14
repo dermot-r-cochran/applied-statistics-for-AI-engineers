@@ -24,8 +24,17 @@ Common mistakes include bootstrapping dependent data as if it were independent, 
 ## 7. AI Engineering Applications
 Use bootstrap methods for custom risk metrics, stratified dashboards, and uncertainty summaries that combine several model outputs. They are often the fastest path from raw evaluation records to practical intervals.
 
-## 8. Exercises
+
+## 8. Trust Checkpoint
+Before trusting an observed Project Frog metric in this setting, write down:
+- the metric definition and unit of analysis
+- the uncertainty estimate and how it was computed
+- the population or slice the result is supposed to represent
+- the assumptions required for the estimate to be interpretable
+- the decision that would change if the result moved
+
+## 9. Exercises
 Bootstrap a Project Frog metric that averages accuracy and evidence quality, then explain which assumptions must hold for the interval to be trustworthy.
 
-## 9. Further Reading
+## 10. Further Reading
 Further reading should include applied bootstrap tutorials and warnings about dependence and resampling design.

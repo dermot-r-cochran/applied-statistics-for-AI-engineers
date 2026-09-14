@@ -24,8 +24,17 @@ Mistakes include hiding strong prior assumptions, confusing convenience priors w
 ## 7. AI Engineering Applications
 Use Bayesian reasoning for release readiness, sequential evaluation, human-label agreement, and combining historical evidence with new audit samples.
 
-## 8. Exercises
+
+## 8. Trust Checkpoint
+Before trusting an observed Project Frog metric in this setting, write down:
+- the metric definition and unit of analysis
+- the uncertainty estimate and how it was computed
+- the population or slice the result is supposed to represent
+- the assumptions required for the estimate to be interpretable
+- the decision that would change if the result moved
+
+## 9. Exercises
 Select a prior for Project Frog accuracy and justify it from an engineering perspective. Then explain how a skeptical prior changes a release decision compared with a neutral prior.
 
-## 9. Further Reading
+## 10. Further Reading
 Further reading should include applied Bayesian workflows, conjugate models, and decision-focused posterior interpretation.

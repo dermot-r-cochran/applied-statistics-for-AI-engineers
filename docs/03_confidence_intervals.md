@@ -24,8 +24,17 @@ Engineers often mistake the interval bounds for worst-case and best-case outcome
 ## 7. AI Engineering Applications
 Confidence intervals are essential for release readiness reviews, benchmarking, trust dashboards, and stakeholder communication. They create a bridge between measured performance and decision risk.
 
-## 8. Exercises
+
+## 8. Trust Checkpoint
+Before trusting an observed Project Frog metric in this setting, write down:
+- the metric definition and unit of analysis
+- the uncertainty estimate and how it was computed
+- the population or slice the result is supposed to represent
+- the assumptions required for the estimate to be interpretable
+- the decision that would change if the result moved
+
+## 9. Exercises
 Compute intervals for Project Frog accuracy at several sample sizes and explain why observed uncertainty changes while the assumed generating accuracy does not. Compare the operational trade-offs between exact and approximate intervals.
 
-## 9. Further Reading
+## 10. Further Reading
 Further reading should include practical resources on interval estimation, binomial proportions, and modern critiques of the Wald interval.

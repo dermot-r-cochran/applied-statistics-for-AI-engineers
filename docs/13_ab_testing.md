@@ -24,8 +24,17 @@ Common mistakes include using too many primary metrics, reacting to early fluctu
 ## 7. AI Engineering Applications
 Use A/B tests for workflow changes, ranking policies, UI decisions, and review-assist features. The same principles support trustworthy product iteration.
 
-## 8. Exercises
+
+## 8. Trust Checkpoint
+Before trusting an observed Project Frog metric in this setting, write down:
+- the metric definition and unit of analysis
+- the uncertainty estimate and how it was computed
+- the population or slice the result is supposed to represent
+- the assumptions required for the estimate to be interpretable
+- the decision that would change if the result moved
+
+## 9. Exercises
 Propose a primary metric and two guardrail metrics for a Project Frog intervention that speeds decisions but might lower evidence quality. Explain the trade-offs.
 
-## 9. Further Reading
+## 10. Further Reading
 Further reading should include experimentation platforms, peeking control, and practical A/B test interpretation.
