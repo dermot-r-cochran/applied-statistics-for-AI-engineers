@@ -77,15 +77,15 @@ nav:
   - 'Appendices and Reference Material':
       - Overview: appendices/index.md
       - Glossary: appendices/glossary.md
-      - Metric-selection guide: appendices/metric-selection-guide.md
-      - Confidence-interval selection guide: appendices/confidence-interval-selection-guide.md
-      - AI evaluation review checklist: appendices/ai-evaluation-review-checklist.md
-      - Experiment protocol template: appendices/experiment-protocol-template.md
-      - Test-set manifest template: appendices/test-set-manifest-template.md
-      - Metric definition card: appendices/metric-definition-card.md
-      - Confidence-related reference material: appendices/confidence-reference.md
-      - Evaluation comparability checklist: appendices/evaluation-comparability-checklist.md
-      - Evaluation dataset review checklist: appendices/evaluation-dataset-review-checklist.md
-      - Metric-comparison report: appendices/metric-comparison-report.md
-      - Minimum meaningful effect statement: appendices/minimum-meaningful-effect-statement.md
-      - Sample-size planning worksheet: appendices/sample-size-planning-worksheet.md
+      - Metric Selection Guide: appendices/metric-selection-guide.md
+      - Confidence Interval Selection Guide: appendices/confidence-interval-selection-guide.md
+      - AI Evaluation Review Checklist: appendices/ai-evaluation-review-checklist.md
+      - Experiment Protocol Template: appendices/experiment-protocol-template.md
+      - Test-Set Manifest Template: appendices/test-set-manifest-template.md
+      - Metric Definition Card: appendices/metric-definition-card.md
+      - Confidence-Related Reference Material: appendices/confidence-reference.md
+      - Evaluation Comparability Checklist: appendices/evaluation-comparability-checklist.md
+      - Evaluation Dataset Review Checklist: appendices/evaluation-dataset-review-checklist.md
+      - Metric Comparison Report: appendices/metric-comparison-report.md
+      - Minimum Meaningful Effect Statement: appendices/minimum-meaningful-effect-statement.md
+      - Sample-Size Planning Worksheet: appendices/sample-size-planning-worksheet.md
