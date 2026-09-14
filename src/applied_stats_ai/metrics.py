@@ -67,6 +67,6 @@ def confusion_matrix_uncertainty(
     }
 
     return {
-        "confusion_matrix": confusion_matrix(y_true_array, y_pred_array),
+        "confusion_matrix": confusion_matrix(y_true_array, y_pred_array, labels=[0, 1]),
         "metrics": metric_results,
     }
