@@ -48,12 +48,13 @@ A strong answer mentions the sample composition, the cost of specific mistakes, 
 
 All examples on this page are synthetic, fictional, and reproducible. They use a fixed random seed for repeatability, but that does **not** remove sampling uncertainty.
 
-```python
+```{code-cell} python3
 from tutorial_examples import difficulty_summary, generate_project_frog_cases
 
 cases = generate_project_frog_cases(seed=7, n=36)
 summary = difficulty_summary(cases)
-print(summary)
+for difficulty, values in summary.items():
+    print(f"{difficulty}: cases={int(values['cases'])}, accuracy={values['accuracy']:.3f}")
 ```
 
 A small evaluation slice is enough to demonstrate the workflow:
@@ -76,15 +77,16 @@ If your production workload shifted toward `Complex` cases next month, would the
 
 The next step is to quantify the observed result and its uncertainty.
 
-```python
+```{code-cell} python3
 from tutorial_examples import overall_accuracy, wilson_interval
 
 accuracy = overall_accuracy(cases)
-interval = wilson_interval(successes=31, total=36)
+successes = sum(case.prediction_correct for case in cases)
+interval = wilson_interval(successes=successes, total=len(cases))
 print(round(accuracy, 3), tuple(round(x, 3) for x in interval))
 ```
 
-For this synthetic slice, the observed accuracy is `0.861` and the Wilson interval is approximately `(0.711, 0.941)`.
+The executed cell shows the current observed accuracy and Wilson interval for this synthetic slice.
 
 That range is the practical message. It reminds the team that a single measured value is not the same thing as a fixed, known system property.
 
@@ -98,7 +100,7 @@ Project Frog is not just predicting labels. It is routing work.
 
 A missed `Escalate` case is usually more serious than a `Clear` versus `Review` mix-up, so the team should read the confusion pattern before celebrating the top-line metric.
 
-```python
+```{code-cell} python3
 from tutorial_examples import class_error_table
 
 print(class_error_table(cases))
@@ -114,13 +116,13 @@ A practical reading pattern is:
 
 Now connect the metric back to the operational question.
 
-```python
+```{code-cell} python3
 from tutorial_examples import release_recommendation
 
 print(release_recommendation(accuracy=accuracy, interval=interval, target=0.85))
 ```
 
-For this tutorial slice, the synthetic recommendation is **Evidence supports release with caveats**.
+The executed cell returns the current synthetic recommendation for a modest pilot-style target.
 
 Why not a stronger claim?
 

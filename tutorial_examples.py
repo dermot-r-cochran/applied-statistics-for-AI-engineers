@@ -228,6 +228,13 @@ def release_recommendation(
 
 
 def _allocate_counts(total: int, weights: dict[str, float]) -> dict[str, int]:
+    """Allocate integer counts from non-negative weights.
+
+    The weights are normalized to sum to one before computing floor counts.
+    Any leftover remainder is assigned by largest fractional part, with ties
+    resolved by the input order preserved in ``weights``.
+    """
+
     if total < 0:
         raise ValueError("total must be non-negative")
     if not weights:

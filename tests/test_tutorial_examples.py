@@ -75,6 +75,14 @@ class TutorialExampleTests(unittest.TestCase):
             "Evidence is insufficient",
         )
         self.assertEqual(
+            release_recommendation(0.851, (0.80, 0.88), target=0.90),
+            "Evidence is insufficient",
+        )
+        self.assertEqual(
+            release_recommendation(0.849, (0.72, 0.84), target=0.90),
+            "Evidence indicates release risk",
+        )
+        self.assertEqual(
             release_recommendation(0.80, (0.72, 0.86), target=0.90),
             "Evidence indicates release risk",
         )
