@@ -1,0 +1,52 @@
+format: jb-book
+root: index
+parts:
+  - caption: Read this first
+    chapters:
+      - file: book/how_to_use_this_book
+      - file: book/decision_framework
+      - file: book/project_frog
+      - file: book/repository_guide
+  - caption: Statistical foundations
+    chapters:
+      - file: docs/01_probability_foundations
+      - file: docs/02_sampling_and_variation
+      - file: docs/03_confidence_intervals
+      - file: docs/04_hypothesis_testing
+      - file: docs/05_effect_size
+      - file: docs/06_statistical_power
+      - file: docs/07_bootstrap_methods
+      - file: docs/08_bayesian_reasoning
+  - caption: Metrics and model comparison
+    chapters:
+      - file: docs/09_classification_metrics
+      - file: docs/10_metric_uncertainty
+      - file: docs/11_model_comparison
+  - caption: Evaluation design
+    chapters:
+      - file: docs/12_experimental_design
+      - file: docs/13_ab_testing
+      - file: docs/14_test_set_design
+      - file: docs/15_sampling_bias
+      - file: docs/16_data_leakage
+  - caption: Decisions and operations
+    chapters:
+      - file: docs/17_measurement_theory
+      - file: docs/18_decision_theory
+      - file: docs/19_monitoring_under_uncertainty
+  - caption: Tutorials and case studies
+    chapters:
+      - file: tutorials/README
+        sections:
+          - file: tutorials/confidence_intervals/README
+          - file: tutorials/bootstrap/README
+          - file: tutorials/classification_metrics/README
+          - file: tutorials/test_set_design/README
+          - file: tutorials/power_analysis/README
+          - file: tutorials/project_frog_case_studies/README
+            sections:
+              - file: tutorials/project_frog_case_studies/01_the_shrinking_pond
+              - file: tutorials/project_frog_case_studies/02_frog_leap
+              - file: tutorials/project_frog_case_studies/03_different_pond
+              - file: tutorials/project_frog_case_studies/04_the_tadpole_problem
+              - file: tutorials/project_frog_case_studies/05_release_readiness

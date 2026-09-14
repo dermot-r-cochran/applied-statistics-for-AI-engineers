@@ -1,0 +1,46 @@
+[project]
+name = "applied-statistics-for-ai-engineers"
+version = "0.1.0"
+description = "Book and utility library for trustworthy AI evaluation."
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "matplotlib>=3.9",
+    "numpy>=2.1",
+    "pandas>=2.2",
+    "scikit-learn>=1.5",
+    "scipy>=1.14",
+    "seaborn>=0.13",
+    "statsmodels>=0.14",
+]
+
+[dependency-groups]
+dev = [
+    "ipykernel>=6.29",
+    "jupyter-book==1.0.4.post1",
+    "jupyterlab>=4.3",
+    "pytest>=8.3",
+    "ruff>=0.6",
+]
+
+[build-system]
+requires = ["hatchling>=1.25"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/applied_stats_ai"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "N", "UP", "B", "C4"]
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]
+testpaths = ["tests"]
+addopts = "-q"
+
+[tool.uv]
+default-groups = ["dev"]

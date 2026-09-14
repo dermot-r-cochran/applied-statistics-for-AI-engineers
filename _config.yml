@@ -1,0 +1,32 @@
+title: Trustworthy AI Evaluation
+author: dermot-r-cochran
+copyright: "2026"
+logo: ""
+only_build_toc_files: true
+exclude_patterns:
+  - _build
+  - Thumbs.db
+  - .DS_Store
+  - .venv
+  - .pytest_cache
+  - .ruff_cache
+  - .ipynb_checkpoints
+execute:
+  execute_notebooks: off
+parse:
+  myst_enable_extensions:
+    - colon_fence
+    - deflist
+    - substitution
+repository:
+  url: https://github.com/dermot-r-cochran/applied-statistics-for-AI-engineers
+  path_to_book: .
+  branch: main
+html:
+  use_issues_button: true
+  use_repository_button: true
+  home_page_in_navbar: true
+  extra_navbar: "Built from synthetic Project Frog examples for educational use."
+sphinx:
+  config:
+    html_last_updated_fmt: "%Y-%m-%d"
