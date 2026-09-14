@@ -525,7 +525,24 @@ The **Brier score** \`(1/n) Σ (s_i − y_i)²\` rewards both calibration and sh
 
 **Selective prediction.** Auto-accept above threshold \`t\`: coverage is the fraction of rows above \`t\`, and the accuracy among them is what matters. A well-calibrated score gives accuracy ≈ mean confidence in that region; the trade-off curve of accuracy against coverage is the object to choose \`t\` on.
 
-**Combining.** If two components' scores were independent, calibrated probabilities of independent events, their product would be the probability of both — three ifs, each testable, each usually false (the components see the same frame). Prefer keeping the vector of scores and learning a calibrated combiner on held-out rows, or converting to a small set of risk categories with a per-category measured accuracy.`,
+**Combining.** The reviewer has four components and each emits a number in [0, 1]:
+
+| Component | Its score | What it actually is |
+| Frame reader | 0.90 | a heuristic quality index for the decoded frame |
+| Verdict classifier | 0.90 | a claimed probability that the verdict is correct |
+| Evidence locator | 0.90 | a ranking margin for the region it chose |
+| Note writer | 0.90 | a self-check score for its own text |
+
+The shared range is real; the shared meaning is not. If two scores were independent, calibrated probabilities of independent events, their product would be the probability of both — three ifs, each testable, each usually false (the components see the same frame, and an upstream failure raises every downstream error rate). Every composition rule inherits assumptions:
+
+| Rule | Assumes | Fails when |
+| minimum | the weakest link dominates risk | one noisy component vetoes safe cases |
+| maximum | one strong signal justifies action | an upstream failure is masked by a confident downstream score |
+| mean or weighted mean | compatible semantics and stable weights | it produces a plausible number with no event behind it |
+| product | independent, calibrated probabilities | correlated failures make it far too pessimistic or optimistic |
+| learned combiner | held-out end-to-end labels | the mix drifts from the training population |
+
+Prefer keeping the vector of scores and learning a calibrated combiner on held-out rows against the **end-to-end** outcome, or converting to a small set of risk categories with a per-category measured accuracy. System-level trust is validated on the end-to-end outcome; it cannot be inferred from component scores.`,
   assumptions:`- The calibration set is separate from anything the score was fitted on, and represents the production mix (Lesson I); calibration drifts with the mix.
 - Bins have enough rows for their intervals to be narrower than the gaps you care about.
 - Independence claims between components are tested on the reference set, not assumed from the architecture.`,
@@ -539,7 +556,7 @@ The **Brier score** \`(1/n) Σ (s_i − y_i)²\` rewards both calibration and sh
 | 0.9 | 100 | 93 | 0.930 |
 
 \`ECE = 0.036\`. The reviewer is slightly under-confident at the bottom, slightly over-confident at 0.7, and at 0.9 it is right 93 times in 100 (Wilson 0.863 to 0.966). Auto-accepting above 0.9 means auto-accepting one wrong verdict in about fourteen; whether that is acceptable is a Lesson D question, and it is a different question for a Barred frame than for a Folder one — so the calibration table must be repeated per class, where the 0.9 bin for Barred will have about two rows in it and say nothing.`,
-  pitfall:`Reading a confidence as a probability because it is between 0 and 1. Averaging four component scores into one "system confidence" and putting it in a user interface. Calibrating once, globally, on the reference set of one year and never per slice or again. And the similarity version from Lesson C: a similarity score used as a confidence for a text field without ever measuring its accuracy against judged usefulness.`,
+  pitfall:`Reading a confidence as a probability because it is between 0 and 1. Averaging four component scores into one "system confidence" and putting it in a user interface. Calibrating once, globally, on the reference set of one year and never per slice or again. Treating a small ECE as a clean bill: ECE depends on the bins chosen, lets over- and under-confidence in different bins cancel, says nothing about discrimination (a score that is 0.84 for every row is perfectly calibrated and useless), can look fine in aggregate while one class or scenario is badly off, and never asks whether the score targets the event the decision needs. And the similarity version from Lesson C: a similarity score used as a confidence for a text field without ever measuring its accuracy against judged usefulness.`,
   application:`The manifest carries a **confidence semantics card** per score the reviewer emits (Cards page): what event it refers to, how it is produced, whether it claims to be a probability, on what population it was calibrated, and which decisions it may support. The auto-accept threshold is chosen from the accuracy–coverage curve per class, with Barred excluded from auto-accept entirely, and the calibration table is re-run on the rolling coverage set (Lesson N).`,
   diagnostic:{ q:`A component that retrieves evidence emits a similarity score, and the classifier emits a softmax probability. An engineer multiplies them and reports the product as "confidence that the verdict is correct and supported". Name the three claims this makes and how each would be tested.`,
     a:`(1) That each score is a calibrated probability of its own event — test each with a calibration table. (2) That the two events are independent given the frame — test whether the classifier's error rate differs between high- and low-similarity rows. (3) That "correct and supported" is the conjunction — test the product itself with a calibration table against the joint outcome. If any test fails, keep the two scores separate or learn a combiner on held-out rows.` },
