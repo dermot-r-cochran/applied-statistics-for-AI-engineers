@@ -43,7 +43,7 @@
     <h2>5) Worked AI-evaluation example (synthetic)</h2>
     <p><strong>Synthetic data:</strong> Run A has 420/500 exact matches (0.84). Run B has 405/500 (0.81).</p>
     <p>For Run A, <code>SE ≈ sqrt(0.84×0.16/500)=0.0164</code>. For Run B, <code>SE ≈ sqrt(0.81×0.19/500)=0.0175</code>.</p>
-    <p>The observed difference is 0.03. This is about 1.2 pooled SEs, so evidence is weak for a true shift without stronger design (for example paired comparison on same examples).</p>
+    <p>The standard error of the difference is approximately <code>sqrt(SE1²+SE2²)=0.024</code>. The observed difference is 0.03, around 1.25 SE of the difference, so evidence is weak for a true shift without stronger design (for example paired comparison on same examples).</p>
   </section>
 
   <section class="card">
@@ -70,7 +70,7 @@
       <label><input type="radio" name="diag" value="c"> Smaller samples remove the need for confidence intervals.</label>
     </fieldset>
     <button class="secondary" onclick="checkDiagnostic()">Check answer</button>
-    <p id="diag-result"></p>
+    <p id="diag-result" role="status" aria-live="polite"></p>
   </section>
 
   <section class="card">

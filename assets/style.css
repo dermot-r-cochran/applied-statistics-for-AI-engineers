@@ -57,12 +57,14 @@ button.secondary {
   display: none;
 }
 
-label, textarea, input {
+label {
   display: block;
-  width: 100%;
 }
 
-textarea, input {
+textarea,
+input:not([type]),
+input[type="text"] {
+  width: 100%;
   margin: 0.3rem 0 0.8rem;
   padding: 0.45rem;
   border: 1px solid #445680;

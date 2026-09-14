@@ -11,7 +11,11 @@ function toggleById(id, trigger) {
 function checkDiagnostic() {
   const selected = document.querySelector('input[name="diag"]:checked');
   const result = document.getElementById("diag-result");
-  if (!selected || !result) return;
+  if (!result) return;
+  if (!selected) {
+    result.textContent = "Please select one option before checking.";
+    return;
+  }
   if (selected.value === "b") {
     result.textContent = "Correct: a smaller sample increases uncertainty, but does not imply upward bias.";
   } else {
