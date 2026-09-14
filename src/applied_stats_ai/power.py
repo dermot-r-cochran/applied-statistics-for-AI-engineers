@@ -80,9 +80,13 @@ def minimum_detectable_effect(
                 - target_power
             )
 
+        lower_bound = 1e-6
+        lower_value = objective(lower_bound)
+        if lower_value >= 0:
+            return lower_bound
         if objective(upper_bound) < 0:
             return None
-        return float(brentq(objective, 1e-6, upper_bound))
+        return float(brentq(objective, lower_bound, upper_bound))
 
     candidates = [
         value
