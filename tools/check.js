@@ -74,6 +74,12 @@ if (BOOK) {
   CARDS.forEach(c => { if (!LESSONS.find(l => l.id === c.lesson)) fail(`card ${c.id} points at lesson ${c.lesson}`); if (!c.lines || c.lines.length < 5) fail(`card ${c.id} is thin`); });
   GLOSSARY.forEach(g => { if (!/Lessons? [A-N]/.test(g[1])) fail(`glossary entry "${g[0]}" names no lesson`); });
   if (SESSION_FIELDS.length !== 5) fail("the session note has five lines");
+  const { READING } = BOOK;
+  if (!Array.isArray(READING) || READING.length < 5) fail("the reading list is missing or thin");
+  else READING.forEach((r, i) => {
+    if (!r.cite || !r.why || !Array.isArray(r.lessons) || !r.lessons.length) fail(`reading entry ${i + 1} needs cite, why and lessons`);
+    else r.lessons.forEach(id => { if (!LESSONS.find(l => l.id === id)) fail(`reading entry ${i + 1} points at lesson ${id}`); });
+  });
 }
 
 // ---- the page is one file with no network --------------------------

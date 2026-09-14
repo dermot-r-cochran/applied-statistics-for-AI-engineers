@@ -13,10 +13,11 @@ under the MIT License. See `LICENSE`.
 ## Course content — CC BY 4.0
 
 The course content — the WORLD DATA section of `index.html` (`SITE`,
-`CASE`, `RULES`, `LESSONS`, `CARDS`, `GLOSSARY`, `SESSION_FIELDS`: the
-lessons and their prose, the worked examples, the diagnostic questions
-and answers, the exercises, the reference cards, the glossary and the
-description of the case) — is licensed under the Creative Commons
+`CASE`, `RULES`, `LESSONS`, `CARDS`, `GLOSSARY`, `READING`,
+`SESSION_FIELDS`: the lessons and their prose, the worked examples, the
+diagnostic questions and answers, the exercises, the reference cards, the
+glossary, the reading notes and the description of the case) — is
+licensed under the Creative Commons
 Attribution 4.0 International license (CC BY 4.0):
 
 https://creativecommons.org/licenses/by/4.0/

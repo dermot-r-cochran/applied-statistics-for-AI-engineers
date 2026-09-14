@@ -110,6 +110,13 @@ with `expect` values that the prose quotes. Add glossary entries that name
 the lesson and, if it introduces a template, a card that points at it.
 Update the table in `README.md`. Then `node tools/check.js`.
 
+`READING` is the further-reading page (added 2026-09-14 at Dermot's
+direction): the sources behind each method, each with a one-line reason
+and the lessons it serves; the check requires every entry to point at a
+real lesson. It is context, not curriculum — the lessons derive what they
+use — so add an entry only for a source a lesson actually rests on, cite
+it fully, and never add a source you have not verified exists as cited.
+
 ## Publishing
 
 `.github/workflows/pages.yml` serves `index.html` from GitHub Pages on

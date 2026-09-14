@@ -54,7 +54,9 @@ Alongside them: the **case** the examples follow, nine **core reasoning
 rules**, six **reference cards** (the reference-set manifest, the
 minimum-meaningful-effect statement, the comparability checklist, the
 confidence semantics card, the one-page report, the review checklist), a
-**glossary**, and the five-line **session note** every lesson ends with.
+**glossary**, a **further reading** page with the sources behind each
+method (none of it required; the lessons derive what they use), and the
+five-line **session note** every lesson ends with.
 
 ## The case
 
