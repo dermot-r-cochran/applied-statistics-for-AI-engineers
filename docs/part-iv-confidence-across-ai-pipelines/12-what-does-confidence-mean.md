@@ -39,7 +39,7 @@ Project Frog contrasts extraction, classification, evidence retrieval, and expla
 
 - [Chapter 13: Calibration](13-calibration.md)
 - [Confidence-related reference material](../appendices/confidence-reference.md)
-- [Metric definition card](../appendices/metric-definition-card.md)
+- [Glossary](../appendices/glossary.md)
 
 
 ## Summary
