@@ -1,0 +1,34 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+# Everything here runs on the Node that ships with the runner. The site
+# has no build and the check has no dependencies, so CI installs nothing —
+# if that ever stops being true, something has gone wrong with the
+# repository rather than with this file.
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Every lesson has its nine parts and every calculator reproduces its worked example
+        run: node tools/check.js
+
+      - name: The page is one file with its two sections
+        run: |
+          grep -q "WORLD DATA" index.html
+          grep -q "ENGINE" index.html
+          test "$(grep -c '<script' index.html)" = "1"
+          # nothing may be fetched from anywhere: no external script, no
+          # fetch, no stylesheet or icon by URL (an inline data: icon is fine)
+          ! grep -qiE '<script[^>]+src=|fetch\(|XMLHttpRequest|<link[^>]+href="(https?:|//)' index.html
+          echo "one file, no network"
+
+      - name: No stray build artifacts
+        run: |
+          test ! -e node_modules && test ! -e _site && test ! -e __pycache__
