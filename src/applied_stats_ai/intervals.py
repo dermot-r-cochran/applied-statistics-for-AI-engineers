@@ -83,4 +83,6 @@ def confidence_interval_accuracy(
         return wilson_interval(successes, trials, confidence_level)
     if method == "clopper_pearson":
         return clopper_pearson_interval(successes, trials, confidence_level)
-    raise ValueError(f"Unsupported method: {method}")
+    raise ValueError(
+        f"Unsupported method: {method}. Supported methods are 'wilson' and 'clopper_pearson'."
+    )

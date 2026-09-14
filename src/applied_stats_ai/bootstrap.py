@@ -27,7 +27,7 @@ def bootstrap_metric(
         >>> sorted(result.keys())
         ['bootstrap_distribution', 'estimate', 'lower', 'upper']
     """
-    data = np.asarray(values)
+    data = np.atleast_1d(np.asarray(values))
     if data.size == 0:
         raise ValueError("values must not be empty")
     if n_resamples <= 0:

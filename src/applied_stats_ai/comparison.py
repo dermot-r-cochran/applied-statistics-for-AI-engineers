@@ -6,6 +6,8 @@ from scipy.stats import binomtest, chi2
 from ._typing import ArrayLike
 from .bootstrap import bootstrap_metric
 
+SMALL_SAMPLE_DISCORDANT_THRESHOLD = 25
+
 
 def compare_two_models(
     y_true: ArrayLike,
@@ -54,10 +56,11 @@ def compare_two_models(
 
     if discordant == 0:
         p_value = 1.0
-    elif discordant < 25:
+    elif discordant < SMALL_SAMPLE_DISCORDANT_THRESHOLD:
         p_value = float(binomtest(k=b_only, n=discordant, p=0.5).pvalue)
     else:
-        statistic = (abs(a_only - b_only) - 1) ** 2 / discordant
+        numerator = max(abs(a_only - b_only) - 1, 0) ** 2
+        statistic = numerator / discordant
         p_value = float(chi2.sf(statistic, df=1))
 
     bootstrap_result = bootstrap_metric(
