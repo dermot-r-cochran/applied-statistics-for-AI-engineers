@@ -40,6 +40,6 @@ def test_compare_two_models_p_value_matches_mcnemar() -> None:
     predictions_b = [0, 0, 0, 0, 0, 1, 0, 0, 1, 1]
 
     result = compare_two_models(y_true, predictions_a, predictions_b)
-    expected_p_value = mcnemar([[5, 1], [2, 2]], exact=False, correction=True).pvalue
+    expected_p_value = mcnemar([[5, 1], [2, 2]], exact=True, correction=False).pvalue
 
     assert result["p_value"] == pytest.approx(expected_p_value)

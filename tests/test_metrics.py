@@ -1,3 +1,5 @@
+import pytest
+
 from applied_stats_ai import confusion_matrix_uncertainty
 
 
@@ -22,3 +24,8 @@ def test_confusion_matrix_uncertainty_returns_binary_shape_when_class_missing() 
         random_state=1,
     )
     assert result["confusion_matrix"].shape == (2, 2)
+
+
+def test_confusion_matrix_uncertainty_rejects_non_binary_labels() -> None:
+    with pytest.raises(ValueError):
+        confusion_matrix_uncertainty([0, 1, 2], [0, 1, 2], n_resamples=20, random_state=1)

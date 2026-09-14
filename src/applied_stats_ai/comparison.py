@@ -57,7 +57,9 @@ def compare_two_models(
         [both, a_only],
         [b_only, neither],
     ]
-    p_value = float(mcnemar(table, exact=False, correction=True).pvalue)
+    discordant = a_only + b_only
+    use_exact = discordant < 25
+    p_value = float(mcnemar(table, exact=use_exact, correction=not use_exact).pvalue)
     paired_differences = correct_b - correct_a
     interval_result = bootstrap_metric(
         paired_differences,

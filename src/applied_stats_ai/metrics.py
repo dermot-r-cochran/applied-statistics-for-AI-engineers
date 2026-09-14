@@ -40,6 +40,11 @@ def confusion_matrix_uncertainty(
         raise ValueError("y_true and y_pred must have equal length")
     if len(y_true_array) == 0:
         raise ValueError("inputs must not be empty")
+    labels = set(np.unique(np.concatenate((y_true_array, y_pred_array))).tolist())
+    if not labels.issubset({0, 1}):
+        raise ValueError(
+            "confusion_matrix_uncertainty currently supports binary labels encoded as 0/1"
+        )
 
     pairs = np.column_stack((y_true_array, y_pred_array))
 
