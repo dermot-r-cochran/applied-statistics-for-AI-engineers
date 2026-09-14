@@ -1,0 +1,7 @@
+format: jb-book
+root: intro
+chapters:
+  - file: tutorials/project-frog-progressive-evaluation
+  - file: chapters/the-metric-is-not-the-system
+  - file: chapters/what-does-confidence-mean
+  - file: chapters/release-readiness-under-uncertainty

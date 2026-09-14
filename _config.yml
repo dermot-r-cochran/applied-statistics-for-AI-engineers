@@ -1,0 +1,20 @@
+title: Trustworthy AI Evaluation
+author: Dermot R. Cochran
+copyright: "2026"
+only_build_toc_files: true
+execute:
+  execute_notebooks: off
+parse:
+  myst_enable_extensions:
+    - colon_fence
+    - deflist
+    - linkify
+html:
+  use_issues_button: true
+  use_repository_button: true
+repository:
+  url: https://github.com/dermot-r-cochran/applied-statistics-for-AI-engineers
+  branch: main
+sphinx:
+  config:
+    nitpicky: true
