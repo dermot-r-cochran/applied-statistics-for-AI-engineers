@@ -249,7 +249,8 @@ def cluster_bootstrap_metric(
     Args:
         values: Metric inputs such as 1/0 correctness indicators.
         clusters: Cluster identifier for each value, such as document or project ID.
-        metric: Function applied to each resampled pseudo-sample.
+        metric: Function applied within each cluster before averaging across
+            sampled clusters. The default returns the mean cluster-level value.
         n_resamples: Number of bootstrap cluster draws.
         confidence_level: Central interval mass.
         seed: Optional random seed.
@@ -257,11 +258,12 @@ def cluster_bootstrap_metric(
             are removed before resampling.
 
     Returns:
-        ``BootstrapResult`` summarizing the cluster-aware uncertainty estimate.
+        ``BootstrapResult`` summarizing a cluster-level metric estimate.
 
     Assumptions:
-        Clusters are the resampling unit. Dependence is allowed within a cluster, but
-        sampled clusters are assumed representative of the cluster population.
+        Clusters are the resampling unit and the estimand is the average
+        cluster-level metric. Dependence is allowed within a cluster, but sampled
+        clusters are assumed representative of the cluster population.
 
     Example:
         >>> result = cluster_bootstrap_metric([1, 0, 1, 1], ["a", "a", "b", "b"], seed=11, n_resamples=200)
@@ -294,14 +296,15 @@ def cluster_bootstrap_metric(
         raise ValueError("confidence_level must be between 0 and 1")
     metric_function = metric or _default_metric
     rng = random.Random(seed)
-    estimate = float(metric_function([value for value, _ in paired]))
+    cluster_summaries = [float(metric_function(cluster_values)) for cluster_values in groups.values()]
+    estimate = fmean(cluster_summaries)
     draws: list[float] = []
     for _ in range(n_resamples):
-        resampled_values: list[float] = []
+        resampled_summaries: list[float] = []
         for _ in cluster_ids:
             sampled_cluster = cluster_ids[rng.randrange(len(cluster_ids))]
-            resampled_values.extend(groups[sampled_cluster])
-        draws.append(float(metric_function(resampled_values)))
+            resampled_summaries.append(float(metric_function(groups[sampled_cluster])))
+        draws.append(fmean(resampled_summaries))
     standard_error = 0.0 if len(draws) == 1 else math.sqrt(
         sum((draw - fmean(draws)) ** 2 for draw in draws) / (len(draws) - 1)
     )
@@ -311,7 +314,7 @@ def cluster_bootstrap_metric(
         standard_error=standard_error,
         resamples=n_resamples,
         method="cluster bootstrap",
-        assumptions="Clusters are exchangeable; within-cluster dependence is preserved by resampling whole clusters.",
+        assumptions="Clusters are exchangeable; within-cluster dependence is preserved, and the estimand is the average cluster-level metric.",
     )
 
 
@@ -391,6 +394,8 @@ def compare_paired_predictions(
 def _wilson_interval(successes: int, total: int, confidence_level: float) -> tuple[float, float]:
     if total <= 0:
         raise ValueError("total must be positive")
+    if not 0.0 < confidence_level < 1.0:
+        raise ValueError("confidence_level must be between 0 and 1")
     proportion = successes / total
     z = _normal_ppf(1.0 - (1.0 - confidence_level) / 2.0)
     denominator = 1.0 + (z * z) / total

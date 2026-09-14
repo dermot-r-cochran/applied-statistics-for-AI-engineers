@@ -35,7 +35,7 @@ result = cluster_bootstrap_metric(rows, clusters, seed=19, n_resamples=2000)
 print(result.estimate, result.confidence_interval)
 ```
 
-This calculation respects document-level dependence by resampling whole documents instead of pretending that all 1,000 rows are independent.
+This calculation treats the **document** as the inferential unit, estimates the average document-level accuracy, and respects document-level dependence by resampling whole documents instead of pretending that all 1,000 rows are independent.
 
 ## Project-level and document-level variation
 

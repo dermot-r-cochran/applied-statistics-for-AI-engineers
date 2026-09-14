@@ -57,6 +57,12 @@ class ClusterBootstrapMetricTests(unittest.TestCase):
         result = cluster_bootstrap_metric(values, clusters, seed=9, n_resamples=300)
         self.assertAlmostEqual(result.estimate, 4 / 6)
 
+    def test_cluster_bootstrap_uses_cluster_level_weighting(self):
+        values = [1, 1, 1, 0]
+        clusters = ["a", "a", "a", "b"]
+        result = cluster_bootstrap_metric(values, clusters, seed=9, n_resamples=300)
+        self.assertAlmostEqual(result.estimate, 0.5)
+
     def test_cluster_bootstrap_rejects_empty_clustered_sample(self):
         with self.assertRaises(ValueError):
             cluster_bootstrap_metric([], [], seed=1)
