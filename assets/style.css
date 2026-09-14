@@ -57,6 +57,11 @@ button.secondary {
   background: #2f3d63;
 }
 
+button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
 .hidden {
   display: none;
 }
@@ -86,4 +91,8 @@ code {
   background: #0f162a;
   padding: 0.1rem 0.3rem;
   border-radius: 4px;
+}
+
+pre {
+  overflow-x: auto;
 }
