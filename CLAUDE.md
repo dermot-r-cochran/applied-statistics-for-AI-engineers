@@ -110,6 +110,17 @@ with `expect` values that the prose quotes. Add glossary entries that name
 the lesson and, if it introduces a template, a card that points at it.
 Update the table in `README.md`. Then `node tools/check.js`.
 
+`EXAMS[id]` is the lesson's exam (added 2026-09-14 at Dermot's direction:
+*add an exam and score card at the end of each lesson*): four or more
+multiple-choice questions, each `{q, o, a, why}` with `a` the index of the
+correct option and `why` shown after marking whatever was chosen. Marked in
+the browser; the lessons page keeps the best score per lesson and a
+scorecard (pass is three of four or better). The check requires at least
+four questions, three distinct options each, a valid answer index, a
+reason, and correct answers not all in the same position. Questions test
+the lesson's reasoning, not recall of its numbers, and every distractor
+should be a mistake a competent engineer actually makes.
+
 `READING` is the further-reading page (added 2026-09-14 at Dermot's
 direction): the sources behind each method, each with a one-line reason
 and the lessons it serves; the check requires every entry to point at a

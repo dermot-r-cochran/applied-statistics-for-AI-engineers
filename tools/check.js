@@ -69,6 +69,23 @@ if (BOOK) {
     if (c.verdictKey && typeof r[c.verdictKey] !== "string") fail(`lesson ${l.id}: verdict output missing`);
   });
 
+  // ---- exams -----------------------------------------------------------
+  const { EXAMS } = BOOK;
+  LESSONS.forEach(l => {
+    const ex = EXAMS && EXAMS[l.id];
+    if (!Array.isArray(ex) || ex.length < 4) { fail(`lesson ${l.id}: exam needs at least four questions`); return; }
+    ex.forEach((x, i) => {
+      const tag = `lesson ${l.id} exam question ${i + 1}`;
+      if (!x.q || x.q.length < 20) fail(`${tag}: question missing or too short`);
+      if (!Array.isArray(x.o) || x.o.length < 3) fail(`${tag}: needs at least three options`);
+      else { if (new Set(x.o).size !== x.o.length) fail(`${tag}: duplicate options`); if (!Number.isInteger(x.a) || x.a < 0 || x.a >= x.o.length) fail(`${tag}: answer index out of range`); }
+      if (!x.why || x.why.length < 20) fail(`${tag}: no reason given`);
+    });
+    // the correct option must not always sit in the same place
+    const positions = new Set(ex.map(x => x.a)); if (positions.size < 2) fail(`lesson ${l.id}: every correct answer is in the same position`);
+  });
+  Object.keys(EXAMS || {}).forEach(id => { if (!LESSONS.find(l => l.id === id)) fail(`exam for lesson ${id}, which does not exist`); });
+
   // ---- rules, cards, glossary, session -------------------------------
   if (RULES.length !== 9) fail(`expected nine reasoning rules, found ${RULES.length}`);
   CARDS.forEach(c => { if (!LESSONS.find(l => l.id === c.lesson)) fail(`card ${c.id} points at lesson ${c.lesson}`); if (!c.lines || c.lines.length < 5) fail(`card ${c.id} is thin`); });

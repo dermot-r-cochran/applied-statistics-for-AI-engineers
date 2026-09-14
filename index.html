@@ -53,6 +53,19 @@ button{font:inherit;font-family:system-ui,sans-serif;font-size:.9rem;padding:.4r
 button:hover{border-color:var(--accent)}
 button:focus-visible,input:focus-visible,a:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 .reveal[hidden]{display:none}
+.exam{font-family:system-ui,sans-serif;font-size:.95rem}
+.exam ol{padding-left:1.4rem}
+.exam li{margin:.9rem 0}
+.exam .q{font-family:Georgia,"Times New Roman",serif;font-size:1rem;margin-bottom:.3rem}
+.exam label{display:block;padding:.2rem 0;cursor:pointer}
+.exam input{margin-right:.4rem}
+.exam .why{margin:.3rem 0 0;padding:.4rem .6rem;border-radius:4px;background:var(--soft);font-size:.88rem}
+.exam .right .why{border-left:3px solid var(--ok)}.exam .wrong .why{border-left:3px solid var(--bad)}
+.exam .mark{margin-top:.5rem}
+.exam .score{margin-top:.8rem;font-size:1.05rem}
+.scorecard{font-family:system-ui,sans-serif;font-size:.92rem;background:var(--soft);border-radius:6px;padding:.6rem .9rem;margin:.8rem 0}
+.roadmap .exam-score{color:var(--mute);font-family:system-ui,sans-serif;font-size:.8rem}
+.roadmap .exam-score.pass{color:var(--ok)}
 .pager{display:flex;justify-content:space-between;gap:1rem;margin-top:2.5rem;padding-top:1rem;border-top:1px solid var(--line);font-family:system-ui,sans-serif;font-size:.92rem}
 .mute{color:var(--mute)}
 .rule{border-left:3px solid var(--accent);padding:.2rem .8rem;margin:.6rem 0;background:var(--soft);border-radius:0 5px 5px 0}
@@ -90,7 +103,7 @@ It assumes you have met probability and statistics before and have shipped or ev
 
 The examples follow one fictional system throughout, described under **The case**: an AI reviewer of photographic contact sheets whose verdicts are scored against the photographer's own decisions. It was chosen because a contact sheet has exactly the structure that makes evaluation statistics hard — rows inside documents inside projects, rare positive classes, judges who disagree — and because the domain is ordinary enough that nothing in it distracts from the statistics. A second, smaller example, an AI reader of short-story drafts, appears where text similarity and disagreeing judges need it. Neither system exists.
 
-Fourteen lessons, each in the same nine parts: the engineering question, the principle, the mathematics, the assumptions, a worked synthetic example with a live calculator, the common misreading, the application to the case, one diagnostic question and one exercise. Read them in order the first time; each leans on the last. The **Session note** page builds the five-line closing note the lessons ask for.`,
+Fourteen lessons, each in the same nine parts: the engineering question, the principle, the mathematics, the assumptions, a worked synthetic example with a live calculator, the common misreading, the application to the case, one diagnostic question and one exercise, then a four-question exam marked on the page. Read them in order the first time; each leans on the last. Your best exam score per lesson and a scorecard for the course sit below; the **Session note** page builds the five-line closing note the lessons ask for.`,
   howToRead: `Each lesson's calculator is seeded with the worked example, so the numbers in the text are the numbers on screen; change an input and the text's claim can be re-tested. Progress is kept in this browser only.`
 };
 
@@ -273,7 +286,7 @@ Power for detecting a true difference \`δ\` with \`n\` per arm: the test reject
 Solve for \`n\` numerically to reach a target power (0.8 by convention, higher when a miss is costly). The dependence is on \`1/n\`: halving the detectable effect quadruples the frames needed.`,
   assumptions:`- Independent rows and independent arms. Paired designs (Lesson F) need a different, usually much smaller, \`n\`.
 - The alternative effect size is the minimum meaningful one, not the one you hope for.
-- α is fixed in advance; one primary metric is named in advance. Testing twelve metrics and forty slices at α = 0.05 finds two "significant" regressions in an unchanged system by chance (Lesson N).`,
+- α is fixed in advance; one primary metric is named in advance. Testing twelve metrics and forty slices — fifty-two tests — at α = 0.05 finds two or three "significant" regressions in an unchanged system by chance (Lesson N).`,
   example:`Synthetic, Lesson A's numbers. Pooled \`p̄ = 0.825\`, \`SE_0 = 0.0240\`, \`z = 1.25\`, \`p = 0.212\`. Not significant at 0.05.
 
 Power to detect a true three-point drop with 500 frames per arm is **0.239**: three times in four, this evaluation would have missed a regression of exactly the size observed. To reach 80% power for three points takes about **2,517 frames per arm**; for a five-point drop, about 946. The evaluation was designed to notice large regressions only, and nobody had said so.`,
@@ -594,6 +607,95 @@ Stratified by scenario, macro frames were 70% of the week against 15% at baselin
     note:"Try 40,000 rows a week and watch the smallest significant shift become meaningless." } }
 ];
 
+/* Exams: four questions per lesson, marked in the browser. `a` is the index
+   of the correct option; `why` is shown after marking, whatever was chosen. */
+const EXAMS = {
+  A: [
+    { q:"Verdict accuracy is 0.84 on 500 independent rows. Its standard error is closest to:", o:["0.0016","0.036","0.0164","0.16"], a:2, why:"√(0.84 × 0.16 / 500) = 0.0164. The variance of a proportion is p(1 − p)/n; the standard error is its square root." },
+    { q:"The standard error of the difference between two independent estimates is:", o:["the sum of the two standard errors","the square root of the sum of their squares","the difference of the two standard errors","their average"], a:1, why:"Variances add for independent quantities, so the standard error of the difference is √(SE_A² + SE_B²)." },
+    { q:"Both runs were scored on the same 500 rows. Applied to them, the independent-draws formula:", o:["gives the exact standard error","overstates the standard error","understates the standard error","cannot be computed"], a:1, why:"Shared row-to-row variation cancels in a paired comparison; the independent formula keeps it and is too large. Lesson F uses the pairing." },
+    { q:"An observed gap of 1.25 standard errors means:", o:["the candidate is worse with 80% probability","a gap this size arises between two draws of an unchanged system about one time in five","the candidate has been shown not to be worse","the sample is too small to compute anything"], a:1, why:"1.25 standard errors is inside the range of ordinary sampling variation (two-sided p ≈ 0.21). It is neither evidence of a regression nor evidence of none." }
+  ],
+  B: [
+    { q:"With 9 of 10 verdicts correct, which interval runs above 1?", o:["Wald","Wilson","Clopper–Pearson","all three"], a:0, why:"Wald is p̂ ± 1.96 √(p̂(1 − p̂)/n) and is symmetric about p̂, so near 1 it overshoots (0.714 to 1.086). Wilson and the exact interval stay inside [0, 1]." },
+    { q:"\"A 95% confidence interval\" means:", o:["there is a 95% chance this interval contains the true value","the procedure that produced it captures the true value in 95% of repeated samples","95% of rows fall inside it","the estimate is 95% accurate"], a:1, why:"Confidence is a property of the procedure over repeated sampling, not a probability statement about this one interval." },
+    { q:"A slice has 12 rows. The right treatment of its accuracy is:", o:["inflate the estimate to allow for the small sample","report it as observed, with a Wilson interval and n beside it","shrink it toward 0.5 by hand","leave the slice out"], a:1, why:"The point estimate is what it is; the smallness belongs in the interval and the disclosed n, not in an adjusted number." },
+    { q:"The Wilson interval's centre is pulled toward 0.5 by a pseudo-count of about:", o:["0.5 observations","2 observations","10 observations","n/2 observations"], a:1, why:"The centre is (p̂ + z²/2n)/(1 + z²/n), equivalent to adding z²/2 ≈ 1.92 pseudo-observations, half successes and half failures." }
+  ],
+  C: [
+    { q:"Accuracy is 0.916 while Keeper recall is 0.80 because:", o:["recall is always lower than accuracy","keepers are rare, so accuracy is dominated by the majority class","the threshold is set wrongly","the ground truth is noisy"], a:1, why:"With 84% of rows in the negative class, getting the negatives right carries accuracy regardless of how the rare class fares." },
+    { q:"The denominator of precision is:", o:["the true positives","the rows the system flagged, which is itself a random quantity","all rows","fixed by the reference-set design"], a:1, why:"Precision = TP/(TP + FP); how many rows get flagged varies from draw to draw, which is one reason its sampling distribution is not binomial." },
+    { q:"The honest way to get a 95% interval for F1 is:", o:["a Wald interval with n = 500","a Wilson interval on F1","bootstrap the rows and take the percentiles","it cannot be estimated"], a:2, why:"F1 is a nonlinear function of two random proportions; resampling the rows (at the independent unit) gives its sampling distribution without a formula." },
+    { q:"\"Crop tighter on the left\" and \"crop tighter on the right\" score nearly identically on a similarity metric. The lesson is:", o:["the similarity score is well calibrated","similarity is not correctness; validate it against judged usefulness","embeddings should replace lexical similarity","the threshold should be lowered"], a:1, why:"A similarity score measures surface closeness. Its relationship to correctness must be measured on a judged sample before it can stand in for correctness." }
+  ],
+  D: [
+    { q:"The effect size a release decision can use is:", o:["Cohen's h","the p-value","the difference in operational units, such as extra wrong rows per month times their cost","the relative difference"], a:2, why:"Statistical effect sizes are comparable across studies; only the operational one says what the change costs or saves." },
+    { q:"The minimum meaningful effect should be fixed:", o:["after the comparison is seen","when p < 0.05","before the data are looked at","never; it is subjective"], a:2, why:"Set afterwards, the data choose the threshold. It is subjective, which is why it is written down in advance, per class, with its reasons." },
+    { q:"A \"20% improvement\" in Barred recall from 0.30 to 0.36 is:", o:["one extra catch in five","about one extra catch in seventeen","a large effect by Cohen's conventions","a significant result"], a:1, why:"0.06 more of the barred frames caught: at 20 barred frames a month, about 1.2 more catches; 1 in 17 of the barred frames. Relative differences flatter small absolute ones." },
+    { q:"A three-point drop in Folder accuracy and a three-point drop in Barred recall:", o:["have the same practical significance","differ in practical significance because the costs per error differ","matter only for Folder, the larger class","are both negligible"], a:1, why:"The same absolute effect is trivial on one class and disqualifying on another; the minimum meaningful effect must be set per class." }
+  ],
+  E: [
+    { q:"A non-significant result from an evaluation with power 0.24 for the effect that matters means:", o:["there is no regression","there is a 24% chance of a regression","the evaluation would miss a real regression of that size three times in four","the sample is biased"], a:2, why:"Power is the chance of detecting the effect if it exists. At 0.24, absence of significance is mostly absence of power." },
+    { q:"To halve the smallest detectable effect at fixed power, the sample size must:", o:["double","quadruple","halve","stay the same"], a:1, why:"Standard errors scale with 1/√n, so halving the detectable difference needs four times the rows." },
+    { q:"A power calculation using the observed effect after the run:", o:["corrects the test","restates the p-value in different clothes","is required by convention","increases the power"], a:1, why:"Post-hoc power is a one-to-one function of the p-value. Power is computed in advance for the minimum meaningful effect." },
+    { q:"Testing twelve metrics and forty slices — fifty-two tests — at α = 0.05 on an unchanged system finds, by chance, roughly:", o:["no significant results","one","two or three","twelve"], a:2, why:"52 × 0.05 = 2.6 false alarms expected. Name the primary metric in advance; label the rest exploratory." }
+  ],
+  F: [
+    { q:"In a paired comparison, the evidence about the difference lives in:", o:["all rows equally","the rows both systems got right","the discordant rows, where the two systems disagree","the rows both systems got wrong"], a:2, why:"Concordant rows say nothing about which system is better; only the b + c discordant rows do." },
+    { q:"With b = 35 and c = 20, McNemar's χ² is:", o:["15","0.27","4.09","55"], a:2, why:"(b − c)²/(b + c) = 225/55 = 4.09, p ≈ 0.043 on one degree of freedom." },
+    { q:"The paired standard error is smaller than the independent one because:", o:["n is larger","the row-to-row variation shared by both systems cancels","there are fewer rows","ties are removed"], a:1, why:"Hard and easy rows are hard and easy for both systems; pairing removes that shared variance from the comparison." },
+    { q:"With 10 discordant rows, report:", o:["the χ² approximation","the exact binomial p, and read the 10 rows","a t-test","nothing; no test is possible"], a:1, why:"Under about 25 discordant rows the χ² approximation is unreliable; the exact test is right, and reading ten rows decides more than either." }
+  ],
+  G: [
+    { q:"The decision that most determines whether a bootstrap interval is honest is:", o:["the number of resamples","the confidence level","which unit is resampled","the seed"], a:2, why:"Resampling rows when documents are the independent unit gives an interval that is far too narrow. The unit must match the dependence structure." },
+    { q:"The null hypothesis of the sign-flip permutation test is:", o:["rows are independent","the per-unit differences are normally distributed","A and B are exchangeable within each unit, so each difference is as likely to be negated","the variances are equal"], a:2, why:"Under exchangeability the sign of each paired difference is arbitrary, which is what the flips simulate." },
+    { q:"On twelve units, the bootstrap interval excludes zero and the permutation p is 0.078. The honest report is:", o:["the bootstrap is right, the effect is established","the permutation test is right, there is no effect","suggestive, not established; more units would settle it","both methods are invalid"], a:2, why:"With twelve units the two methods disagree at the margin for known reasons. Neither is wrong; the sample is small and the report says so." },
+    { q:"Bootstrapping two systems separately and comparing their intervals:", o:["is the recommended method","throws the pairing away, like an independent-samples test","is exact","doubles the power"], a:1, why:"Resample the pairs and bootstrap the difference; separate intervals reintroduce the shared variance that pairing removed." }
+  ],
+  H: [
+    { q:"For single-label classification, micro-averaged recall equals:", o:["macro-averaged recall","accuracy","F1","precision"], a:1, why:"Σ k_c / Σ n_c is the number of rows classified correctly over all rows." },
+    { q:"The choice between micro and macro averaging should be made:", o:["after seeing which one moved in the right direction","by the written error costs, before the data","always macro, to protect rare classes","always micro, to reflect volume"], a:1, why:"Neither is right in general; the cost-weighted aggregate is the one a decision needs, and the weights predate the comparison." },
+    { q:"Simpson's paradox in evaluation arises because:", o:["samples are small","labels are noisy","the pooled proportions weight strata differently for each system","of rounding"], a:2, why:"Pooled p = Σ (n_s/n) p_s; when the two systems were evaluated on different mixes, the pooled numbers compare mixes, not systems." },
+    { q:"Accuracy is 0.892; Barred is 2% of rows with recall 0.30. The report should lead with:", o:["accuracy, to three decimals","macro-F1 alone","the per-class table, Barred first, with n and an interval","the pooled number, since it is most precise"], a:2, why:"The class whose errors cost most contributes 2% of accuracy. Per class first, cost-weighted aggregate second, accuracy as context." }
+  ],
+  I: [
+    { q:"A confidence interval computed on a sample with the wrong stratum mix:", o:["widens to include the true value","says nothing about the bias","shrinks","becomes undefined"], a:1, why:"The interval measures precision about the population the sample represents. Bias is aim, not precision, and no interval sees it." },
+    { q:"Post-stratification corrects:", o:["all bias","the mix between strata, not bias within a stratum","variance only","nothing; it is cosmetic"], a:1, why:"It reweights per-stratum estimates to the target mix. If a stratum's rows are unrepresentative of that stratum in production, weighting cannot help." },
+    { q:"The post-stratified standard error is larger than the naive one when:", o:["the strata have equal sizes","a heavily weighted stratum is thinly sampled","n is large","the weights sum to one"], a:1, why:"Each stratum contributes W_s² p_s(1 − p_s)/n_s; a large weight on a small n_s inflates the total." },
+    { q:"Dropping rows from the over-represented stratum to \"balance\" the set:", o:["removes the bias exactly","is equivalent to weighting","loses precision and still misses the target mix","increases power"], a:2, why:"Balancing to 50/50 is not the 40/60 target and discards information; weighting uses every row and hits the target exactly." }
+  ],
+  J: [
+    { q:"The design effect for clusters of average size m and intra-cluster correlation ρ is:", o:["mρ","1 + (m − 1)ρ","1/ρ","m/ρ"], a:1, why:"With ρ = 0 the rows are independent and DEFF = 1; with ρ = 1 every row in a cluster is a copy and DEFF = m." },
+    { q:"500 rows in 40 clusters with ρ = 0.2 have an effective sample size of about:", o:["500","250","152","40"], a:2, why:"m = 12.5, DEFF = 1 + 11.5 × 0.2 = 3.3, n_eff = 500/3.3 ≈ 152." },
+    { q:"For a fixed budget of rows, precision grows mainly with:", o:["rows per cluster","the number of clusters","the intra-cluster correlation","neither"], a:1, why:"Adding rows to an existing cluster adds little once ρ is material; adding clusters adds independent evidence." },
+    { q:"Clustering and the paired comparison of Lesson F:", o:["pairing removes the clustering","discordant rows cluster too; use a cluster bootstrap on the paired difference","clustering does not apply to paired data","use the Wald formula instead"], a:1, why:"Rows a candidate loses tend to come from the same hard sheets. The paired standard error must be cluster-corrected like any other." }
+  ],
+  K: [
+    { q:"If the reference set and the system both changed between two runs, the comparison is:", o:["paired","stratified","confounded","exact"], a:2, why:"Two causes changed at once, so the difference cannot be attributed to either. Compare on the shared rows first." },
+    { q:"500 shared rows at 0.85 plus 60 added rows at 0.55 pool to:", o:["0.85","0.818","0.70","0.55"], a:1, why:"(500 × 0.85 + 60 × 0.55)/560 = 0.818: a one-point improvement on comparable rows hidden inside a two-point apparent regression." },
+    { q:"Two annotators agree 80% of the time; the system agrees with annotator 1 95% of the time. The right response is:", o:["celebrate: the system beats a human","check for leakage: the system may have learned that annotator, not the task","reduce the reference set","drop annotator 2"], a:1, why:"A system cannot meaningfully agree with a noisy annotator more than the annotators agree with each other unless it has seen that annotator's labels." },
+    { q:"A stakeholder wants the reference set refreshed monthly for representativeness. The approach that keeps comparisons valid is:", o:["refresh the only set monthly","never refresh","a frozen comparison set plus a rolling coverage set, re-frozen on a stated cadence","average the old and new results"], a:2, why:"Release-over-release comparison needs a frozen set; representativeness needs a rolling one. Two sets, two jobs." }
+  ],
+  L: [
+    { q:"The release decision rule compares:", o:["the point estimate with zero","the p-value with 0.05","the lower confidence bound with the minimum meaningful effect","accuracy with a round-number target"], a:2, why:"A bound against a written threshold is a rule; a point estimate against zero is not." },
+    { q:"Paired improvement 0.030, SE 0.0148, δ gain 0.01. One-sided 95% lower bound 0.006. Verdict:", o:["ship as a meaningful improvement","hold","probably improved, not shown to be meaningful: collect evidence","nothing can be said"], a:2, why:"The bound is above zero (probably real) and below δ (not shown meaningful). The report says how many more paired rows would settle it." },
+    { q:"\"Accuracy 0.83 (0.80–0.86), target 0.85.\" The right verdict is:", o:["target met, since 0.85 is inside the interval","target missed, since 0.83 is below it","collect evidence: neither shown met nor shown missed","ship"], a:2, why:"Both readings treat the interval as the rule. The rule is a lower bound above the target; 0.80 is not, and 0.86 has not shown it missed either." },
+    { q:"A regression found by scanning forty slices after the run:", o:["enters the decision rule as a primary finding","is reported, labelled exploratory, separate from the rule","is omitted","replaces the primary metric"], a:1, why:"Rule 9: exploratory findings are reported and named as such; they become confirmatory only when tested on new data with the hypothesis fixed in advance." }
+  ],
+  M: [
+    { q:"A score in [0, 1] is a probability of correctness only if:", o:["it comes from a softmax","among rows given that score, the stated fraction turn out correct","it is monotone in the true probability","it is between 0 and 1"], a:1, why:"Calibration is an empirical property tested on held-out rows, per slice; the range of the number says nothing." },
+    { q:"The product of two component scores is the probability that both events hold only if:", o:["both are in [0, 1]","both are calibrated probabilities of independent events","both come from the same model","they are averaged first"], a:1, why:"Three testable claims: calibrated, calibrated, independent given the input. Components that see the same frame are rarely independent." },
+    { q:"A small expected calibration error shows:", o:["the score discriminates well","auto-accept is safe","little on its own: it depends on the bins, lets errors offset, and says nothing about discrimination or subgroups","that per-class calibration holds"], a:2, why:"A constant score equal to the base rate has zero ECE and no use. Check the reliability diagram, per class, with intervals per bin." },
+    { q:"At stated confidence 0.9 the observed accuracy is 0.93 on 100 rows. Auto-accepting above 0.9 means:", o:["no errors are auto-accepted","about one wrong verdict in fourteen is auto-accepted, and whether that is acceptable is a per-class cost question","10% are wrong","auto-accept is never safe"], a:1, why:"7 in 100 wrong. Acceptable for Folder, perhaps; for Barred the 0.9 bin has two rows and the answer is no." }
+  ],
+  N: [
+    { q:"A weekly test at α = 0.05 over a year, on an unchanged system, raises at least one false alarm with probability about:", o:["0.05","0.5","0.93","1.0"], a:2, why:"1 − 0.95⁵² ≈ 0.93. Alarm on the minimum meaningful shift, use a sequential method, or lower the per-check α." },
+    { q:"Within each scenario the keeper rate matches its baseline; only the scenario mix changed. This is:", o:["concept drift; retrain","covariate shift; the model is fine and the alarm should compare within strata","label bias","a model regression"], a:1, why:"The inputs moved, the input-to-verdict relationship did not. Nothing about the model needs touching." },
+    { q:"Ground truth exists only for frames someone chose to look at. Consequence:", o:["none; labels are labels","monitoring cannot distinguish drift from selective labelling without a random labelled sample","the labels are better than random ones","the sample is larger"], a:1, why:"Frames that looked wrong get checked. Their error rate says nothing about the rest; only a random sample does." },
+    { q:"After an alarm, the first step is:", o:["retrain on last month's frames","roll back","establish on a random labelled sample whether within-stratum performance moved","ignore it; alarms are mostly false"], a:2, why:"Retraining on an alarm caused by a mix change shifts the model toward the new mix and degrades it elsewhere. Diagnose first; then a retrained candidate faces the frozen set (Lesson F)." }
+  ]
+};
+
 const CARDS = [
   { id:"manifest", title:"Reference-set manifest", lesson:"K", lines:[
     "Name and version; row count; content hash",
@@ -797,12 +899,18 @@ const md = (text) => {
 
 const PARTS = [["question","Engineering question"],["principle","Core statistical principle"],["maths","Essential mathematics"],["assumptions","Assumptions"],["example","Worked example (synthetic)"],["pitfall","Common interpretation error"],["application","Application to the case"],["diagnostic","One diagnostic question"],["exercise","One applied exercise"]];
 
-const BOOK = { SITE, CASE, RULES, LESSONS, CARDS, GLOSSARY, READING, SESSION_FIELDS, PARTS, S, fmt, md };
+const BOOK = { SITE, CASE, RULES, LESSONS, EXAMS, CARDS, GLOSSARY, READING, SESSION_FIELDS, PARTS, S, fmt, md };
 
 if (typeof document !== "undefined") (function page(){
   const main = document.getElementById("main");
   const store = { get(k,d){ try { const v=localStorage.getItem("asai:"+k); return v===null?d:JSON.parse(v); } catch(e){ return d; } }, set(k,v){ try { localStorage.setItem("asai:"+k, JSON.stringify(v)); } catch(e){} } };
   const doneSet = () => new Set(store.get("done",[]));
+  const examRecord = (id) => (store.get("exams",{})[id]) || {best:0,attempts:0};
+  const passMark = (id) => Math.ceil((EXAMS[id]||[]).length*0.75);
+  const scorecard = () => { const rows=LESSONS.map(l=>({l,ex:EXAMS[l.id]||[],rec:examRecord(l.id)})); const taken=rows.filter(r=>r.rec.attempts);
+    if(!taken.length) return `<div class="scorecard">No exams marked yet. Each lesson ends with four questions; your best score per lesson and the total appear here.</div>`;
+    const got=taken.reduce((a,r)=>a+r.rec.best,0), of=taken.reduce((a,r)=>a+r.ex.length,0), passed=taken.filter(r=>r.rec.best>=passMark(r.l.id)).length;
+    return `<div class="scorecard"><b>Scorecard:</b> ${got} of ${of} across ${taken.length} exam${taken.length===1?"":"s"} taken; ${passed} passed (three of four or better); ${LESSONS.length-taken.length} not yet taken.</div>`; };
 
   const calcDefaults = (c) => Object.fromEntries(c.inputs.map(i=>[i[0],i[2]]));
   const renderCalc = (lesson) => {
@@ -825,7 +933,8 @@ if (typeof document !== "undefined") (function page(){
 
   const views = {
     home(){ const done=doneSet();
-      return `<h2>${esc(SITE.tagline)}</h2>${md(SITE.intro)}<p class="mute">${inline(SITE.howToRead)}</p><h3>The lessons</h3><ol class="roadmap">${LESSONS.map(l=>`<li><span class="letter">${l.id}</span><span><a href="#/lesson/${l.id}">${esc(l.title)}</a><small>${esc(l.question.replace(/\*\*/g,"").split(/[.?]/)[0])}.</small></span><span class="done">${done.has(l.id)?"read":""}</span></li>`).join("")}</ol>`; },
+      return `<h2>${esc(SITE.tagline)}</h2>${md(SITE.intro)}<p class="mute">${inline(SITE.howToRead)}</p><h3>The lessons</h3>${scorecard()}<ol class="roadmap">${LESSONS.map(l=>{ const r=examRecord(l.id), n=(EXAMS[l.id]||[]).length;
+        return `<li><span class="letter">${l.id}</span><span><a href="#/lesson/${l.id}">${esc(l.title)}</a><small>${esc(l.question.replace(/\*\*/g,"").split(/[.?]/)[0])}.</small></span><span class="done">${done.has(l.id)?"read ":""}<span class="exam-score${r.attempts&&r.best>=passMark(l.id)?" pass":""}">${r.attempts?`exam ${r.best}/${n}`:""}</span></span></li>`; }).join("")}</ol>`; },
     case(){ return `<h2>The case: ${esc(CASE.name)}</h2>${md(CASE.summary)}${md(CASE.body)}`; },
     rules(){ return `<h2>Core reasoning rules</h2><p>Nine distinctions the lessons return to. Each is a habit, not a formula: the question to ask before a number is allowed to mean something.</p>${RULES.map((r,i)=>`<div class="rule"><b>${i+1}. Distinguish ${esc(r[0].toLowerCase())}.</b> ${inline(r[1])}</div>`).join("")}`; },
     cards(){ return `<h2>Reference cards</h2><p>Templates the lessons ask you to fill. Copy the lines into your own documents; every line left blank is a finding.</p>${CARDS.map(c=>`<div class="card" id="card-${c.id}"><h4>${esc(c.title)} <span class="mute">(Lesson ${c.lesson})</span></h4><ul>${c.lines.map(l=>`<li>${inline(l)}</li>`).join("")}</ul></div>`).join("")}`; },
@@ -839,7 +948,9 @@ if (typeof document !== "undefined") (function page(){
         else if(key==="example") body = md(l.example)+renderCalc(l);
         else body = md(l[key]);
         return `<section id="part-${i+1}"><h3>${i+1}. ${esc(p[1])}</h3>${body}</section>`; }).join("");
-      return `<p class="mute">Lesson ${l.id} · ${LESSONS.indexOf(l)+1} of ${LESSONS.length}</p><h2>${l.id}. ${esc(l.title)}</h2><ul class="parts">${PARTS.map((p,i)=>`<li><a href="#/lesson/${l.id}#part-${i+1}">${i+1}. ${esc(p[1])}</a></li>`).join("")}</ul>${parts}<p><button type="button" id="mark-done">Mark this lesson read</button> <span class="mute" id="done-msg"></span></p>${nav(l)}`; }
+      const ex = EXAMS[l.id] || []; const rec = examRecord(l.id);
+      const exam = `<section id="part-10" class="exam"><h3>10. Exam</h3><p class="mute">${ex.length} questions, one answer each. Mark it as often as you like; the lessons page keeps your best score.${rec.attempts?` Best so far: ${rec.best} of ${ex.length} in ${rec.attempts} attempt${rec.attempts===1?"":"s"}.`:""}</p><form id="exam-form"><ol>${ex.map((x,i)=>`<li data-q="${i}"><div class="q">${inline(x.q)}</div>${x.o.map((opt,j)=>`<label><input type="radio" name="q${i}" value="${j}">${inline(opt)}</label>`).join("")}<div class="why" hidden></div></li>`).join("")}</ol><button type="submit" class="mark">Mark the exam</button> <span class="score" id="exam-score" aria-live="polite"></span></form></section>`;
+      return `<p class="mute">Lesson ${l.id} · ${LESSONS.indexOf(l)+1} of ${LESSONS.length}</p><h2>${l.id}. ${esc(l.title)}</h2><ul class="parts">${PARTS.map((p,i)=>`<li><a href="#/lesson/${l.id}#part-${i+1}">${i+1}. ${esc(p[1])}</a></li>`).join("")}<li><a href="#/lesson/${l.id}#part-10">10. Exam</a></li></ul>${parts}${exam}<p><button type="button" id="mark-done">Mark this lesson read</button> <span class="mute" id="done-msg"></span></p>${nav(l)}`; }
   };
 
   const route = () => {
@@ -852,6 +963,11 @@ if (typeof document !== "undefined") (function page(){
     document.title = (seg[0]==="lesson" ? `Lesson ${seg[1].toUpperCase()} — ` : "") + SITE.title;
     main.querySelectorAll(".calc").forEach(el => { runCalc(el); el.addEventListener("input", () => runCalc(el)); });
     main.querySelectorAll(".reveal-btn").forEach(b => b.addEventListener("click", () => { const t=document.getElementById(b.getAttribute("aria-controls")); t.hidden=!t.hidden; b.setAttribute("aria-expanded", String(!t.hidden)); b.textContent = t.hidden ? "Show an answer" : "Hide the answer"; }));
+    const ef = main.querySelector("#exam-form"); if (ef) ef.addEventListener("submit", (e) => { e.preventDefault(); const id=seg[1].toUpperCase(), ex=EXAMS[id]||[]; let score=0;
+      ex.forEach((x,i)=>{ const li=ef.querySelector(`li[data-q="${i}"]`), picked=ef.querySelector(`input[name="q${i}"]:checked`); const ok=picked&&Number(picked.value)===x.a; if(ok) score++;
+        li.classList.remove("right","wrong"); li.classList.add(ok?"right":"wrong"); const w=li.querySelector(".why"); w.hidden=false; w.innerHTML=(ok?"<b>Right.</b> ":picked?`<b>Not this one.</b> The answer is "${inline(x.o[x.a])}". `:`<b>Unanswered.</b> The answer is "${inline(x.o[x.a])}". `)+inline(x.why); });
+      const all=store.get("exams",{}); const prev=all[id]||{best:0,attempts:0}; all[id]={best:Math.max(prev.best,score),attempts:prev.attempts+1,last:score}; store.set("exams",all);
+      document.getElementById("exam-score").textContent=`${score} of ${ex.length}${score>=passMark(id)?" — passed":""}. Best: ${all[id].best} of ${ex.length}.`; });
     const md_ = main.querySelector("#mark-done"); if (md_) md_.addEventListener("click", () => { const d=doneSet(); d.add(seg[1].toUpperCase()); store.set("done",[...d]); document.getElementById("done-msg").textContent="Marked."; });
     const sb = main.querySelector("#s-build"); if (sb) {
       const fields = () => { const o={}; main.querySelectorAll("textarea").forEach(t=>o[t.dataset.key]=t.value); return o; };

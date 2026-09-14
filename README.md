@@ -31,7 +31,9 @@ Fourteen, in the same nine parts each: the engineering question, the
 statistical principle, the essential mathematics, the assumptions, a
 worked synthetic example with a live calculator seeded to it, the common
 misreading, the application to the case, one diagnostic question with a
-hidden answer, and one exercise.
+hidden answer, and one exercise. Each ends with a four-question exam,
+marked in the browser with a reason for every answer; the lessons page
+keeps your best score per lesson and a scorecard for the course.
 
 | | Lesson | The question |
 | --- | --- | --- |
