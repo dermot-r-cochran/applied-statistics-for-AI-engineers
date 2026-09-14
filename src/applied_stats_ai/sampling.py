@@ -29,6 +29,9 @@ def effective_sample_size(
         ... )
         5.0
     """
+    if weights is not None and cluster_ids is not None:
+        raise ValueError("choose either weights or cluster_ids, not both")
+
     if weights is not None:
         w = np.asarray(weights, dtype=float)
         if w.size == 0 or np.any(w <= 0):

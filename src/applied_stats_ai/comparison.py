@@ -5,6 +5,7 @@ from statsmodels.stats.contingency_tables import mcnemar
 
 from ._typing import ArrayLike
 from .bootstrap import bootstrap_metric
+from .intervals import clopper_pearson_interval
 
 
 def compare_two_models(
@@ -60,15 +61,26 @@ def compare_two_models(
     discordant = a_only + b_only
     use_exact = discordant < 25
     p_value = float(mcnemar(table, exact=use_exact, correction=not use_exact).pvalue)
-    paired_differences = correct_b - correct_a
-    interval_result = bootstrap_metric(
-        paired_differences,
-        np.mean,
-        n_resamples=n_resamples,
-        confidence_level=confidence_level,
-        random_state=random_state,
-    )
-    interval = (float(interval_result["lower"]), float(interval_result["upper"]))
+    if discordant == 0:
+        interval = (0.0, 0.0)
+    elif use_exact:
+        lower_q, upper_q = clopper_pearson_interval(
+            b_only,
+            discordant,
+            confidence_level=confidence_level,
+        )
+        scale = discordant / len(y)
+        interval = (scale * ((2 * lower_q) - 1), scale * ((2 * upper_q) - 1))
+    else:
+        paired_differences = correct_b - correct_a
+        interval_result = bootstrap_metric(
+            paired_differences,
+            np.mean,
+            n_resamples=n_resamples,
+            confidence_level=confidence_level,
+            random_state=random_state,
+        )
+        interval = (float(interval_result["lower"]), float(interval_result["upper"]))
 
     return {
         "accuracy_a": accuracy_a,

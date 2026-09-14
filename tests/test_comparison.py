@@ -1,7 +1,7 @@
 import pytest
 from statsmodels.stats.contingency_tables import mcnemar
 
-from applied_stats_ai import compare_two_models
+from applied_stats_ai import clopper_pearson_interval, compare_two_models
 
 
 def test_compare_two_models_reports_difference() -> None:
@@ -28,10 +28,12 @@ def test_compare_two_models_bootstrap_interval_stays_nonzero_for_one_sided_disco
         random_state=3,
     )
 
+    lower_q, upper_q = clopper_pearson_interval(2, 2)
+    expected_interval = (0.2 * ((2 * lower_q) - 1), 0.2 * ((2 * upper_q) - 1))
     lower, upper = result["confidence_interval"]
+
     assert result["difference"] == pytest.approx(0.2)
-    assert lower < upper
-    assert lower <= result["difference"] <= upper
+    assert (lower, upper) == pytest.approx(expected_interval)
 
 
 def test_compare_two_models_p_value_matches_mcnemar() -> None:
