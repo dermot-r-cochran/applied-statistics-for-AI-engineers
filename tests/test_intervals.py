@@ -14,3 +14,14 @@ def test_clopper_pearson_interval_bounds() -> None:
 
 def test_confidence_interval_dispatch_matches_wilson() -> None:
     assert confidence_interval_accuracy(42, 50) == wilson_interval(42, 50)
+
+
+def test_confidence_interval_dispatch_matches_clopper_pearson() -> None:
+    assert confidence_interval_accuracy(
+        42,
+        50,
+        method="clopper_pearson",
+    ) == clopper_pearson_interval(
+        42,
+        50,
+    )

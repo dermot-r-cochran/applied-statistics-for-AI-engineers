@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Literal
+
 import numpy as np
 from statsmodels.stats.contingency_tables import mcnemar
 
@@ -13,6 +15,7 @@ def compare_two_models(
     predictions_a: ArrayLike,
     predictions_b: ArrayLike,
     confidence_level: float = 0.95,
+    interval_method: Literal["exact", "bootstrap"] = "exact",
     n_resamples: int = 2_000,
     random_state: int | None = 0,
 ) -> dict[str, float | bool | tuple[float, float]]:
@@ -40,6 +43,8 @@ def compare_two_models(
         raise ValueError("confidence_level must be between 0 and 1")
     if n_resamples <= 0:
         raise ValueError("n_resamples must be positive")
+    if interval_method not in {"exact", "bootstrap"}:
+        raise ValueError("interval_method must be 'exact' or 'bootstrap'")
 
     correct_a = (a == y).astype(int)
     correct_b = (b == y).astype(int)
@@ -61,9 +66,9 @@ def compare_two_models(
     discordant = a_only + b_only
     use_exact = discordant < 25
     p_value = float(mcnemar(table, exact=use_exact, correction=not use_exact).pvalue)
-    if discordant == 0:
+    if interval_method == "exact" and discordant == 0:
         interval = (0.0, 0.0)
-    elif use_exact:
+    elif interval_method == "exact":
         lower_q, upper_q = clopper_pearson_interval(
             b_only,
             discordant,
