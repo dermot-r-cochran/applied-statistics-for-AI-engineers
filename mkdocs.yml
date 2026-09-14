@@ -1,0 +1,94 @@
+site_name: Trustworthy AI Evaluation
+site_description: Book site for trustworthy AI evaluation, statistics, and decision-making.
+site_url: https://example.com/trustworthy-ai-evaluation/
+repo_url: https://github.com/dermot-r-cochran/applied-statistics-for-AI-engineers
+strict: true
+use_directory_urls: true
+
+theme:
+  name: material
+  features:
+    - navigation.tabs
+    - navigation.sections
+    - navigation.expand
+    - content.code.copy
+    - toc.follow
+  palette:
+    - scheme: default
+      primary: teal
+      accent: deep orange
+
+markdown_extensions:
+  - admonition
+  - attr_list
+  - def_list
+  - footnotes
+  - md_in_html
+  - tables
+  - toc:
+      permalink: true
+  - pymdownx.arithmatex:
+      generic: true
+  - pymdownx.details
+  - pymdownx.highlight
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - pymdownx.superfences
+  - pymdownx.tasklist:
+      custom_checkbox: true
+
+extra_javascript:
+  - https://unpkg.com/mathjax@3/es5/tex-mml-chtml.js
+
+nav:
+  - Home: index.md
+  - Part I: What Are We Measuring?:
+      - Overview: part-i-what-are-we-measuring/index.md
+      - '1. The Metric Is Not the System': part-i-what-are-we-measuring/01-the-metric-is-not-the-system.md
+      - '2. From Concepts to Measurements': part-i-what-are-we-measuring/02-from-concepts-to-measurements.md
+      - '3. Ground Truth Is a Measurement Too': part-i-what-are-we-measuring/03-ground-truth-is-a-measurement-too.md
+  - Part II: Samples, Test Sets, and Generalization:
+      - Overview: part-ii-samples-test-sets-and-generalization/index.md
+      - '4. The Shrinking Pond': part-ii-samples-test-sets-and-generalization/04-the-shrinking-pond.md
+      - '5. Is the Pond Representative?': part-ii-samples-test-sets-and-generalization/05-is-the-pond-representative.md
+      - '6. The Tadpole Problem': part-ii-samples-test-sets-and-generalization/06-the-tadpole-problem.md
+      - '7. Test-Set Governance': part-ii-samples-test-sets-and-generalization/07-test-set-governance.md
+  - Part III: Choosing and Interpreting Metrics:
+      - Overview: part-iii-choosing-and-interpreting-metrics/index.md
+      - '8. Accuracy and Its Discontents': part-iii-choosing-and-interpreting-metrics/08-accuracy-and-its-discontents.md
+      - '9. Precision, Recall, and the Cost of Being Wrong': part-iii-choosing-and-interpreting-metrics/09-precision-recall-and-the-cost-of-being-wrong.md
+      - '10. Aggregation Can Hide the Story': part-iii-choosing-and-interpreting-metrics/10-aggregation-can-hide-the-story.md
+      - '11. Similarity Is Not Correctness': part-iii-choosing-and-interpreting-metrics/11-similarity-is-not-correctness.md
+  - Part IV: Confidence Across AI Pipelines:
+      - Overview: part-iv-confidence-across-ai-pipelines/index.md
+      - '12. What Does Confidence Mean?': part-iv-confidence-across-ai-pipelines/12-what-does-confidence-mean.md
+      - '13. Calibration': part-iv-confidence-across-ai-pipelines/13-calibration.md
+      - '14. Combining Confidence Scores': part-iv-confidence-across-ai-pipelines/14-combining-confidence-scores.md
+      - '15. System-Level Trust Is Not the Average of Component Confidence': part-iv-confidence-across-ai-pipelines/15-system-level-trust-is-not-the-average-of-component-confidence.md
+  - Part V: Experimental Design:
+      - Overview: part-v-experimental-design/index.md
+      - '16. Start with the Decision': part-v-experimental-design/16-start-with-the-decision.md
+      - '17. Fair Model Comparisons': part-v-experimental-design/17-fair-model-comparisons.md
+      - '18. Effect Size Before Significance': part-v-experimental-design/18-effect-size-before-significance.md
+      - '19. Power and Sample-Size Planning': part-v-experimental-design/19-power-and-sample-size-planning.md
+      - '20. Bootstrap, Permutation, and Simulation': part-v-experimental-design/20-bootstrap-permutation-and-simulation.md
+  - Part VI: From Evidence to Decisions:
+      - Overview: part-vi-from-evidence-to-decisions/index.md
+      - '21. Release Readiness Under Uncertainty': part-vi-from-evidence-to-decisions/21-release-readiness-under-uncertainty.md
+      - '22. Monitoring Is an Ongoing Experiment': part-vi-from-evidence-to-decisions/22-monitoring-is-an-ongoing-experiment.md
+      - '23. Communicating What the Evidence Does Not Prove': part-vi-from-evidence-to-decisions/23-communicating-what-the-evidence-does-not-prove.md
+      - '24. Building an AI Evaluation Strategy': part-vi-from-evidence-to-decisions/24-building-an-ai-evaluation-strategy.md
+  - Appendices and Reference Material:
+      - Glossary: appendices/glossary.md
+      - Metric-selection guide: appendices/metric-selection-guide.md
+      - Confidence-interval selection guide: appendices/confidence-interval-selection-guide.md
+      - AI evaluation review checklist: appendices/ai-evaluation-review-checklist.md
+      - Experiment protocol template: appendices/experiment-protocol-template.md
+      - Test-set manifest template: appendices/test-set-manifest-template.md
+      - Metric definition card: appendices/metric-definition-card.md
+      - Confidence-related reference material: appendices/confidence-reference.md
+      - Evaluation comparability checklist: appendices/evaluation-comparability-checklist.md
+      - Evaluation dataset review checklist: appendices/evaluation-dataset-review-checklist.md
+      - Metric-comparison report: appendices/metric-comparison-report.md
+      - Minimum meaningful effect statement: appendices/minimum-meaningful-effect-statement.md
+      - Sample-size planning worksheet: appendices/sample-size-planning-worksheet.md
