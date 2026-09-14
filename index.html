@@ -1,61 +1,830 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Applied Statistics for AI Engineers</title>
-  <link rel="stylesheet" href="assets/style.css">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Applied Statistics for AI Engineers</title>
+<meta name="description" content="Applied statistical concepts for evaluating AI systems: sampling variation, confidence intervals, paired comparison, bootstrap, aggregation, clustering, test-set governance, calibration and drift. Fourteen lessons with a live calculator each, in one file.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Crect width='16' height='16' rx='3' fill='%23245'/%3E%3Ctext x='8' y='12' font-size='10' text-anchor='middle' fill='%23fff' font-family='serif'%3E%CF%83%3C/text%3E%3C/svg%3E">
+<style>
+:root{--bg:#f7f6f2;--fg:#1d1f22;--mute:#5d6470;--line:#d8d5cc;--card:#fff;--accent:#1f4e79;--soft:#e9eef5;--ok:#2a7a3b;--warn:#a05a00;--bad:#9b2c2c;--code:#eef0f3}
+@media (prefers-color-scheme:dark){:root{--bg:#15171a;--fg:#e6e4dd;--mute:#a1a7b1;--line:#33373d;--card:#1d2024;--accent:#8fb6e0;--soft:#232a33;--ok:#7fcf8f;--warn:#e0a54d;--bad:#e08080;--code:#24282e}}
+*{box-sizing:border-box}
+html{font-size:17px}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:Georgia,"Times New Roman",serif;line-height:1.55}
+a{color:var(--accent)}
+header{border-bottom:1px solid var(--line);padding:.9rem 1.2rem;display:flex;flex-wrap:wrap;gap:.6rem 1.4rem;align-items:baseline}
+header h1{font-size:1.15rem;margin:0;font-weight:normal}
+header h1 a{text-decoration:none;color:var(--fg)}
+header nav a{margin-right:1rem;font-size:.92rem}
+main{max-width:46rem;margin:0 auto;padding:1.4rem 1.2rem 4rem}
+h2{font-size:1.5rem;font-weight:normal;margin:1.6rem 0 .6rem;line-height:1.25}
+h3{font-size:1.02rem;margin:1.6rem 0 .4rem;text-transform:uppercase;letter-spacing:.06em;color:var(--mute);font-family:system-ui,sans-serif;font-weight:600}
+h4{margin:1rem 0 .3rem;font-size:1.05rem}
+p{margin:.6rem 0}
+ul,ol{padding-left:1.3rem}
+li{margin:.25rem 0}
+code{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:.88em;background:var(--code);padding:.05em .3em;border-radius:3px}
+pre{background:var(--code);padding:.7rem .9rem;border-radius:5px;overflow-x:auto;font-size:.85rem;line-height:1.45}
+pre code{background:none;padding:0}
+table{border-collapse:collapse;margin:.6rem 0;font-size:.93rem;font-family:system-ui,sans-serif}
+th,td{border:1px solid var(--line);padding:.3rem .55rem;text-align:left;vertical-align:top}
+th{background:var(--soft)}
+.card{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:1rem 1.1rem;margin:1rem 0}
+.calc{font-family:system-ui,sans-serif;font-size:.93rem}
+.calc .inputs{display:grid;grid-template-columns:repeat(auto-fill,minmax(11rem,1fr));gap:.5rem .9rem;margin:.5rem 0 .8rem}
+.calc label{display:flex;flex-direction:column;gap:.15rem;font-size:.85rem;color:var(--mute)}
+.calc input{font:inherit;padding:.3rem .4rem;border:1px solid var(--line);border-radius:4px;background:var(--bg);color:var(--fg);width:100%}
+.calc .outputs{display:grid;grid-template-columns:repeat(auto-fill,minmax(12rem,1fr));gap:.4rem .9rem}
+.calc .out{border-top:2px solid var(--line);padding-top:.3rem}
+.calc .out b{display:block;font-size:1.15rem;font-weight:600}
+.calc .out span{font-size:.82rem;color:var(--mute)}
+.calc .note{margin-top:.7rem;color:var(--mute);font-size:.85rem}
+.calc .verdict{margin-top:.6rem;padding:.5rem .7rem;border-radius:5px;background:var(--soft)}
+.calc .verdict.ok{border-left:4px solid var(--ok)}.calc .verdict.warn{border-left:4px solid var(--warn)}.calc .verdict.bad{border-left:4px solid var(--bad)}
+.roadmap{list-style:none;padding:0}
+.roadmap li{display:grid;grid-template-columns:2.2rem 1fr auto;gap:.6rem;align-items:baseline;padding:.45rem 0;border-bottom:1px solid var(--line)}
+.roadmap .letter{font-family:system-ui,sans-serif;font-weight:600;color:var(--accent)}
+.roadmap .done{color:var(--ok);font-family:system-ui,sans-serif;font-size:.8rem}
+.roadmap small{display:block;color:var(--mute);font-size:.86rem}
+.parts{list-style:none;padding:0;display:flex;flex-wrap:wrap;gap:.3rem .8rem;font-family:system-ui,sans-serif;font-size:.8rem;color:var(--mute);margin:.4rem 0 1rem}
+.parts a{color:var(--mute)}
+button{font:inherit;font-family:system-ui,sans-serif;font-size:.9rem;padding:.4rem .9rem;border:1px solid var(--line);background:var(--card);color:var(--fg);border-radius:5px;cursor:pointer}
+button:hover{border-color:var(--accent)}
+button:focus-visible,input:focus-visible,a:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.reveal[hidden]{display:none}
+.pager{display:flex;justify-content:space-between;gap:1rem;margin-top:2.5rem;padding-top:1rem;border-top:1px solid var(--line);font-family:system-ui,sans-serif;font-size:.92rem}
+.mute{color:var(--mute)}
+.rule{border-left:3px solid var(--accent);padding:.2rem .8rem;margin:.6rem 0;background:var(--soft);border-radius:0 5px 5px 0}
+textarea{width:100%;min-height:4.5rem;font:inherit;font-size:.95rem;padding:.4rem .5rem;border:1px solid var(--line);border-radius:4px;background:var(--bg);color:var(--fg)}
+.session label{display:block;margin:.8rem 0 .2rem;font-family:system-ui,sans-serif;font-size:.85rem;color:var(--mute)}
+footer{border-top:1px solid var(--line);color:var(--mute);font-size:.82rem;padding:1rem 1.2rem;font-family:system-ui,sans-serif}
+.sr{position:absolute;left:-9999px}
+@media (max-width:520px){html{font-size:16px}.roadmap li{grid-template-columns:2rem 1fr}.roadmap .done{grid-column:2}}
+</style>
 </head>
 <body>
-<main>
-  <h1>Applied Statistics for AI Evaluation Engineers</h1>
-  <p>This site is a practical coaching workspace for production AI evaluation, with FRG-aligned examples and exercises.</p>
+<header>
+  <h1><a href="#/">Applied Statistics for AI Engineers</a></h1>
+  <nav aria-label="Sections"><a href="#/">Lessons</a><a href="#/case">The case</a><a href="#/rules">Rules</a><a href="#/cards">Cards</a><a href="#/glossary">Glossary</a><a href="#/session">Session note</a></nav>
+</header>
+<main id="main" tabindex="-1"></main>
+<footer>One file, no dependencies, no network. Every number on this site is synthetic and labelled as such. Text CC BY 4.0, engine MIT. <a href="https://github.com/dermot-r-cochran/applied-statistics-for-AI-engineers">Source</a>.</footer>
+<script>
+/* =====================================================================
+   WORLD DATA
+   Everything a reader meets lives here, as plain literals: the running
+   example, the reasoning rules, the fourteen lessons, the reference
+   cards and the glossary. The engine below renders them and never needs
+   editing to add a lesson. Prose uses a small markup: blank line between
+   paragraphs, `code`, **bold**, "- " for list items, "| " rows for a
+   table (first row is the header), "> " for a rule box.
+   ===================================================================== */
 
-  <section class="card">
-    <h2>Learning objective</h2>
-    <p>Distinguish real system changes from sampling variation, sampling bias, measurement error, test-set composition changes, class-distribution changes, drift, and misleading aggregation.</p>
-  </section>
+const SITE = {
+  title: "Applied Statistics for AI Engineers",
+  tagline: "Evaluation metrics and confidence intervals for people who ship AI systems.",
+  intro: `This is a course in applied statistics, not in any AI framework. It reactivates the statistics you already met and connects each idea to one recurring engineering question: **is what I am seeing a real change in the system, or something else** — sampling variation, sampling bias, measurement error, a change in the test set, a change in the class mix, drift, or an aggregation that hides the story?
 
-  <section class="card">
-    <h2>Navigation</h2>
-    <ul>
-      <li><a href="lesson-01-sampling-distributions.html">Lesson A: Sampling distributions and standard error</a></li>
-      <li><a href="session-template.html">End-of-session output generator</a></li>
-    </ul>
-  </section>
+It assumes you have met probability and statistics before and have shipped or evaluated models. Foundations are reactivated, not taught from zero; every formula is derived far enough that you could re-derive it; every assumption is stated; and every example is synthetic and says so.
 
-  <section class="card">
-    <h2>Full progression</h2>
-    <ol>
-      <li>A. Sampling distributions and standard error</li>
-      <li>B. Estimation and confidence intervals</li>
-      <li>C. Proportion and classification-metric uncertainty</li>
-      <li>D. Effect sizes and practical significance</li>
-      <li>E. Hypothesis tests and statistical power</li>
-      <li>F. Paired comparison of model versions</li>
-      <li>G. Bootstrap and permutation methods</li>
-      <li>H. Class imbalance and metric aggregation</li>
-      <li>I. Sampling bias, stratification, and weighting</li>
-      <li>J. Clustered and repeated observations</li>
-      <li>K. Test-set governance and reproducibility</li>
-      <li>L. Decision-oriented evaluation reporting</li>
-    </ol>
-  </section>
+The examples follow one fictional system throughout, described under **The case**: an AI reviewer of photographic contact sheets whose verdicts are scored against the photographer's own decisions. It was chosen because a contact sheet has exactly the structure that makes evaluation statistics hard — rows inside documents inside projects, rare positive classes, judges who disagree — and because the domain is ordinary enough that nothing in it distracts from the statistics. A second, smaller example, an AI reader of short-story drafts, appears where text similarity and disagreeing judges need it. Neither system exists.
 
-  <section class="card">
-    <h2>Core reasoning rules</h2>
-    <ul>
-      <li>Point estimate vs uncertainty</li>
-      <li>Small sample vs biased sample</li>
-      <li>Statistical vs practical significance</li>
-      <li>Row count vs effective sample size</li>
-      <li>Independent vs clustered observations</li>
-      <li>Model regression vs test-set composition change</li>
-      <li>Metric variance vs metric-definition change</li>
-      <li>Association vs causation</li>
-      <li>Exploratory analysis vs confirmatory evaluation</li>
-    </ul>
-  </section>
-</main>
+Fourteen lessons, each in the same nine parts: the engineering question, the principle, the mathematics, the assumptions, a worked synthetic example with a live calculator, the common misreading, the application to the case, one diagnostic question and one exercise. Read them in order the first time; each leans on the last. The **Session note** page builds the five-line closing note the lessons ask for.`,
+  howToRead: `Each lesson's calculator is seeded with the worked example, so the numbers in the text are the numbers on screen; change an input and the text's claim can be re-tested. Progress is kept in this browser only.`
+};
+
+const CASE = {
+  name: "Project Frog",
+  summary: `**Project Frog** is the codename of a fictional AI system that reviews a photographer's contact sheets. The name means nothing; it is a codename, the way real internal projects have codenames, and the system does not exist. Everything measured about it in these lessons is synthetic.`,
+  body: `**What the system does.** Given a contact sheet — every frame from one outing's memory card — the reviewer emits one row per frame, with these fields:
+
+| Field | Kind | Scored how |
+| \`frame\` | structural identifier | exact match against the sheet's frame numbers; a row whose frame does not exist is an *invented* row, a frame with no row is a *missed* row |
+| \`verdict\` | categorical: **Keeper**, **Near miss**, **Folder**, **Barred** | categorical correctness against the photographer's verdict |
+| \`category\` | categorical: Wildlife, Nature, Documentary, Macro, Landscape | categorical correctness |
+| \`note\` | natural-language recommendation ("crop the left third", "heal the dust spot at top right") | text similarity to the photographer's own note; judged usefulness on a 0–2 scale |
+| \`reason\` | justification for the verdict | judged support on a 0–2 scale |
+| \`evidence\` | what in the frame the reason points at (a region, an exposure fact) | evidence quality 0–2: does it actually show what the reason claims |
+| \`relations\` | links to other rows: burst sibling of, duplicate of, better than | precision and recall over the photographer's links |
+
+**Ground truth** is the photographer's own decision for every frame — which went to the published set, which to the folder, which could never be published (a recognisable person, a mating pair) — plus their notes and links. It is a measurement, not an oracle: on a subset a club judge annotates the same sheets independently, and the two disagree on a known fraction of verdicts. That fraction is measurement error, and several lessons use it.
+
+**Structure.** A row is a frame. A document is a contact sheet (one outing, typically 8–25 frames after a first cull). A project is a trip or a season (many outings). A scenario is a kind of shooting — safari, home ground, macro, an air show — with its own light, subjects and keeper rate. The dataset is a versioned reference set; the lessons use **Reference Set 1**: 500 frames from 40 outings across 6 projects, keeper rate about 16%, frozen with its ground truth on a stated date.
+
+**Metrics** that appear: exact match (frames, relations), categorical correctness (verdict, category), accuracy, precision, recall, F1 and F-beta on the Keeper and Barred classes, pass rate (a sheet *passes* if every Barred frame was caught), text similarity of notes, evidence quality, unmatched-row counts (missed and invented), and processing time per sheet.
+
+**Aggregation** happens at every level and each level asks a different question: by cell (one field of one row), by column (all verdicts), by row (the whole frame right or wrong), by verdict class, by document (the sheet passed?), by project (how did the safari go?), by scenario, and over the whole reference set. Most of the traps in this course are about moving between these levels without noticing.
+
+**Why this example.** Frames from one outing share light, subject and the photographer's mood, so rows are clustered, not independent. Keepers are rare, so accuracy flatters. Barred frames are rarer still and matter most, so class weighting is not academic. Two annotators disagree, so ground truth has error bars of its own. A new camera body changes the frames without changing the reviewer, so drift and composition change are natural. And nothing about it needs domain knowledge beyond what a hobbyist has.
+
+**The second example.** Where text is the output — the \`note\` and \`reason\` fields, and the whole of a fictional AI that reads short-story drafts and returns editorial notes — the lessons say what a similarity score does and does not measure, and how much two competent editors disagree. That example is smaller and appears only where it is needed.`
+};
+
+const RULES = [
+  ["A point estimate from its uncertainty", "0.84 is not a fact about the system; it is a fact about the system and this sample. Report the interval or the standard error with it, always."],
+  ["A smaller sample from a biased sample", "A small sample is imprecise and the interval says so. A biased sample is wrong in a direction the interval cannot see. No amount of data fixes the second."],
+  ["Statistical significance from practical significance", "A p-value says the difference is unlikely to be noise. It does not say the difference is worth anything. Decide the minimum meaningful effect before looking."],
+  ["Row count from effective sample size", "A thousand frames from six outings carry far fewer than a thousand independent pieces of evidence. The design effect says how many."],
+  ["Independent observations from clustered or repeated observations", "Rows inside a document share causes. Treat them as independent and every standard error is too small."],
+  ["Model regression from test-set composition change", "If the reference set changed between runs, the metric changed for two reasons at once. Compare on the shared rows first."],
+  ["Metric variance from metric-definition change", "A new similarity threshold or a re-adjudicated label moves the number without touching the system. Version the scorer as you version the model."],
+  ["Association from causation", "Sheets with long notes score lower. That does not mean notes cause errors; hard sheets get long notes."],
+  ["Exploratory analysis from confirmatory evaluation", "The slice you found by looking at forty slices is not evidence at the same strength as the one you named in advance."]
+];
+
+const LESSONS = [
+{ id:"A", title:"Sampling distributions and standard error",
+  question:`Verdict accuracy on Reference Set 1 was **0.84** for the last release and is **0.81** for the candidate. Both runs used 500 frames. Did the candidate get worse, or is a three-point gap what two draws from the same system look like?`,
+  principle:`A metric computed on a finite sample is a random variable. If the same system were scored on another 500 frames drawn the same way, the accuracy would differ. The distribution of the metric over such re-draws is its **sampling distribution**, and the standard deviation of that distribution is the **standard error** (SE). The standard error is the unit in which any observed difference must be measured before it means anything.`,
+  maths:`For a binary outcome per row, \`X_i ∈ {0, 1}\` (verdict right or wrong), the accuracy is the mean \`p̂ = (1/n) Σ X_i\`. If rows are independent with the same success probability \`p\`, each \`X_i\` has variance \`p(1 − p)\`, so the mean has variance \`p(1 − p)/n\` and
+
+\`SE(p̂) = √( p(1 − p) / n )\`
+
+We do not know \`p\`, so we plug in \`p̂\`. For the difference of two independent estimates the variances add:
+
+\`SE(p̂_A − p̂_B) = √( SE_A² + SE_B² )\`
+
+By the central limit theorem the sampling distribution of \`p̂\` is close to normal once \`np̂\` and \`n(1 − p̂)\` are both above about 10, so about 95% of re-draws land within \`±1.96 SE\` of the truth. The observed difference divided by its standard error, \`z = (p̂_A − p̂_B)/SE_diff\`, says how many standard errors apart the two runs are.`,
+  assumptions:`- Rows are independent, or nearly so. On contact sheets they are not (Lesson J), so this lesson's standard errors are a floor, not the truth.
+- The same success probability applies to every row, or at least the mean of the row probabilities is what we care about.
+- Ground truth and the metric definition did not change between the two runs (Lessons K and the rules).
+- The two runs are on different draws if you use the independent formula. If they scored the *same* 500 frames, the rows are paired and Lesson F applies; the independent formula then overstates the standard error.`,
+  example:`Synthetic. Release A: 420 of 500 verdicts correct, \`p̂_A = 0.84\`. Candidate B: 405 of 500, \`p̂_B = 0.81\`.
+
+\`SE_A = √(0.84 × 0.16 / 500) = 0.0164\` and \`SE_B = √(0.81 × 0.19 / 500) = 0.0175\`.
+
+The standard error of the difference is \`√(0.0164² + 0.0175²) = 0.0240\`. The observed gap of 0.03 is therefore \`z = 1.25\` standard errors — the kind of gap that appears between two draws from an unchanged system roughly one time in five. On this evidence alone the candidate has not been shown to be worse. It has not been shown to be the same either; the interval for the difference runs from about −0.017 to +0.077.`,
+  pitfall:`Reading 0.84 and 0.81 as two facts and subtracting them. A number without its standard error is a coordinate without a scale. The mirror-image error is treating a "not significant" result as proof of no change: with 500 rows a side, a real three-point regression is invisible more often than not (Lesson E).`,
+  application:`Report every reference-set metric with its standard error or interval, computed on the unit that is actually independent. When two runs differ, express the gap in standard errors before anyone reads it as a regression or an improvement. Where both runs scored the same frames — which they should — use the paired analysis of Lesson F instead; the answer changes.`,
+  diagnostic:{ q:`The candidate's accuracy on the 60-frame safari slice is 0.90 against the release's 0.95. A colleague says a five-point drop on safari is clearly a regression because it is bigger than the three-point drop overall. What is the flaw in the reasoning?`,
+    a:`The slice is one eighth the size, so its standard errors are about \`√8 ≈ 2.8\` times larger. \`SE\` for 0.95 on 60 rows is about 0.028 and for 0.90 about 0.039, so the five-point gap is about one standard error — weaker evidence than the overall three-point gap, not stronger. The reasoning compared point estimates across different sample sizes without scaling by their uncertainty.` },
+  exercise:`Take the last two evaluation runs you have to hand. For the headline metric, compute the standard error of each and of their difference under the independence assumption, and state the gap in standard errors. Then write one sentence on why the true standard error is probably larger than what you computed.`,
+  calc:{ inputs:[["kA","Release: correct rows",420,0,1e9,1],["nA","Release: rows",500,1,1e9,1],["kB","Candidate: correct rows",405,0,1e9,1],["nB","Candidate: rows",500,1,1e9,1]],
+    compute:(v)=>{ const pA=v.kA/v.nA, pB=v.kB/v.nB, seA=S.seProp(pA,v.nA), seB=S.seProp(pB,v.nB), sed=Math.hypot(seA,seB); const d=pA-pB;
+      return {pA,pB,seA,seB,sed,z:d/sed,lo:d-1.96*sed,hi:d+1.96*sed}; },
+    outputs:[["pA","p̂ release",3],["pB","p̂ candidate",3],["seA","SE release",4],["seB","SE candidate",4],["sed","SE of difference",4],["z","gap in standard errors",2],["lo","difference, 95% low",3],["hi","difference, 95% high",3]],
+    expect:{seA:0.0164,seB:0.0175,sed:0.0240,z:1.25},
+    note:"Independent-draws formula. If both runs scored the same rows, Lesson F's paired calculator is the right one." } },
+
+{ id:"B", title:"Estimation and confidence intervals",
+  question:`A single contact sheet of 10 frames came back with 9 verdicts right. Someone wants to write "90% accurate" on the sheet's report. What range of true accuracies is consistent with 9 of 10, and which interval formula should produce it?`,
+  principle:`A **confidence interval** is the output of a procedure that, over repeated samples, captures the true value a stated fraction of the time. The interval is a property of the procedure, not of this one sample: a 95% interval does not have a 95% chance of containing the truth; the procedure has a 95% success rate. Different procedures with the same nominal level can behave very differently at small \`n\` or near 0% and 100%, which is exactly where AI evaluation lives — rare classes, small slices, high accuracies.`,
+  maths:`**Wald (normal approximation):** \`p̂ ± z √(p̂(1 − p̂)/n)\`. Simple, and wrong where it matters: at \`p̂ = 1\` its width is zero, and it can run past 1.
+
+**Wilson:** invert the test instead of plugging in. Solve \`|p̂ − p| = z √(p(1 − p)/n)\` for \`p\`, which gives
+
+\`centre = (p̂ + z²/2n) / (1 + z²/n)\`, \`half-width = z √( p̂(1 − p̂)/n + z²/4n² ) / (1 + z²/n)\`
+
+The centre is pulled toward 0.5 by a pseudo-count of \`z²/2 ≈ 2\` observations, which is why it behaves at the edges.
+
+**Clopper–Pearson (exact):** the interval of \`p\` values for which the observed \`k\` is not in a 2.5% tail of the Binomial(\`n\`, \`p\`) distribution. Guaranteed at least 95% coverage, at the cost of being wider than necessary.
+
+**Bootstrap** (Lesson G) resamples the rows; **posterior intervals** put a prior on \`p\` (Beta(1, 1) gives an interval close to Wilson's). All of them widen as \`n\` shrinks; none of them can say anything about bias.`,
+  assumptions:`- Independent rows with a common \`p\` — the binomial model. Clustering (Lesson J) breaks it and widens every interval.
+- The level (95%) is chosen before the data are seen.
+- The interval speaks about the population the sample was drawn from. If the 10 frames are one macro outing, the interval is about macro outings, not about the reviewer in general.`,
+  example:`Synthetic. 9 of 10 verdicts correct.
+
+| Method | Low | High |
+| Wald | 0.714 | 1.086 |
+| Wilson | 0.596 | 0.982 |
+| Clopper–Pearson | 0.555 | 0.997 |
+
+The Wald interval is nonsense above 1 and too narrow below. Wilson and the exact interval agree that anything from about 0.56 to 0.98 is consistent with the data — the sheet has told us the reviewer is probably better than a coin, and little else. For contrast, 405 of 500 (Lesson A's candidate) gives Wilson 0.773–0.842; the three methods agree to two decimals once \`n\` is large and \`p̂\` is away from the edges.`,
+  pitfall:`Adjusting or inflating a small-sample accuracy because "the sample is small". The point estimate is what it is; the smallness belongs in the interval, the sample-size disclosure and the composition note. The second pitfall is the Wald interval at high accuracy: a 48-of-50 slice reported as "0.96 ± 0.05" (0.906–1.014) is a formula failing, not a measurement.`,
+  application:`Use Wilson by default for every proportion the reviewer is scored on — accuracy, pass rate, per-class recall — and Clopper–Pearson when a stakeholder needs a guarantee or when \`k\` is 0 or \`n\`. Print the interval on every per-sheet and per-slice report, and print \`n\` beside it. Never print a proportion from fewer than about 10 rows without both.`,
+  diagnostic:{ q:`On a 25-frame sheet the reviewer caught 0 of 0 Barred frames — there were none. The report prints "Barred recall: n/a". A colleague suggests printing 100% with a Wilson interval instead. What is wrong with each choice, and what should the report say?`,
+    a:`"n/a" throws away the information that the sheet had no Barred frames, which matters for aggregation. "100%" claims a measurement that was never made — with \`n = 0\` every interval is 0 to 1 and Wilson is undefined. The report should say the class was absent on this sheet (\`n = 0\`) and exclude the sheet from the Barred-recall aggregate while counting it toward the sheet-level pass rate.` },
+  exercise:`For the smallest slice in your last evaluation report, compute Wald, Wilson and Clopper–Pearson intervals by hand or with the calculator. Note where they disagree, and rewrite the slice's line in the report so that it carries \`n\` and a Wilson interval.`,
+  calc:{ inputs:[["k","Correct rows",9,0,1e9,1],["n","Rows",10,1,1e9,1],["level","Confidence level (%)",95,50,99.9,0.1]],
+    compute:(v)=>{ const z=S.zq(1-(1-v.level/100)/2); const w=S.wald(v.k,v.n,z), wi=S.wilson(v.k,v.n,z), cp=S.clopper(v.k,v.n,1-v.level/100);
+      return {p:v.k/v.n,waldLo:w[0],waldHi:w[1],wilsonLo:wi[0],wilsonHi:wi[1],cpLo:cp[0],cpHi:cp[1]}; },
+    outputs:[["p","p̂",3],["waldLo","Wald low",3],["waldHi","Wald high",3],["wilsonLo","Wilson low",3],["wilsonHi","Wilson high",3],["cpLo","Exact low",3],["cpHi","Exact high",3]],
+    expect:{waldLo:0.714,waldHi:1.086,wilsonLo:0.596,wilsonHi:0.982,cpLo:0.555,cpHi:0.997},
+    note:"Try 48 of 50, and 0 of 12." } },
+
+{ id:"C", title:"Proportion and classification-metric uncertainty",
+  question:`Keepers are about 16% of frames. The reviewer's verdict accuracy on Reference Set 1 is 0.916, which sounds fine, but the photographer says it misses keepers. What do precision, recall and F1 on the Keeper class say, how uncertain are they, and why is their uncertainty not the same as accuracy's?`,
+  principle:`Accuracy is a proportion over all rows, so Lesson B's intervals apply directly. Precision and recall are proportions over **subsets whose sizes are themselves random** — the rows the system flagged, the rows that are truly positive — and F1 is a nonlinear function of both. Their sampling distributions are not binomial, their denominators are small when the class is rare, and the analytic standard errors are approximations. The bootstrap gives honest intervals for all of them with one method.`,
+  maths:`With true positives \`TP\`, false positives \`FP\` and false negatives \`FN\` on the positive class:
+
+\`precision = TP/(TP + FP)\`, \`recall = TP/(TP + FN)\`, \`F1 = 2PR/(P + R) = 2TP/(2TP + FP + FN)\`
+
+\`F_β = (1 + β²) P R / (β² P + R)\` weights recall \`β\` times as much as precision; \`β = 2\` for the Barred class, where a miss costs more than a false alarm.
+
+Treating the denominator as fixed, \`SE(recall) ≈ √(R(1 − R)/(TP + FN))\` — a binomial on the positive rows only, so with 80 keepers the standard error is roughly \`√6\` times larger than accuracy's on 500 rows. For F1 there is no clean closed form; **resample the rows** (draw 500 rows with replacement from the 500, recompute F1, repeat 2,000 times) and read off the 2.5th and 97.5th percentiles.
+
+**Text similarity** (the \`note\` field) is a continuous score per row; its mean has the usual \`s/√n\` standard error, but the score's *meaning* is the problem, not its variance — see the pitfall.`,
+  assumptions:`- The positive class is defined the same way in both the system's output and the ground truth. "Keeper" must mean the same thing to the reviewer and the photographer.
+- Rows are exchangeable for the bootstrap: resampling rows assumes rows are the independent unit. If documents are the unit, resample documents (Lesson J).
+- The threshold that turns a score into a Keeper verdict is fixed. Sweep it and precision–recall moves along a curve; the curve is the object to compare, not one point on it.`,
+  example:`Synthetic, Reference Set 1, Keeper class. 80 true keepers among 500 frames. The reviewer flagged 90: \`TP = 64\`, \`FP = 26\`, \`FN = 16\`, \`TN = 394\`.
+
+Accuracy \`= (64 + 394)/500 = 0.916\`. Precision \`= 64/90 = 0.711\`. Recall \`= 64/80 = 0.800\`. \`F1 = 128/(128 + 26 + 16) = 0.753\`.
+
+A row bootstrap with 2,000 resamples (seeded, so the calculator reproduces it) gives a 95% interval for F1 of **0.673 to 0.821**, and for recall 0.704 to 0.882. Accuracy's Wilson interval is 0.889 to 0.937. The headline number is precise and irrelevant; the number the photographer cares about is imprecise and the only one worth discussing.`,
+  pitfall:`Quoting F1 to three decimals with no interval, and comparing two systems' F1 as if the second decimal were stable. With 80 positives, a difference of 0.05 in F1 is inside one interval's width. The text-similarity pitfall is separate: a note that says "crop tighter on the left" and one that says "crop tighter on the right" score nearly identically on any lexical or embedding similarity, and one of them is wrong. **Similarity is not correctness**; validate a similarity score against judged usefulness on a sample before it is allowed to stand in for it (Lesson M's calibration logic applies).`,
+  application:`Report Keeper and Barred precision, recall and F_β with bootstrap intervals, and the sheet-level pass rate with a Wilson interval. State the count of positives beside every per-class metric; a per-class number from fewer than about 30 positives is a sketch. For the \`note\` and \`reason\` fields, report judged quality (0–2) from a human sample as the primary metric and similarity only as a tracked proxy with its validated correlation stated.`,
+  diagnostic:{ q:`Two candidate releases score F1 = 0.75 and F1 = 0.79 on the Keeper class, 80 positives each, different reference-set draws. The team calls the second a clear improvement. What would you compute before agreeing, and what would make the comparison much sharper?`,
+    a:`A bootstrap interval for each F1 (each is roughly ±0.06 wide here, so they overlap heavily) or, better, a bootstrap interval for the *difference*. Sharper: score both releases on the same frames and bootstrap the paired difference (Lesson G), which removes the between-draw variation and usually narrows the interval by a large factor.` },
+  exercise:`Pick the rarest class in your evaluation. Write down TP, FP, FN, compute precision, recall, F1 and F2, then bootstrap a 95% interval for F1 with the calculator or a ten-line script. Compare the interval's width to the difference between your last two releases on that class.`,
+  calc:{ inputs:[["tp","True positives",64,0,1e7,1],["fp","False positives",26,0,1e7,1],["fn","False negatives",16,0,1e7,1],["tn","True negatives",394,0,1e7,1],["beta","β for F_β",2,0.1,10,0.1]],
+    compute:(v)=>{ const {tp,fp,fn,tn}=v, n=tp+fp+fn+tn; const P=tp/(tp+fp), R=tp/(tp+fn), F1=2*tp/(2*tp+fp+fn), b2=v.beta*v.beta, Fb=(1+b2)*P*R/(b2*P+R);
+      const boot=S.bootstrapCounts([tp,fp,fn,tn],2000,20240914,(c)=>({f1:2*c[0]/(2*c[0]+c[1]+c[2]),r:c[0]/(c[0]+c[2]),p:c[0]/(c[0]+c[1])}));
+      return {acc:(tp+tn)/n,P,R,F1,Fb,f1Lo:boot.f1[0],f1Hi:boot.f1[1],rLo:boot.r[0],rHi:boot.r[1]}; },
+    outputs:[["acc","accuracy",3],["P","precision",3],["R","recall",3],["F1","F1",3],["Fb","F_β",3],["f1Lo","F1 bootstrap 95% low",3],["f1Hi","F1 bootstrap 95% high",3],["rLo","recall bootstrap low",3],["rHi","recall bootstrap high",3]],
+    expect:{acc:0.916,P:0.711,R:0.800,F1:0.753,f1Lo:0.673,f1Hi:0.821,rLo:0.704,rHi:0.882},
+    note:"Row bootstrap, 2,000 resamples, fixed seed. Percentile interval." } },
+
+{ id:"D", title:"Effect sizes and practical significance",
+  question:`Suppose Lesson A's three-point gap were real. Is a three-point drop in verdict accuracy something to block a release over, or something nobody would notice? Who decides, and on what scale?`,
+  principle:`Statistical evidence answers "is there a difference?"; an **effect size** answers "how big?"; and **practical significance** answers "does a difference that big change what we do?". The third question has no statistical answer. It has an operational one — reviewer hours, missed keepers per month, barred frames published — and it must be written down as a **minimum meaningful effect** before the data are looked at, or the data will be allowed to choose it.`,
+  maths:`For two proportions the natural effect sizes are the **absolute difference** \`p_A − p_B\` (0.03: thirty more wrong verdicts per thousand frames), the **relative difference** \`(p_A − p_B)/p_B\` (3.7% more errors relative to the candidate), and the **odds ratio** \`[p_A/(1−p_A)] / [p_B/(1−p_B)]\` (1.23). **Cohen's h** \`= 2 asin√p_A − 2 asin√p_B\` puts differences on a scale where equal values are equally detectable at equal \`n\` regardless of where \`p\` sits; 0.2 is conventionally small, and 0.03 at these accuracies is \`h = 0.079\`, very small.
+
+None of these is the effect size that matters. That one is in the units of the decision: \`(p_A − p_B) × frames per month × cost per wrong verdict\`.`,
+  assumptions:`- The cost per wrong verdict is roughly constant across rows, or the effect size is computed per class where it is not (a missed Barred frame costs more than a missed Keeper).
+- The monthly volume is known well enough for the arithmetic to mean something.
+- The minimum meaningful effect was fixed before the comparison was run and is recorded with the comparison.`,
+  example:`Synthetic, Lesson A's numbers. Absolute difference 0.030; relative difference 0.037; odds ratio 1.23; Cohen's h 0.079. Those are four ways of saying "small" on scales nobody makes decisions on.
+
+The photographer reviews about 2,000 frames a month and spends about half a minute re-checking a frame the reviewer got wrong. A real three-point drop in verdict accuracy is 60 more wrong verdicts a month, or about 30 minutes of re-checking — not nothing, but nobody's release criterion. The same three points on the Barred class, at about 20 barred frames a month, is 0.6 more barred frames a month reaching the publish queue, and one published is a serious matter. The same effect size is trivial on one class and disqualifying on another; the minimum meaningful effect must be set per class, and the Barred class's minimum is close to zero.`,
+  pitfall:`"Significant" read as "important", and its inverse: a large, decision-relevant effect dismissed because \`p > 0.05\` on a small slice. Also: reporting relative differences alone (a "20% improvement" in Barred recall from 0.30 to 0.36 is one extra catch in seventeen).`,
+  application:`Every metric the reviewer is judged on carries a written minimum meaningful effect in operational units, set per class where costs differ, and the evaluation report states the observed effect in the same units next to the interval. A release decision compares the interval to that threshold (Lesson L), never the point estimate to zero.`,
+  diagnostic:{ q:`The candidate reduces processing time per sheet from 41 s to 39 s, and with 40 sheets the paired difference is highly significant. The team lists it as an improvement in the release note. Is that wrong?`,
+    a:`Not wrong, but empty until the minimum meaningful effect for latency is stated. If sheets are processed overnight in batch, 2 s is not an improvement anyone experiences and the note should say "no meaningful change in latency". If a user waits for each sheet, it may well matter. Significance established that the change is real; it said nothing about whether it is worth a line.` },
+  exercise:`For your primary metric, write a one-paragraph minimum meaningful effect statement: the decision it supports, the operational consequence of a one-point change in each direction, and the smallest change worth acting on. Do it per class if the classes have different costs. Date it and put it beside the metric definition.`,
+  calc:{ inputs:[["pA","Release accuracy",0.84,0,1,0.001],["pB","Candidate accuracy",0.81,0,1,0.001],["vol","Rows per month",2000,1,1e9,1],["cost","Minutes per wrong row",0.5,0,1e4,0.1]],
+    compute:(v)=>{ const d=v.pA-v.pB; const oA=v.pA/(1-v.pA), oB=v.pB/(1-v.pB);
+      return {abs:d,rel:d/v.pB,orat:oA/oB,h:2*Math.asin(Math.sqrt(v.pA))-2*Math.asin(Math.sqrt(v.pB)),per1000:d*1000,rowsMonth:d*v.vol,minMonth:d*v.vol*v.cost}; },
+    outputs:[["abs","absolute difference",3],["rel","relative difference",3],["orat","odds ratio",2],["h","Cohen's h",3],["per1000","extra wrong rows per 1000",0],["rowsMonth","extra wrong rows per month",0],["minMonth","extra minutes per month",0]],
+    expect:{abs:0.030,rel:0.037,h:0.079,per1000:30,rowsMonth:60,minMonth:30},
+    note:"The last two outputs are the effect size that a decision can use." } },
+
+{ id:"E", title:"Hypothesis tests and statistical power",
+  question:`Lesson A said the three-point gap was 1.25 standard errors: "not significant". Before concluding the candidate is fine, ask the other question. If the candidate really were three points worse, how likely was this evaluation to notice? And how many frames would it take to notice reliably?`,
+  principle:`A **test** fixes a false-alarm rate α (the chance of calling a difference when there is none) and reports whether the data cross that bar. **Power** is the chance of crossing it when a difference of a stated size really exists. A non-significant result from a low-powered evaluation is not evidence of no difference; it is an evaluation that could not have found one. Power is decided by sample size, effect size and α, and it must be computed *before* the run, for the minimum meaningful effect of Lesson D.`,
+  maths:`Two-proportion z-test, independent samples, pooled under the null: \`p̄ = (k_A + k_B)/(n_A + n_B)\`, \`SE_0 = √( p̄(1 − p̄)(1/n_A + 1/n_B) )\`, \`z = (p̂_A − p̂_B)/SE_0\`, two-sided \`p = 2(1 − Φ(|z|))\`.
+
+Power for detecting a true difference \`δ\` with \`n\` per arm: the test rejects when \`|p̂_A − p̂_B| > z_{α/2} SE_0\`; under the alternative the difference has mean \`δ\` and standard error \`SE_1 = √( p_A(1−p_A)/n + p_B(1−p_B)/n )\`, so
+
+\`power ≈ 1 − Φ( (z_{α/2} SE_0 − δ)/SE_1 ) + Φ( (−z_{α/2} SE_0 − δ)/SE_1 )\`
+
+Solve for \`n\` numerically to reach a target power (0.8 by convention, higher when a miss is costly). The dependence is on \`1/n\`: halving the detectable effect quadruples the frames needed.`,
+  assumptions:`- Independent rows and independent arms. Paired designs (Lesson F) need a different, usually much smaller, \`n\`.
+- The alternative effect size is the minimum meaningful one, not the one you hope for.
+- α is fixed in advance; one primary metric is named in advance. Testing twelve metrics and forty slices at α = 0.05 finds two "significant" regressions in an unchanged system by chance (Lesson N).`,
+  example:`Synthetic, Lesson A's numbers. Pooled \`p̄ = 0.825\`, \`SE_0 = 0.0240\`, \`z = 1.25\`, \`p = 0.212\`. Not significant at 0.05.
+
+Power to detect a true three-point drop with 500 frames per arm is **0.239**: three times in four, this evaluation would have missed a regression of exactly the size observed. To reach 80% power for three points takes about **2,517 frames per arm**; for a five-point drop, about 946. The evaluation was designed to notice large regressions only, and nobody had said so.`,
+  pitfall:`"Not significant, so no regression" from an evaluation whose power for the effect that matters was never computed. And its twin: a post-hoc power calculation using the *observed* effect, which just restates the p-value in different clothes. Power is computed for the effect you needed to detect, in advance.`,
+  application:`Before a reference set is frozen, compute the power it gives for the minimum meaningful effect on each primary metric, per class. Where power is low — it will be, for Barred, at any affordable size — say so in the manifest and move the design toward pairing (Lesson F) and sequential accumulation rather than pretending the set can answer the question.`,
+  diagnostic:{ q:`Barred recall is 0.30 on 20 barred frames. A stakeholder asks for an evaluation that would detect an improvement to 0.45 with 80% power. Roughly how many barred frames does that need, and what does the answer imply about how the reference set must be built?`,
+    a:`Cohen's h for 0.30 versus 0.45 is about 0.31; with the two-arm formula, roughly 165 barred frames per arm at 80% power (try it in the calculator). At a 4% barred rate that is over 4,000 frames per arm sampled naively. The set must **oversample** barred frames deliberately — and then report other metrics with weights that undo the oversampling (Lesson I).` },
+  exercise:`For your primary metric and its minimum meaningful effect, compute the power of your current reference set with the calculator. If it is under 0.8, compute the size that reaches 0.8 and write two sentences on whether that size is affordable and what you will do if it is not.`,
+  calc:{ inputs:[["pA","Release accuracy",0.84,0.001,0.999,0.001],["pB","Candidate accuracy (alternative)",0.81,0.001,0.999,0.001],["n","Rows per arm",500,2,1e9,1],["alpha","α",0.05,0.001,0.5,0.001],["target","Target power",0.8,0.05,0.999,0.01]],
+    compute:(v)=>{ const kA=Math.round(v.pA*v.n), kB=Math.round(v.pB*v.n); const pp=(kA+kB)/(2*v.n), se0=Math.sqrt(pp*(1-pp)*2/v.n), z=(v.pA-v.pB)/se0;
+      return {z,p:2*(1-S.Phi(Math.abs(z))),power:S.power2p(v.pA,v.pB,v.n,v.alpha),nNeed:S.nForPower(v.pA,v.pB,v.alpha,v.target)}; },
+    outputs:[["z","z (pooled)",2],["p","two-sided p",3],["power","power at this n",3],["nNeed","n per arm for target power",0]],
+    expect:{z:1.25,p:0.212,power:0.239,nNeed:2517},
+    note:"Independent two-arm design. A paired design on the same rows needs far fewer; see Lesson F." } },
+
+{ id:"F", title:"Paired comparison of model versions",
+  question:`Both releases were, in fact, scored on the *same* 500 frames. Lesson A treated them as two independent draws and found nothing. Does the shared design change the answer?`,
+  principle:`When two systems are scored on the same rows, the row-to-row variation — hard sheets, easy sheets — is shared, and it cancels in the comparison. The evidence about the *difference* lives entirely in the rows where the two systems **disagree**. A paired analysis uses only those rows and is far more sensitive than the independent comparison, which lets the shared variation blur the picture. Always pair when you can, and you almost always can.`,
+  maths:`Cross-tabulate the 500 rows by (A right?, B right?). Let \`b\` be the rows A got right and B wrong, \`c\` the rows B got right and A wrong; the rows where both were right or both wrong say nothing about the difference. Under the null of no difference, each discordant row is equally likely to fall either way, so \`b ~ Binomial(b + c, ½)\`.
+
+**McNemar's test:** \`χ² = (b − c)²/(b + c)\` on one degree of freedom; the two-sided \`p\` is \`2(1 − Φ(√χ²))\`. For small \`b + c\` (under about 25) use the exact binomial tail instead.
+
+**The difference and its standard error:** \`d = (b − c)/n\`, \`SE(d) = √( (b + c) − (b − c)²/n ) / n\`, interval \`d ± 1.96 SE(d)\`. Compare that standard error with the independent one from Lesson A: the paired one is smaller whenever \`b + c\` is small relative to what independence would predict, which is whenever the two systems mostly agree — that is, always.`,
+  assumptions:`- Identical rows, identical ground truth, identical scoring code and thresholds for both systems. Any of these differing turns a paired comparison into a confounded one (Lesson K).
+- Discordant rows are independent of one another. Within a sheet they are not; Lesson J's cluster correction applies to the paired difference too.
+- Both systems were run under the same conditions (same document preprocessing, same time limit).`,
+  example:`Synthetic, the same 500 frames. Both right on 385, both wrong on 60; **A right and B wrong on 35** (\`b\`), **B right and A wrong on 20** (\`c\`). The totals are still 420 and 405, and the difference is still 0.030.
+
+McNemar: \`χ² = (35 − 20)²/55 = 4.09\`, \`p = 0.043\`; exact binomial on 35 of 55, \`p = 0.058\`. The standard error of the difference is \`√(55 − 225/500)/500 = 0.0148\`, against 0.0240 under independence, and the 95% interval runs from **0.001 to 0.059**. The same three points that Lesson A could not distinguish from noise are, in the paired analysis, borderline evidence of a real regression — and the interval says the regression could be anywhere from nothing to six points, which is the honest state of knowledge.`,
+  pitfall:`Running independent-sample tests on paired data, which throws away most of the evidence, and then concluding "no difference" (Lessons A and E). The reverse error: pairing on rows that were *not* actually the same — a re-adjudicated ground truth between runs breaks the pairing silently.`,
+  application:`Every comparison between two releases is run on the same frozen reference set with the same scorer, reported as the paired difference with McNemar's test and the paired interval, and the count of discordant rows is printed. The discordant rows themselves are the review queue: 55 frames is an afternoon's reading, and it tells you *what kind* of frame the candidate lost, which no p-value will.`,
+  diagnostic:{ q:`Two releases agree on 490 of 500 rows; A wins 8 of the 10 discordant rows. McNemar's χ² is 3.6, p ≈ 0.06; the exact test gives p ≈ 0.11. Which p-value should be reported, and what is the more useful thing to report than either?`,
+    a:`The exact one: with 10 discordant rows the χ² approximation is unreliable. More useful than either is the list of the 10 rows. With so few discordances, reading them decides more than testing them — and it may reveal that the 2 rows B won are Barred frames, which no aggregate would show.` },
+  exercise:`Re-run your last release comparison as a paired analysis: build the 2×2 agreement table, compute \`b\`, \`c\`, McNemar's statistic and the paired interval. Report how much narrower the interval is than the independent one, and read the discordant rows.`,
+  calc:{ inputs:[["b","A right, B wrong (b)",35,0,1e7,1],["c","B right, A wrong (c)",20,0,1e7,1],["n","Rows scored by both",500,1,1e9,1]],
+    compute:(v)=>{ const {b,c,n}=v, m=b+c; const chi=m?(b-c)*(b-c)/m:0; const d=(b-c)/n; const se=Math.sqrt(Math.max(0,m-(b-c)*(b-c)/n))/n;
+      return {chi,p:m?2*(1-S.Phi(Math.sqrt(chi))):1,pExact:S.binomTwoSided(Math.max(b,c),m),d,se,lo:d-1.96*se,hi:d+1.96*se,discordant:m}; },
+    outputs:[["discordant","discordant rows",0],["chi","McNemar χ²",2],["p","p (χ² approx.)",3],["pExact","p (exact binomial)",3],["d","paired difference",3],["se","SE of paired difference",4],["lo","95% low",3],["hi","95% high",3]],
+    expect:{chi:4.09,p:0.043,pExact:0.058,d:0.030,se:0.0148,lo:0.001,hi:0.059},
+    note:"Use the exact p when b + c is under about 25." } },
+
+{ id:"G", title:"Bootstrap and permutation methods",
+  question:`The sheet-level pass rate — did the reviewer catch every Barred frame on the sheet — is the metric the photographer trusts most. It is a proportion of sheets, there are 40 of them, and the two releases differ on it. No formula in Lessons A to F was derived for it. What now?`,
+  principle:`When the metric is awkward — a ratio, a maximum, an F-score, a pass rate over documents — or the sampling unit is not a row, stop deriving and **resample**. The **bootstrap** re-draws the data with replacement from itself, recomputes the metric each time, and uses the spread of those recomputations as the sampling distribution. A **permutation test** asks a different question: if the labels "A" and "B" were meaningless, how often would a reshuffle produce a difference this large? Both are exact in spirit, need no formula, and inherit their honesty from one decision: **what unit gets resampled**.`,
+  maths:`**Paired bootstrap for a difference over units.** For units \`i = 1..m\` (sheets) with paired outcomes \`(a_i, b_i)\`, compute \`d_i = a_i − b_i\`. Draw \`m\` units with replacement, compute the mean difference, repeat \`B\` times (2,000 is plenty for a 95% interval), take the 2.5th and 97.5th percentiles. Resampling *pairs* keeps the within-unit correlation that makes the paired design powerful.
+
+**Sign-flip permutation test.** Under the null that A and B are exchangeable, each \`d_i\` is as likely to be \`−d_i\`. Flip the sign of each \`d_i\` at random, compute the mean, repeat; the \`p\`-value is the fraction of flips whose \`|mean|\` reaches the observed \`|d̄|\`. With \`m = 12\` there are \`2¹² = 4,096\` flips and the test can be enumerated exactly.
+
+**Cluster bootstrap.** When rows sit inside documents, resample documents and keep every row of each drawn document. This is the row bootstrap of Lesson C done at the right level, and it is the tool that makes Lesson J's design effect unnecessary to estimate by hand.`,
+  assumptions:`- The units resampled are exchangeable: sheets are a fair sample of sheets, and one sheet's outcome does not depend on another's.
+- The number of units is not tiny. Below about 10 units the bootstrap percentile interval is too narrow; use the permutation test's exact enumeration and say the sample is small.
+- The seed is recorded, so the interval is reproducible; reproducibility controls the draw you can recreate, not the uncertainty.`,
+  example:`Synthetic. Twelve outings from Reference Set 1 with two or more Barred frames each, scored by both releases on Barred recall per outing (fraction of that outing's barred frames caught):
+
+| Outing | A | B | d = A − B |
+| 1 | 1.00 | 0.50 | 0.50 |
+| 2 | 0.67 | 0.67 | 0.00 |
+| 3 | 0.50 | 0.50 | 0.00 |
+| 4 | 1.00 | 1.00 | 0.00 |
+| 5 | 0.75 | 0.50 | 0.25 |
+| 6 | 0.50 | 0.00 | 0.50 |
+| 7 | 1.00 | 1.00 | 0.00 |
+| 8 | 0.33 | 0.67 | −0.33 |
+| 9 | 1.00 | 0.50 | 0.50 |
+| 10 | 0.50 | 0.50 | 0.00 |
+| 11 | 0.67 | 0.33 | 0.33 |
+| 12 | 1.00 | 0.75 | 0.25 |
+
+Mean difference \`d̄ = 0.167\` in A's favour. Paired bootstrap, 2,000 resamples, seeded: 95% interval **0.022 to 0.305**. Exact sign-flip permutation over all 4,096 assignments: \`p = 0.078\`.
+
+The two methods disagree at the margin, and that is the lesson of a twelve-unit sample: the bootstrap interval excludes zero, the permutation test does not reach 0.05, and neither is wrong. The permutation test is exact but coarse — five of the twelve differences are zero and contribute nothing to it — while the percentile bootstrap on twelve units runs a little narrow. The honest report is "suggestive, not established: the candidate probably catches fewer barred frames per outing, on the metric the photographer cares about, and twelve more outings with barred frames would settle it".`,
+  pitfall:`Bootstrapping rows when the question is about documents (an interval far too narrow), or bootstrapping the two systems separately and comparing the intervals (throwing the pairing away, Lesson F's mistake in new clothes). And reporting a permutation \`p\` without the effect size and interval beside it.`,
+  application:`Sheet-level metrics — pass rate, per-outing Barred recall, time per sheet — are compared with a paired bootstrap over sheets and a sign-flip permutation test, seed recorded in the report. Row-level metrics on Reference Set 1 use a cluster bootstrap over outings as the standard interval, replacing the independent-row formulas of Lessons A to C once the clustering has been shown to matter (Lesson J).`,
+  diagnostic:{ q:`A colleague bootstraps the row-level accuracy of a release by resampling 500 rows, gets an interval of ±0.032, and notes it matches Lesson A's formula. Is the match reassuring?`,
+    a:`It is expected, not reassuring: a row bootstrap and the binomial formula make the same independence assumption, so they agree with each other even when both are wrong. The check that would mean something is a *cluster* bootstrap over the 40 outings. If that interval is much wider, the rows are not independent and the agreement was two methods sharing a mistake.` },
+  exercise:`Take a document-level metric from your evaluation, paired across two releases. Compute the paired bootstrap interval and the sign-flip permutation \`p\` with the calculator (paste your per-document differences) or a short script. Then compute the row-level interval the old way and record the ratio of widths.`,
+  calc:{ inputs:[["diffs","Per-unit differences (A − B), comma-separated","0.5,0,0,0,0.25,0.5,0,-0.33,0.5,0,0.33,0.25",null,null,null],["B","Bootstrap resamples",2000,100,20000,100]],
+    compute:(v)=>{ const d=S.parseList(v.diffs); if(d.length<2) return {m:d.length,mean:NaN,lo:NaN,hi:NaN,pPerm:NaN};
+      const mean=S.mean(d); const bs=S.bootstrapMean(d,Math.round(v.B),20240914); const pp=S.signFlipP(d,20240914);
+      return {m:d.length,mean,lo:bs[0],hi:bs[1],pPerm:pp}; },
+    outputs:[["m","units",0],["mean","mean difference",3],["lo","paired bootstrap 95% low",3],["hi","paired bootstrap 95% high",3],["pPerm","sign-flip permutation p",3]],
+    expect:{m:12,mean:0.167,lo:0.022,hi:0.305,pPerm:0.078},
+    note:"Up to 16 units the permutation test enumerates every sign assignment exactly; beyond that it samples 20,000." } },
+
+{ id:"H", title:"Class imbalance and metric aggregation",
+  question:`Verdict accuracy is 0.892 and the release note calls it "near 90%". Barred frames are 2% of rows and the reviewer catches 3 in 10 of them. How does one number hide the other, and which aggregate should have been reported?`,
+  principle:`Every aggregate is a weighted sum, and the weights are a decision. **Micro** averages weight by rows, so the majority class sets the number. **Macro** averages weight classes equally, so a 2% class counts as much as a 78% one. Neither is right in general; the right weights are the costs of the errors, and when the costs are unknown, report per class. Aggregating across groups with different mixes can even reverse the ranking of two systems — **Simpson's paradox** — and it does so in evaluation more often than in textbooks, because reference sets are built from whatever was available.`,
+  maths:`With classes \`c\` having \`n_c\` true rows and \`k_c\` correctly recovered: micro-averaged recall \`= Σ k_c / Σ n_c\` (which for single-label classification equals accuracy), macro-averaged recall \`= (1/C) Σ k_c/n_c\`. Macro-F1 is the mean of per-class F1s; micro-F1 collapses to accuracy. A **cost-weighted** aggregate \`Σ w_c k_c/n_c\` with weights from the minimum-meaningful-effect statement is the only one that answers an operational question.
+
+**Simpson's paradox** in one line: if \`p_B > p_A\` in every stratum but the strata have different sizes in the two systems' evaluations, the pooled proportions can order the other way, because pooled \`p = Σ (n_s/n) p_s\` is a different weighted average for each system.`,
+  assumptions:`- Class labels are mutually exclusive and exhaustive, so micro-recall equals accuracy. Multi-label fields (\`relations\`) need per-link precision and recall instead.
+- The reference set's class mix is either the production mix, or is known and reweighted to it (Lesson I).
+- The costs behind the weights are the ones written down in Lesson D, not ones chosen after seeing which weighting flatters the release.`,
+  example:`Synthetic, Reference Set 1, per-class verdict recall:
+
+| Class | True rows | Recovered | Recall |
+| Folder | 400 | 380 | 0.950 |
+| Keeper | 60 | 45 | 0.750 |
+| Near miss | 30 | 18 | 0.600 |
+| Barred | 10 | 3 | 0.300 |
+
+Micro-recall (accuracy) \`= 446/500 = 0.892\`. Macro-recall \`= (0.95 + 0.75 + 0.60 + 0.30)/4 = 0.650\`. The class whose errors cost most contributes 2% of the first number and 25% of the second, and neither is the cost-weighted figure the decision needs.
+
+Simpson, synthetic: two releases evaluated on different mixes of safari and home-ground sheets.
+
+| | Safari | Home ground | Pooled |
+| A | 380/400 = 0.950 | 72/100 = 0.720 | 452/500 = 0.904 |
+| B | 96/100 = 0.960 | 290/400 = 0.725 | 386/500 = 0.772 |
+
+B is better on safari *and* on home ground, and worse pooled, because B was evaluated mostly on the harder scenario. The pooled number is not about the systems; it is about the mixes.`,
+  pitfall:`Headlining accuracy, or micro-F1, on an imbalanced task; choosing between micro and macro after seeing which one moved in the right direction; and comparing pooled numbers across evaluations with different mixes. A subtler one: averaging per-sheet accuracies (macro over documents) when sheets vary in length — a 5-frame sheet then weighs the same as a 25-frame one, which may or may not be what the decision wants.`,
+  application:`Reference Set 1's report leads with the per-class table and the cost-weighted aggregate, then accuracy as context. Pooled comparisons between releases are only made on identical mixes (same frozen set; Lesson K), and any cross-mix comparison is stratified first (Lesson I). The Barred row is printed first, with its \`n\`, because it is the one that decides.`,
+  diagnostic:{ q:`A candidate improves macro-F1 from 0.65 to 0.70 and lowers accuracy from 0.892 to 0.880. The team splits on whether it is better. What question resolves the split without more data?`,
+    a:`Which classes moved, and what each class's errors cost. The per-class table will show whether the macro gain came from Barred or Near miss (which cost) and whether the accuracy loss is Folder frames being sent for a second look (which is cheap). With the Lesson D cost weights, the two numbers collapse into one cost-weighted comparison and the split disappears; without them, the disagreement is about values, not statistics.` },
+  exercise:`Build the per-class recall table for your last evaluation, compute micro and macro recall, then a cost-weighted version with weights from your minimum-meaningful-effect statement. Find one stratum split (scenario, source, difficulty) and check whether the pooled ranking of your last two releases survives it.`,
+  calc:{ inputs:[["n1","Folder: true rows",400,0,1e7,1],["k1","Folder: recovered",380,0,1e7,1],["n2","Keeper: true rows",60,0,1e7,1],["k2","Keeper: recovered",45,0,1e7,1],["n3","Near miss: true rows",30,0,1e7,1],["k3","Near miss: recovered",18,0,1e7,1],["n4","Barred: true rows",10,0,1e7,1],["k4","Barred: recovered",3,0,1e7,1],["w4","Cost weight: Barred (others 1)",20,0,1e4,1]],
+    compute:(v)=>{ const ns=[v.n1,v.n2,v.n3,v.n4], ks=[v.k1,v.k2,v.k3,v.k4]; const rec=ns.map((n,i)=>n?ks[i]/n:NaN); const valid=rec.filter(x=>!isNaN(x));
+      const micro=S.sum(ks)/S.sum(ns), macro=S.mean(valid); const w=[1,1,1,v.w4]; let ws=0,wt=0; rec.forEach((r,i)=>{ if(!isNaN(r)){ws+=w[i]*r;wt+=w[i];} });
+      return {micro,macro,weighted:ws/wt,rFolder:rec[0],rKeeper:rec[1],rNear:rec[2],rBarred:rec[3]}; },
+    outputs:[["micro","micro recall (= accuracy)",3],["macro","macro recall",3],["weighted","cost-weighted recall",3],["rFolder","Folder recall",3],["rKeeper","Keeper recall",3],["rNear","Near-miss recall",3],["rBarred","Barred recall",3]],
+    expect:{micro:0.892,macro:0.650,rBarred:0.300},
+    note:"The cost weight is a decision, made before the data. Set it to 1 to see macro recall; to 0 to see how the aggregate looks when Barred is ignored." } },
+
+{ id:"I", title:"Sampling bias, stratification and weighting",
+  question:`Reference Set 1 is 70% safari frames because that is where the photographer had been. Production is closer to 40% safari, 60% home ground, and the reviewer is much better on safari. What does the set's headline accuracy estimate, and how is the production accuracy recovered from it?`,
+  principle:`A sample estimates the population it was drawn from, not the one you meant. When the reference set's mix of strata differs from the target population's, the naive metric is **biased** for the target, and no confidence interval will show it — the interval measures precision, not aim. If the strata are known and their target weights are known, **post-stratification** re-weights the per-stratum estimates to the target mix. What it cannot do is fix strata that are missing, or a bias inside a stratum.`,
+  maths:`With strata \`s\`, per-stratum accuracy \`p̂_s\` on \`n_s\` rows and target weights \`W_s\` (summing to 1):
+
+naive \`p̂ = Σ (n_s/n) p̂_s\`, weighted \`p̂_W = Σ W_s p̂_s\`
+
+\`SE(p̂_W) = √( Σ W_s² p̂_s(1 − p̂_s)/n_s )\`
+
+The weighted standard error is larger than the naive one whenever a heavily weighted stratum is thinly sampled: a stratum with 30% of the rows carrying 60% of the weight contributes \`0.6²/150\` rather than \`0.3²/150\` to the variance. The **design effect** of the weighting, \`SE_W²/SE_naive²\`, says how much precision the mismatch cost — and the cure for next time is to sample the reference set in the target proportions, or to oversample rare strata on purpose and weight them back down.`,
+  assumptions:`- Strata are known for every row, in both the reference set and production.
+- Within a stratum, the reference rows are representative of production rows in that stratum. Weighting corrects the mix between strata; it cannot correct a bias within one.
+- The target weights are current. When the photographer changes what they shoot, the weights change (Lesson N).`,
+  example:`Synthetic. Safari: 350 rows, accuracy 0.88. Home ground: 150 rows, accuracy 0.74. Naive accuracy \`= (350 × 0.88 + 150 × 0.74)/500 = 0.838\`, standard error 0.0165. Reweighted to the production mix of 40/60: \`0.4 × 0.88 + 0.6 × 0.74 = 0.796\`, standard error \`√(0.4² × 0.88 × 0.12/350 + 0.6² × 0.74 × 0.26/150) = 0.0226\`.
+
+The set said 0.84 and production will experience about 0.80. The interval was never going to reveal a four-point gap that is not variance. And the price of estimating production from a badly mixed set is a standard error 37% larger than a set drawn in the right proportions would have given.`,
+  pitfall:`Confusing a small sample with a biased one — a bigger sample from the same 70/30 mix converges precisely on the wrong number. Also: weighting to a target mix that was itself guessed, then reporting the weighted number with no note that its bias now depends on the guess.`,
+  application:`Reference Set 1's manifest records the stratum mix and the production weights it is meant to represent; every headline metric is reported both naive and post-stratified to those weights, with the weighted standard error. New reference sets are drawn in target proportions with rare strata (Barred, macro) oversampled and weighted back. Strata missing from the set — the air show, say — are listed as *not covered* rather than silently absent.`,
+  diagnostic:{ q:`Someone proposes fixing the bias by dropping 200 safari frames so the set becomes 150/150, "balanced". What does that do to bias and to precision, compared with weighting?`,
+    a:`It changes the mix to 50/50, which is still not the 40/60 target, so the bias is reduced but not removed; and it throws away 200 rows of information, so precision falls for every metric, safari-specific ones most. Weighting uses every row and hits the target mix exactly. Balancing only makes sense when the goal is equal precision per stratum, which is a different goal.` },
+  exercise:`Identify the two or three strata that matter most in your evaluation. Record the reference-set mix and your best estimate of the production mix. Compute naive and post-stratified headline metrics with their standard errors, and write one sentence on where the production-mix estimate came from and how sure you are of it.`,
+  calc:{ inputs:[["n1","Stratum 1: rows",350,1,1e7,1],["p1","Stratum 1: accuracy",0.88,0,1,0.001],["W1","Stratum 1: target weight",0.4,0,1,0.01],["n2","Stratum 2: rows",150,1,1e7,1],["p2","Stratum 2: accuracy",0.74,0,1,0.001]],
+    compute:(v)=>{ const n=v.n1+v.n2, W2=1-v.W1; const naive=(v.n1*v.p1+v.n2*v.p2)/n; const w=v.W1*v.p1+W2*v.p2;
+      const seN=Math.sqrt(naive*(1-naive)/n), seW=Math.sqrt(v.W1*v.W1*v.p1*(1-v.p1)/v.n1+W2*W2*v.p2*(1-v.p2)/v.n2);
+      return {naive,weighted:w,bias:naive-w,seNaive:seN,seW,deff:seW*seW/(seN*seN)}; },
+    outputs:[["naive","naive accuracy",3],["weighted","post-stratified accuracy",3],["bias","bias of the naive estimate",3],["seNaive","SE naive",4],["seW","SE post-stratified",4],["deff","design effect of weighting",2]],
+    expect:{naive:0.838,weighted:0.796,seNaive:0.0165,seW:0.0226},
+    note:"Two strata; the second's target weight is 1 minus the first's." } },
+
+{ id:"J", title:"Clustered and repeated observations",
+  question:`Reference Set 1 has 500 frames, and every standard error so far has used \`n = 500\`. The frames come from 40 outings, and frames from one outing share the light, the subject and the photographer's judgement that day. How many independent observations are there really?`,
+  principle:`Rows that share a cause are **clustered**, and clustered rows carry less information than independent ones because part of what each row tells you, its neighbours already told you. The **intra-cluster correlation** ρ measures how much rows within a cluster resemble each other; the **design effect** converts it into how much larger the standard error is than the independent formula claims; and the **effective sample size** is the number of independent rows that would carry the same information. A thousand rows from six projects can be worth sixty.`,
+  maths:`For clusters of average size \`m\` and intra-cluster correlation \`ρ\`,
+
+\`DEFF = 1 + (m − 1) ρ\`, \`n_eff = n / DEFF\`, \`SE_clustered = SE_independent × √DEFF\`
+
+ρ can be estimated from a one-way analysis of variance on the row outcomes grouped by cluster, or more simply: compute the per-cluster accuracies, take their variance, subtract the part that binomial sampling within clusters would produce, and divide by the total variance. With unequal cluster sizes use the mean of \`m²\` divided by the mean of \`m\` in place of \`m\`.
+
+The cluster bootstrap (Lesson G) sidesteps the formula: resample outings, keep their rows, recompute, and the width of the result already includes the design effect. When per-document metrics are what the decision needs, aggregate to the document first and treat documents as the sample, which is the honest unit and often the simplest.`,
+  assumptions:`- Clusters are the right level: outings share causes and are themselves roughly independent. If outings inside a trip also share causes (the same camera fault all week), the trip is the cluster and there are six of them.
+- ρ is roughly constant across clusters, or the estimate is an average over them.
+- The metric is a mean over rows; for per-document metrics the clustering is already inside the unit.`,
+  example:`Synthetic. 500 frames, 40 outings, \`m = 12.5\`. Per-outing accuracies vary far more than binomial noise would explain; the estimated intra-cluster correlation is \`ρ = 0.20\`.
+
+\`DEFF = 1 + 11.5 × 0.20 = 3.30\`, \`n_eff = 500/3.30 = 152\`, and the standard error of accuracy is \`0.0164 × √3.30 = 0.0164 × 1.82 = 0.0298\` — not 0.0164. Lesson A's three-point gap, already only 1.25 independent standard errors, is about 0.7 clustered ones. Lesson E's power calculation was for 500 rows; the set had the power of about 150. Everything computed on \`n = 500\` was optimistic by a factor of 1.8.`,
+  pitfall:`Counting rows. A project-level evaluation of "1,000 rows" from six projects with ρ = 0.3 has \`DEFF ≈ 50\` and an effective size of about 20; its confidence intervals, computed on rows, are off by a factor of seven. The paired comparison of Lesson F is not exempt: discordant rows cluster too, and the cluster bootstrap on the paired difference is the fix.`,
+  application:`Reference Set 1's manifest states the cluster structure (rows in outings in projects) and an estimated ρ per primary metric. All intervals are produced by a cluster bootstrap over outings, and the report prints \`n_eff\` beside \`n\`. New reference sets favour *more outings with fewer frames each* over the reverse, because for a fixed row budget the effective size grows with the number of clusters, not with rows per cluster.`,
+  diagnostic:{ q:`You can add 500 more frames to the set: either 10 new outings of 50 frames, or 50 new outings of 10 frames. With ρ = 0.2, which adds more information about the reviewer, and roughly how much?`,
+    a:`For the 10 × 50 option, \`DEFF = 1 + 49 × 0.2 = 10.8\` and \`n_eff ≈ 46\`. For 50 × 10, \`DEFF = 1 + 9 × 0.2 = 2.8\` and \`n_eff ≈ 179\`. The same 500 frames carry about four times the information when spread across more outings. Diversity of clusters, not volume of rows, is what buys precision.` },
+  exercise:`Group your evaluation rows by the document or project they came from. Compute per-cluster accuracy, estimate ρ (or just run a cluster bootstrap), compute DEFF and \`n_eff\`, and rewrite the headline interval. Then re-read your last "significant" regression in the light of the new standard error.`,
+  calc:{ inputs:[["n","Rows",500,2,1e9,1],["clusters","Clusters (documents)",40,1,1e9,1],["rho","Intra-cluster correlation ρ",0.2,0,1,0.01],["p","Accuracy",0.84,0.001,0.999,0.001]],
+    compute:(v)=>{ const m=v.n/v.clusters, deff=1+(m-1)*v.rho, se=S.seProp(v.p,v.n); return {m,deff,neff:v.n/deff,seInd:se,seClu:se*Math.sqrt(deff),factor:Math.sqrt(deff)}; },
+    outputs:[["m","rows per cluster",1],["deff","design effect",2],["neff","effective sample size",0],["seInd","SE, independent rows",4],["seClu","SE, clustered",4],["factor","SE inflation factor",2]],
+    expect:{deff:3.30,neff:152,seInd:0.0164,seClu:0.0298,factor:1.82},
+    note:"Try 1,000 rows in 6 clusters with ρ = 0.3." } },
+
+{ id:"K", title:"Test-set governance and reproducibility",
+  question:`The candidate scored 0.818 on "the reference set" and the release scored 0.84 on "the reference set". Sixty frames from a new trip were added between the two runs, and one Barred label was re-adjudicated. Is the two-point drop the candidate's, the new frames', or the label's?`,
+  principle:`A metric is a function of four things: the system, the data, the ground truth and the scorer. Change any one and the number changes, and if two changed at once the comparison is **confounded** — it cannot be attributed. Evaluation is only measurement when the other three are held fixed and versioned, which is what a reference set's **governance** is for: a frozen, named, hashed set; ground truth under change control with an adjudication log; scoring code with a version; and a manifest that says what population the set claims to represent and what it does not cover. Ground truth is itself a measurement, with its own error, and the manifest says how much.`,
+  maths:`Composition change decomposes exactly. If a set of \`n_1\` rows on which the candidate scores \`p_1\` is extended by \`n_2\` rows on which it scores \`p_2\`, the pooled score is \`(n_1 p_1 + n_2 p_2)/(n_1 + n_2)\` — the old score diluted toward the new rows' score. Report the shared-rows comparison first and the added rows separately.
+
+**Measurement error in ground truth.** If two competent annotators agree on a fraction \`κ_obs\` of verdicts, the reviewer's accuracy against one of them cannot meaningfully exceed roughly that agreement level, and a comparison between two systems on rows where annotators disagree is a comparison against noise. Cohen's κ corrects the raw agreement for chance: \`κ = (p_o − p_e)/(1 − p_e)\` with \`p_e\` the agreement expected from the marginal label frequencies.
+
+**Reproducibility** is arithmetic: same set hash, same ground-truth version, same scorer version, same seed, same number. If those match and the number differs, the system changed; if any of them differ, the comparison is not yet a comparison.`,
+  assumptions:`- The manifest is kept. Governance that lives in someone's memory is not governance.
+- Re-adjudication of ground truth is logged with a reason and applied to *both* sides of any comparison, re-running the old system if needed.
+- The scorer is deterministic, or its randomness is seeded and the seed is part of the version.`,
+  example:`Synthetic. Reference Set 1, version 1: 500 rows. The release scored 0.84 on it. Version 2 added 60 frames from an air show — a scenario the reviewer had never seen — and the candidate scored **0.85 on the shared 500** and 0.55 on the 60 new rows, pooling to \`(500 × 0.85 + 60 × 0.55)/560 = 0.818\`. Composition alone moved the number by −0.032.
+
+The "two-point regression" was a one-point *improvement* on comparable rows plus a new scenario the set had not covered before. Both facts matter; the pooled number conveyed neither. The re-adjudicated Barred label moved one row, which is 0.002 of accuracy and 10% of Barred recall — so it is noted in the Barred line and nowhere else.
+
+Second example, the story-draft reader: two editors annotate 200 draft notes as *useful* or *not*. They agree on 160, and each marks about 55% useful, so \`p_e = 0.55² + 0.45² = 0.505\` and \`κ = (0.80 − 0.505)/(1 − 0.505) = 0.60\` — "moderate to substantial", and a hard ceiling on how well any system can be shown to agree with either editor on this task. An AI reader reporting 0.85 agreement with editor 1 has exceeded what editor 2 achieves, which is a reason to check for leakage, not to celebrate.`,
+  pitfall:`"The reference set" as a name for a moving thing. Silent additions, silent label fixes, a scorer upgrade that changed a similarity threshold — each shows up as a system change. And treating ground truth as truth: a system that agrees with one annotator 95% of the time when annotators agree with each other 80% of the time has been trained on that annotator, not on the task.`,
+  application:`Reference Set 1 has a manifest (the card on the **Cards** page): version, row count, hash, cluster structure, stratum mix and target weights, scenario coverage and known gaps, annotator agreement per field, scorer version and seed, owner and change log. Every evaluation report names the manifest version. Additions create a new version, and the first comparison after any addition is a paired one on the shared rows (Lesson F).`,
+  diagnostic:{ q:`A stakeholder asks for the reference set to be "refreshed every month with recent frames so it stays representative". What does this do to release-over-release comparisons, and how can both goals be met?`,
+    a:`Every monthly comparison becomes confounded with composition change. Meet both goals with two sets: a frozen **comparison** set for release-over-release paired analysis, and a rolling **coverage** set that tracks representativeness and drift (Lesson N), with the frozen set replaced by a new frozen version on a stated cadence and both old and new systems scored on both versions at the changeover.` },
+  exercise:`Write the manifest for your current reference set from the card on the Cards page, filling every line, including the ones you cannot fill — those are the findings. Compute annotator agreement (raw and κ) on at least one field if you have two annotators, and if you do not, record that the ground truth's error is unknown.`,
+  calc:{ inputs:[["n1","Shared rows",500,1,1e9,1],["p1","Accuracy on shared rows",0.85,0,1,0.001],["n2","Added rows",60,0,1e9,1],["p2","Accuracy on added rows",0.55,0,1,0.001],["agree","Annotator agreement (raw)",0.80,0,1,0.001],["marg","Marginal rate of the positive label",0.55,0,1,0.001]],
+    compute:(v)=>{ const pooled=(v.n1*v.p1+v.n2*v.p2)/(v.n1+v.n2); const pe=v.marg*v.marg+(1-v.marg)*(1-v.marg); return {pooled,dilution:pooled-v.p1,pe,kappa:(v.agree-pe)/(1-pe)}; },
+    outputs:[["pooled","pooled accuracy after addition",3],["dilution","change due to composition alone",3],["pe","agreement expected by chance",3],["kappa","Cohen's κ",2]],
+    expect:{pooled:0.818,dilution:-0.032,pe:0.505,kappa:0.60},
+    note:"κ here assumes both annotators use the positive label at the same marginal rate." } },
+
+{ id:"L", title:"Decision-oriented evaluation reporting",
+  question:`Everything from A to K is on the table for the candidate: a paired difference of 0.03 with interval 0.001 to 0.059, a Barred recall that may have fallen, an air show it has never seen. The release meeting is in an hour and wants one page. What goes on it, and what is the decision rule?`,
+  principle:`An evaluation report exists to support a decision, and the decision has a small number of outcomes: **ship**, **hold**, **collect specific evidence**. The report's job is to put the evidence in the form that rule needs — an interval compared against a minimum meaningful effect, per class, on the frozen set, with the assumptions and the uncovered scenarios stated — and to say plainly what the evidence does *not* show. A point estimate compared to zero is not a decision rule. A lower confidence bound compared to a written threshold is.`,
+  maths:`Let \`d\` be the paired improvement (candidate minus release) with standard error \`SE\`, and δ the minimum meaningful effect. Because the decision is one-sided — we need to know the candidate is not worse — use the one-sided lower bound:
+
+\`LCB_95 = d − 1.645 SE\`
+
+Decision rule, per primary metric: ship if \`LCB_95 > −δ_harm\` (the candidate is not meaningfully worse) and, where an improvement is claimed, \`LCB_95 > δ_gain\`; hold if the upper bound is below \`−δ_harm\` (meaningfully worse); otherwise **collect evidence** — the interval straddles the threshold, and the report says what data would narrow it (Lesson E's \`n\`, or Lesson F's discordant rows).
+
+The same rule at 90% two-sided is \`d ± 1.645 SE\`; the choice of level is a risk decision, recorded in the minimum-meaningful-effect statement, not a convention borrowed from a textbook.`,
+  assumptions:`- The thresholds δ were written before the run (Lesson D).
+- The interval is the right one: paired (Lesson F), cluster-corrected (Lesson J), on the frozen set (Lesson K).
+- The primary metrics were named in advance; anything found by exploring is labelled exploratory and does not enter the rule (rule 9).`,
+  example:`Synthetic. The candidate's verdict accuracy, paired against the release on Reference Set 1 v1: \`d = −0.030\` (the release was better), \`SE = 0.0148\`, so the candidate's one-sided 95% lower bound on *improvement* is \`−0.030 − 0.024 = −0.054\` and its upper bound \`−0.006\`. With δ_harm for verdict accuracy set at 0.02 (Lesson D: 40 frames a month), the interval lies entirely below zero and mostly below −0.02: **hold**, with the 55 discordant rows attached for reading.
+
+Had the sign been the other way — an improvement of 0.030 with the same standard error — the lower bound would be \`0.030 − 0.024 = 0.006\`: above zero, so the improvement is probably real, but below a δ_gain of 0.01, so it has not been shown to be *meaningful*. The honest line is "probably improved, not yet shown to be worth the change; 1,200 more paired frames would settle it". That is a **collect evidence** verdict, and it is the most common one.`,
+  pitfall:`The one-page report that leads with accuracy to three decimals, no interval, no \`n\`, no per-class line, and the word "significant" doing the work of a decision. And the opposite failure: a report so hedged that it makes no recommendation. The rule makes the recommendation; the report's hedging is where the assumptions live.`,
+  application:`The report template is on the Cards page. One page: the decision and the rule; per primary metric, the paired difference, its cluster-corrected interval, δ, and the verdict (ship / hold / collect); the per-class table with Barred first; scenario coverage and gaps; manifest version, scorer version, seed; what would change the verdict. The last line is the **session note** of these lessons: principle, application, assumption to check, one task, one line for the interpretation guide.`,
+  diagnostic:{ q:`The report says "accuracy 0.83 (95% CI 0.80–0.86), target 0.85: target not met". A stakeholder replies that 0.85 is inside the interval so the target might be met, and asks to ship. Who is right?`,
+    a:`Both are reading the interval as if it were the rule. The rule for "target met" should be a lower bound above the target; 0.80 is not, so the target has not been *shown* to be met. Nor has it been shown to be missed. The right verdict is collect evidence: the interval straddles the target, and the report should say how many more paired frames would resolve it — and whether the target was a δ set in advance or a round number.` },
+  exercise:`Rewrite your last release report on one page using the card. Apply the rule to each primary metric and write the verdict word. Where the verdict is "collect evidence", state exactly what evidence and how much.`,
+  calc:{ inputs:[["d","Paired improvement (candidate − release)",0.03,-1,1,0.001],["se","Standard error of d",0.0148,0.0001,1,0.0001],["dHarm","δ: meaningful harm",0.02,0,1,0.001],["dGain","δ: meaningful gain",0.01,0,1,0.001]],
+    compute:(v)=>{ const lcb=v.d-1.645*v.se, ucb=v.d+1.645*v.se; let verdict, cls;
+      if(ucb< -v.dHarm){verdict="HOLD: meaningfully worse (upper bound below −δ harm).";cls="bad";}
+      else if(lcb> v.dGain){verdict="SHIP: meaningful improvement shown (lower bound above δ gain).";cls="ok";}
+      else if(lcb> -v.dHarm && v.d<=v.dGain && lcb<=v.dGain && ucb>=0 && lcb>=0){verdict="SHIP-AS-NEUTRAL: probably improved, improvement not shown to be meaningful.";cls="warn";}
+      else if(lcb> -v.dHarm){verdict="SHIP-AS-NEUTRAL or COLLECT: not meaningfully worse; improvement unproven.";cls="warn";}
+      else {verdict="COLLECT EVIDENCE: interval straddles the harm threshold.";cls="warn";}
+      return {lcb,ucb,verdict,cls}; },
+    outputs:[["lcb","one-sided 95% lower bound",3],["ucb","one-sided 95% upper bound",3]],
+    expect:{lcb:0.006,ucb:0.054},
+    verdictKey:"verdict",
+    note:"Enter d = −0.03 for the worked example's actual sign." } },
+
+{ id:"M", title:"Confidence, calibration and combining scores",
+  question:`Beside every verdict the reviewer emits a confidence, and the photographer wants to auto-accept verdicts above 0.9 without looking. Does 0.9 mean nine in ten are right? And when the reviewer's four components each emit a score, is the product, the mean or the minimum the confidence of the whole?`,
+  principle:`A score is a **probability** only if, among rows given that score, the stated fraction turn out right; that property is **calibration**, and it is an empirical claim to be tested on the reference set, per slice, not a property of the number being between 0 and 1. Scores from different components have different semantics — one is a softmax margin, one a retrieval similarity, one a self-reported estimate — and there is no formula for combining them that does not inherit assumptions about what each means and whether their errors are independent. **System-level trust is not the average of component confidence.** It is measured end to end, like any other metric, and expressed in the vocabulary of Lessons A to L.`,
+  maths:`Bin rows by stated confidence. In bin \`j\` with \`n_j\` rows, mean stated confidence \`c̄_j\` and observed accuracy \`o_j\`, the **expected calibration error** is
+
+\`ECE = Σ_j (n_j/n) |o_j − c̄_j|\`
+
+The **Brier score** \`(1/n) Σ (s_i − y_i)²\` rewards both calibration and sharpness; a reliability diagram plots \`o_j\` against \`c̄_j\`. Each \`o_j\` is a proportion with a Wilson interval (Lesson B) on \`n_j\` rows, so a bin of 30 rows says little.
+
+**Selective prediction.** Auto-accept above threshold \`t\`: coverage is the fraction of rows above \`t\`, and the accuracy among them is what matters. A well-calibrated score gives accuracy ≈ mean confidence in that region; the trade-off curve of accuracy against coverage is the object to choose \`t\` on.
+
+**Combining.** The reviewer has four components and each emits a number in [0, 1]:
+
+| Component | Its score | What it actually is |
+| Frame reader | 0.90 | a heuristic quality index for the decoded frame |
+| Verdict classifier | 0.90 | a claimed probability that the verdict is correct |
+| Evidence locator | 0.90 | a ranking margin for the region it chose |
+| Note writer | 0.90 | a self-check score for its own text |
+
+The shared range is real; the shared meaning is not. If two scores were independent, calibrated probabilities of independent events, their product would be the probability of both — three ifs, each testable, each usually false (the components see the same frame, and an upstream failure raises every downstream error rate). Every composition rule inherits assumptions:
+
+| Rule | Assumes | Fails when |
+| minimum | the weakest link dominates risk | one noisy component vetoes safe cases |
+| maximum | one strong signal justifies action | an upstream failure is masked by a confident downstream score |
+| mean or weighted mean | compatible semantics and stable weights | it produces a plausible number with no event behind it |
+| product | independent, calibrated probabilities | correlated failures make it far too pessimistic or optimistic |
+| learned combiner | held-out end-to-end labels | the mix drifts from the training population |
+
+Prefer keeping the vector of scores and learning a calibrated combiner on held-out rows against the **end-to-end** outcome, or converting to a small set of risk categories with a per-category measured accuracy. System-level trust is validated on the end-to-end outcome; it cannot be inferred from component scores.`,
+  assumptions:`- The calibration set is separate from anything the score was fitted on, and represents the production mix (Lesson I); calibration drifts with the mix.
+- Bins have enough rows for their intervals to be narrower than the gaps you care about.
+- Independence claims between components are tested on the reference set, not assumed from the architecture.`,
+  example:`Synthetic. Reviewer verdict confidence on Reference Set 1, five bins:
+
+| Stated confidence | Rows | Correct | Observed accuracy |
+| 0.1 | 50 | 3 | 0.060 |
+| 0.3 | 80 | 20 | 0.250 |
+| 0.5 | 120 | 62 | 0.517 |
+| 0.7 | 150 | 98 | 0.653 |
+| 0.9 | 100 | 93 | 0.930 |
+
+\`ECE = 0.036\`. The reviewer is slightly under-confident at the bottom, slightly over-confident at 0.7, and at 0.9 it is right 93 times in 100 (Wilson 0.863 to 0.966). Auto-accepting above 0.9 means auto-accepting one wrong verdict in about fourteen; whether that is acceptable is a Lesson D question, and it is a different question for a Barred frame than for a Folder one — so the calibration table must be repeated per class, where the 0.9 bin for Barred will have about two rows in it and say nothing.`,
+  pitfall:`Reading a confidence as a probability because it is between 0 and 1. Averaging four component scores into one "system confidence" and putting it in a user interface. Calibrating once, globally, on the reference set of one year and never per slice or again. Treating a small ECE as a clean bill: ECE depends on the bins chosen, lets over- and under-confidence in different bins cancel, says nothing about discrimination (a score that is 0.84 for every row is perfectly calibrated and useless), can look fine in aggregate while one class or scenario is badly off, and never asks whether the score targets the event the decision needs. And the similarity version from Lesson C: a similarity score used as a confidence for a text field without ever measuring its accuracy against judged usefulness.`,
+  application:`The manifest carries a **confidence semantics card** per score the reviewer emits (Cards page): what event it refers to, how it is produced, whether it claims to be a probability, on what population it was calibrated, and which decisions it may support. The auto-accept threshold is chosen from the accuracy–coverage curve per class, with Barred excluded from auto-accept entirely, and the calibration table is re-run on the rolling coverage set (Lesson N).`,
+  diagnostic:{ q:`A component that retrieves evidence emits a similarity score, and the classifier emits a softmax probability. An engineer multiplies them and reports the product as "confidence that the verdict is correct and supported". Name the three claims this makes and how each would be tested.`,
+    a:`(1) That each score is a calibrated probability of its own event — test each with a calibration table. (2) That the two events are independent given the frame — test whether the classifier's error rate differs between high- and low-similarity rows. (3) That "correct and supported" is the conjunction — test the product itself with a calibration table against the joint outcome. If any test fails, keep the two scores separate or learn a combiner on held-out rows.` },
+  exercise:`Build the five-bin calibration table for one score your system emits, with a Wilson interval per bin and the ECE. Do it per class for the class that matters most and record how many rows the top bin has. Then write the confidence semantics card for that score.`,
+  calc:{ inputs:[["n1","0.1 bin: rows",50,0,1e7,1],["k1","0.1 bin: correct",3,0,1e7,1],["n2","0.3 bin: rows",80,0,1e7,1],["k2","0.3 bin: correct",20,0,1e7,1],["n3","0.5 bin: rows",120,0,1e7,1],["k3","0.5 bin: correct",62,0,1e7,1],["n4","0.7 bin: rows",150,0,1e7,1],["k4","0.7 bin: correct",98,0,1e7,1],["n5","0.9 bin: rows",100,0,1e7,1],["k5","0.9 bin: correct",93,0,1e7,1]],
+    compute:(v)=>{ const cs=[0.1,0.3,0.5,0.7,0.9], ns=[v.n1,v.n2,v.n3,v.n4,v.n5], ks=[v.k1,v.k2,v.k3,v.k4,v.k5]; const n=S.sum(ns); let ece=0, brier=0;
+      ns.forEach((nj,j)=>{ if(nj){ const o=ks[j]/nj; ece+=nj/n*Math.abs(o-cs[j]); brier+=ks[j]*(cs[j]-1)**2+(nj-ks[j])*cs[j]**2; } });
+      const top=S.wilson(ks[4],ns[4]||1,1.96);
+      return {ece,brier:brier/n,o5:ns[4]?ks[4]/ns[4]:NaN,o5lo:top[0],o5hi:top[1],cover:ns[4]/n}; },
+    outputs:[["ece","expected calibration error",3],["brier","Brier score",3],["o5","accuracy in the 0.9 bin",3],["o5lo","0.9 bin Wilson low",3],["o5hi","0.9 bin Wilson high",3],["cover","coverage of auto-accept at 0.9",3]],
+    expect:{ece:0.036,o5:0.930,o5lo:0.863,o5hi:0.966},
+    note:"Bin centres are fixed at 0.1, 0.3, 0.5, 0.7, 0.9; the Brier score uses the bin centre as each row's stated score." } },
+
+{ id:"N", title:"Drift and monitoring",
+  question:`The reviewer shipped. Three months later the weekly Keeper rate it reports has fallen from 12% to 7%, and someone asks whether the reviewer has degraded. The reviewer has not changed. The photographer has a new camera, has been shooting macro all month, and has been in a mood. Which of these is drift, and what does monitoring have to establish before anyone touches the model?`,
+  principle:`Monitoring is the reference-set evaluation continued into a population that is allowed to change. Everything in Lessons A to M still applies, with one addition: a difference between this week and the baseline can come from the **system**, from the **inputs** (covariate shift: a new camera, a macro month), from the **relationship** between inputs and truth (concept drift: the photographer's taste moved), or from the **labels** arriving late and biased (only the frames that got looked at have ground truth). Monitoring's first job is to tell those apart, and its second is not to raise false alarms every week, because weekly tests at α = 0.05 will.`,
+  maths:`For a monitored proportion with baseline \`p_0\` and this week's \`k\` of \`n\`: \`z = (k/n − p_0)/√(p_0(1 − p_0)/n)\`. But 52 weekly tests at α = 0.05 raise at least one false alarm with probability \`1 − 0.95⁵² = 0.93\` in a year of an unchanged system. Options: a stricter per-check α (Bonferroni: 0.05/52 ≈ 0.001), a **sequential** method such as CUSUM that accumulates evidence across weeks, or — the engineering answer — alarms defined on the minimum meaningful effect rather than on significance, since with enough production rows everything is significant.
+
+**Decomposing a shift.** Stratify by the suspected cause (camera body, scenario) and compare within strata (Lesson I). If within-stratum rates are stable and only the mix moved, it is covariate shift and the reviewer is fine; if within-stratum rates moved, something about frames-to-verdicts changed. A labelled sample drawn at random from production, not just the frames someone chose to check, is the only thing that can distinguish concept drift from selective labelling.`,
+  assumptions:`- The baseline was measured on a population comparable to production at the time (Lesson I), and its own uncertainty is known.
+- Stratum membership is logged for production rows.
+- A random labelled sample exists, or is being collected at a stated rate; without it, monitoring sees only what was looked at.`,
+  example:`Synthetic. Baseline Keeper rate 0.12, measured well. This week: 28 keepers flagged in 400 frames, \`p̂ = 0.070\`, standard error under the baseline \`0.0162\`, \`z = −3.08\`, \`p = 0.002\`. Highly significant, and uninformative on its own: over a year of weekly checks at 0.05 the chance of at least one false alarm is 0.93, and this one may be real for the wrong reason.
+
+Stratified by scenario, macro frames were 70% of the week against 15% at baseline, and the Keeper rate within macro (0.05) and within the rest (0.13) each match their baseline strata. The drop is covariate shift: the photographer shot macro. The reviewer's calibration table on the labelled sample from the month is unchanged. Nothing about the model needs touching; what needs touching is the alarm, which should compare within strata or against a mix-adjusted baseline.`,
+  pitfall:`Retraining on an alarm. Alarming on significance with production-scale \`n\`, where a 0.2-point shift is "significant" and irrelevant. Trusting labels that only exist for frames someone chose to look at — usually the ones that looked wrong. And the quiet one: a baseline measured on the reference set, whose mix was never production's (Lesson I), so the "drift" was there on day one.`,
+  application:`The monitoring plan for the reviewer is written before release (Cards page, in the report template): which proportions are watched, per stratum, against which baseline; the minimum meaningful shift that raises an alarm; the random labelled sample rate; and the rule for when an alarm becomes a frozen-set evaluation of a retrained candidate — which then goes back to Lesson F, on the same reference set, like any other release.`,
+  diagnostic:{ q:`After the alarm, the team proposes retraining the reviewer on last month's frames "so it adapts to the new camera". What should be established first, and what evaluation does the retrained candidate face?`,
+    a:`First, that within-stratum performance actually moved on a random labelled sample — otherwise there is nothing to adapt to, and retraining on a month of macro frames will shift the reviewer toward macro and degrade it elsewhere. If it did move, the retrained candidate faces the frozen reference set in a paired comparison (Lesson F) plus a new stratum for the new camera added as a new manifest version (Lesson K), never a comparison against last month's production numbers.` },
+  exercise:`Choose one proportion you monitor. Compute its baseline standard error and the per-check α that keeps the yearly false-alarm rate under 10%. Stratify last month's value by the most likely nuisance cause and report whether the shift is in the mix or within strata. If you have no random labelled sample, write down what that means for every conclusion above.`,
+  calc:{ inputs:[["p0","Baseline rate",0.12,0.001,0.999,0.001],["n","Rows this period",400,1,1e9,1],["k","Events this period",28,0,1e9,1],["checks","Checks per year",52,1,1e4,1],["alpha","Per-check α",0.05,0.0001,0.5,0.0001]],
+    compute:(v)=>{ const p=v.k/v.n, se=Math.sqrt(v.p0*(1-v.p0)/v.n), z=(p-v.p0)/se; return {p,se,z,pval:2*(1-S.Phi(Math.abs(z))),famAlarm:1-Math.pow(1-v.alpha,v.checks),bonf:v.alpha/v.checks,mde:1.96*se}; },
+    outputs:[["p","observed rate",3],["se","SE under baseline",4],["z","z",2],["pval","two-sided p",3],["famAlarm","P(≥1 false alarm per year)",2],["bonf","per-check α for family α",4],["mde","smallest 'significant' shift",3]],
+    expect:{p:0.070,se:0.0162,z:-3.08,pval:0.002,famAlarm:0.93},
+    note:"Try 40,000 rows a week and watch the smallest significant shift become meaningless." } }
+];
+
+const CARDS = [
+  { id:"manifest", title:"Reference-set manifest", lesson:"K", lines:[
+    "Name and version; row count; content hash",
+    "Population claim: what production mix this set represents, and as of when",
+    "Structure: rows in documents in projects; clusters and estimated ρ per primary metric",
+    "Stratum mix in the set and target weights for post-stratification",
+    "Scenario coverage, and scenarios known to be absent",
+    "Class counts per verdict, with the oversampling applied and the weights that undo it",
+    "Ground truth: who annotated, guidance version, adjudication log, agreement (raw and κ) per field",
+    "Scorer version, thresholds, seed",
+    "Power at the minimum meaningful effect for each primary metric, per class",
+    "Owner, change-control rule, and the change log" ] },
+  { id:"mme", title:"Minimum meaningful effect statement", lesson:"D", lines:[
+    "Decision supported and the metric it reads",
+    "Operational consequence of a one-point change in each direction, in the decision's units",
+    "Smallest improvement worth acting on (δ gain), per class where costs differ",
+    "Smallest degradation worth blocking (δ harm), per class",
+    "Why smaller changes are not meaningful",
+    "Confidence level for the decision rule and who accepted that risk",
+    "Date written; must predate the comparison it governs" ] },
+  { id:"comparability", title:"Comparability checklist", lesson:"F", lines:[
+    "Same rows (paired) — or a stated reason and an independent-samples analysis",
+    "Same ground-truth version and adjudication policy",
+    "Same scorer version, metric definitions and thresholds",
+    "Same preprocessing and operating conditions",
+    "Same unit of inference, or a documented translation between units",
+    "Same stratum mix, or a stratified comparison",
+    "Ruling: directly comparable / comparable with stated limitations / not comparable" ] },
+  { id:"semantics", title:"Confidence semantics card", lesson:"M", lines:[
+    "Score name and the component that produces it",
+    "The event it refers to (\"this verdict is correct\", \"this passage supports the reason\")",
+    "How it is generated; its mathematical range",
+    "Whether it claims to be a probability, and the calibration evidence: population, date, ECE, per-class table",
+    "Known failure modes and dependence on other scores",
+    "Decisions it may support; decisions it must not",
+    "How it may and may not be combined with other scores" ] },
+  { id:"report", title:"One-page evaluation report", lesson:"L", lines:[
+    "The decision and the rule (lower bound against δ), stated first",
+    "Per primary metric: paired difference, cluster-corrected interval, δ, verdict word",
+    "Per-class table, Barred first, each with n and an interval",
+    "Discordant-row count and where to read them",
+    "Scenario coverage and gaps; naive and post-stratified headline",
+    "Manifest version, scorer version, seed",
+    "What would change the verdict, and how much evidence it needs",
+    "Exploratory findings, labelled as such, separate from the rule",
+    "Monitoring plan: watched proportions per stratum, alarm thresholds in δ units, labelled-sample rate",
+    "Session note: principle, application, assumption to check, one task, one line for the interpretation guide" ] },
+  { id:"review", title:"Evaluation review checklist", lesson:"L", lines:[
+    "The decision and its evidence threshold are written and predate the run",
+    "The population claim and known exclusions are documented",
+    "Metric definitions, thresholds and scorer are versioned",
+    "Ground-truth process, adjudication and annotator agreement are recorded",
+    "Representativeness per stratum has been checked and the headline is post-stratified",
+    "Clustering has been assessed and intervals are cluster-corrected",
+    "Every score used in a decision has a semantics card and calibration evidence",
+    "Every comparison has a comparability ruling",
+    "Release evidence is classified: ship / hold / collect, with what to collect",
+    "Monitoring commitments and alarm rules are defined",
+    "All examples and artifacts are synthetic and carry no proprietary content" ] }
+];
+
+const GLOSSARY = [
+  ["Standard error","The standard deviation of a metric's sampling distribution: how much the number would move between re-draws of the same size. Lesson A."],
+  ["Confidence interval","The output of a procedure that captures the true value a stated fraction of the time over repeated samples. Wilson for proportions by default. Lesson B."],
+  ["Wilson interval","A proportion interval obtained by inverting the z-test; behaves at small n and near 0 and 1, unlike the Wald interval. Lesson B."],
+  ["Bootstrap","Resampling the data with replacement to obtain the sampling distribution of any metric; honest only when the resampled unit is the independent unit. Lessons C, G."],
+  ["Permutation test","A test that reshuffles labels under the null of exchangeability and asks how often the observed statistic recurs. Lesson G."],
+  ["Effect size","How big a difference is, on a scale that a decision can use: absolute, relative, Cohen's h, or operational units. Lesson D."],
+  ["Minimum meaningful effect","The smallest change that would alter a decision, written before the data are seen. Lessons D, L."],
+  ["Power","The probability that a test detects an effect of a stated size; computed in advance for the minimum meaningful effect. Lesson E."],
+  ["Paired comparison","Two systems scored on the same rows; the evidence lives in the discordant rows. McNemar's test. Lesson F."],
+  ["Micro and macro averaging","Weighting an aggregate by rows or by classes; neither is the cost-weighted aggregate a decision needs. Lesson H."],
+  ["Simpson's paradox","A ranking that holds in every stratum and reverses when pooled, because the pooled figures weight strata differently. Lesson H."],
+  ["Post-stratification","Reweighting per-stratum estimates to a target population mix; corrects mix, not within-stratum bias. Lesson I."],
+  ["Intra-cluster correlation","How much rows within a cluster resemble one another; drives the design effect. Lesson J."],
+  ["Design effect","The factor by which clustering (or weighting) inflates the variance relative to independent sampling; n over DEFF is the effective sample size. Lessons I, J."],
+  ["Effective sample size","The number of independent rows carrying the same information as the clustered sample. Lesson J."],
+  ["Composition change","A change in the reference set's rows between two runs, which confounds any comparison across it. Lesson K."],
+  ["Cohen's κ","Agreement between annotators corrected for chance; a ceiling on measurable system agreement with either. Lesson K."],
+  ["Calibration","Among rows given confidence c, a fraction c are correct. Tested with a binned table; summarised by ECE. Lesson M."],
+  ["Selective prediction","Acting automatically only above a confidence threshold; judged by the accuracy–coverage curve. Lesson M."],
+  ["Covariate shift","The input mix changed; within-stratum behaviour did not. Lesson N."],
+  ["Concept drift","The relationship between inputs and ground truth changed. Lesson N."],
+  ["Unit of inference","The level a conclusion is about: row, document, project, or period. Intervals must be computed at that level. Lessons G, J."]
+];
+
+const SESSION_FIELDS = [
+  ["principle","Core principle","One sentence: the statistical idea this session turned on."],
+  ["application","Application to the case","Where it bites in the evaluation you are actually running."],
+  ["assumption","Assumption to check","The one assumption you leaned on that you have not verified."],
+  ["task","One practice task","Something to do before the next session, with a number in it."],
+  ["guide","Suggested note for the interpretation guide","One line your team's guide should carry from now on."]
+];
+
+/* =====================================================================
+   ENGINE
+   Pure section first: statistics, formatting, markup. Then the page.
+   The check loads this script without a document and reads BOOK.
+   ===================================================================== */
+
+const S = (() => {
+  const erf = (x) => { // Abramowitz–Stegun 7.1.26, |error| < 1.5e-7
+    const s = x < 0 ? -1 : 1; x = Math.abs(x); const t = 1/(1+0.3275911*x);
+    const y = 1-(((((1.061405429*t-1.453152027)*t)+1.421413741)*t-0.284496736)*t+0.254829592)*t*Math.exp(-x*x);
+    return s*y; };
+  const Phi = (z) => 0.5*(1+erf(z/Math.SQRT2));
+  const zq = (p) => { let lo=-10, hi=10; for(let i=0;i<100;i++){ const m=(lo+hi)/2; if(Phi(m)<p) lo=m; else hi=m; } return (lo+hi)/2; };
+  const seProp = (p,n) => Math.sqrt(p*(1-p)/n);
+  const wald = (k,n,z) => { const p=k/n, h=z*seProp(p,n); return [p-h,p+h]; };
+  const wilson = (k,n,z) => { const p=k/n, d=1+z*z/n, c=(p+z*z/(2*n))/d, h=z*Math.sqrt(p*(1-p)/n+z*z/(4*n*n))/d; return [c-h,c+h]; };
+  const logChoose = (n,k) => { let s=0; for(let i=1;i<=k;i++) s+=Math.log(n-k+i)-Math.log(i); return s; };
+  const binomCdf = (k,n,p) => { if(p<=0) return 1; if(p>=1) return k>=n?1:0; let s=0; for(let i=0;i<=k;i++) s+=Math.exp(logChoose(n,i)+i*Math.log(p)+(n-i)*Math.log(1-p)); return Math.min(1,s); };
+  const clopper = (k,n,a) => {
+    const solve = (f) => { let lo=0, hi=1; for(let i=0;i<60;i++){ const m=(lo+hi)/2; if(f(m)) lo=m; else hi=m; } return (lo+hi)/2; };
+    const L = k===0 ? 0 : solve(p => 1-binomCdf(k-1,n,p) < a/2);
+    const U = k===n ? 1 : solve(p => binomCdf(k,n,p) > a/2);
+    return [L,U]; };
+  const binomTwoSided = (k,m) => { if(!m) return 1; const tail=1-binomCdf(k-1,m,0.5); return Math.min(1,2*tail); };
+  const power2p = (p1,p2,n,alpha) => { const pb=(p1+p2)/2, se0=Math.sqrt(2*pb*(1-pb)/n), se1=Math.sqrt(p1*(1-p1)/n+p2*(1-p2)/n), za=zq(1-alpha/2), d=Math.abs(p1-p2);
+    return 1-Phi((za*se0-d)/se1)+Phi((-za*se0-d)/se1); };
+  const nForPower = (p1,p2,alpha,target) => { if(Math.abs(p1-p2)<1e-9) return Infinity; let lo=2, hi=2; while(power2p(p1,p2,hi,alpha)<target){ hi*=2; if(hi>1e9) return Infinity; }
+    while(hi-lo>1){ const m=Math.floor((lo+hi)/2); if(power2p(p1,p2,m,alpha)<target) lo=m; else hi=m; } return hi; };
+  const rng = (seed) => { let a = seed>>>0; return () => { a|=0; a=a+0x6D2B79F5|0; let t=Math.imul(a^a>>>15,1|a); t=t+Math.imul(t^t>>>7,61|t)^t; return ((t^t>>>14)>>>0)/4294967296; }; }; // mulberry32
+  const sum = (xs) => xs.reduce((a,b)=>a+b,0);
+  const mean = (xs) => sum(xs)/xs.length;
+  const pct = (xs,q) => { const s=[...xs].sort((a,b)=>a-b); const i=(s.length-1)*q, lo=Math.floor(i), hi=Math.ceil(i); return s[lo]+(s[hi]-s[lo])*(i-lo); };
+  const bootstrapCounts = (counts,B,seed,fn) => { // multinomial resample of a small contingency table
+    const n=sum(counts), r=rng(seed), cum=[]; let acc=0; counts.forEach(c=>{acc+=c/n;cum.push(acc);});
+    const out={}; for(let b=0;b<B;b++){ const c=counts.map(()=>0); for(let i=0;i<n;i++){ const u=r(); let j=0; while(u>cum[j]&&j<c.length-1) j++; c[j]++; }
+      const v=fn(c); for(const k in v){ (out[k]=out[k]||[]).push(v[k]); } }
+    const res={}; for(const k in out){ const xs=out[k].filter(x=>!isNaN(x)); res[k]=[pct(xs,0.025),pct(xs,0.975)]; } return res; };
+  const bootstrapMean = (d,B,seed) => { const r=rng(seed), m=d.length, ms=[]; for(let b=0;b<B;b++){ let s=0; for(let i=0;i<m;i++) s+=d[Math.floor(r()*m)]; ms.push(s/m); } return [pct(ms,0.025),pct(ms,0.975)]; };
+  const signFlipP = (d,seed) => { const m=d.length, obs=Math.abs(mean(d)); const eps=1e-12;
+    if(m<=16){ let hit=0, total=1<<m; for(let mask=0;mask<total;mask++){ let s=0; for(let i=0;i<m;i++) s+=(mask>>i&1)?-d[i]:d[i]; if(Math.abs(s/m)>=obs-eps) hit++; } return hit/total; }
+    const r=rng(seed), B=20000; let hit=0; for(let b=0;b<B;b++){ let s=0; for(let i=0;i<m;i++) s+=r()<0.5?-d[i]:d[i]; if(Math.abs(s/m)>=obs-eps) hit++; } return hit/B; };
+  const parseList = (s) => String(s).split(/[,\s]+/).map(Number).filter(x=>!isNaN(x));
+  return {erf,Phi,zq,seProp,wald,wilson,clopper,binomTwoSided,power2p,nForPower,rng,sum,mean,pct,bootstrapCounts,bootstrapMean,signFlipP,parseList};
+})();
+
+const fmt = (x,d) => { if(typeof x!=="number"||isNaN(x)) return "—"; if(!isFinite(x)) return "∞"; return d===0 ? String(Math.round(x)) : x.toFixed(d); };
+
+const esc = (s) => String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+const inline = (s) => esc(s).replace(/`([^`]+)`/g,"<code>$1</code>").replace(/\*\*([^*]+)\*\*/g,"<b>$1</b>").replace(/\*([^*]+)\*/g,"<i>$1</i>");
+const md = (text) => {
+  const blocks = String(text).trim().split(/\n\s*\n/); let html = "";
+  for (const b of blocks) {
+    const lines = b.split("\n");
+    if (lines.every(l => l.startsWith("| "))) {
+      const rows = lines.map(l => l.replace(/^\|\s*/,"").replace(/\s*\|?$/,"").split(/\s*\|\s*/));
+      html += "<table><thead><tr>" + rows[0].map(c=>"<th>"+inline(c)+"</th>").join("") + "</tr></thead><tbody>" +
+        rows.slice(1).map(r=>"<tr>"+r.map(c=>"<td>"+inline(c)+"</td>").join("")+"</tr>").join("") + "</tbody></table>";
+    } else if (lines.every(l => l.startsWith("- "))) {
+      html += "<ul>" + lines.map(l=>"<li>"+inline(l.slice(2))+"</li>").join("") + "</ul>";
+    } else if (lines.every(l => l.startsWith("> "))) {
+      html += "<div class=\"rule\">" + inline(lines.map(l=>l.slice(2)).join(" ")) + "</div>";
+    } else {
+      html += "<p>" + inline(lines.join(" ")) + "</p>";
+    }
+  }
+  return html;
+};
+
+const PARTS = [["question","Engineering question"],["principle","Core statistical principle"],["maths","Essential mathematics"],["assumptions","Assumptions"],["example","Worked example (synthetic)"],["pitfall","Common interpretation error"],["application","Application to the case"],["diagnostic","One diagnostic question"],["exercise","One applied exercise"]];
+
+const BOOK = { SITE, CASE, RULES, LESSONS, CARDS, GLOSSARY, SESSION_FIELDS, PARTS, S, fmt, md };
+
+if (typeof document !== "undefined") (function page(){
+  const main = document.getElementById("main");
+  const store = { get(k,d){ try { const v=localStorage.getItem("asai:"+k); return v===null?d:JSON.parse(v); } catch(e){ return d; } }, set(k,v){ try { localStorage.setItem("asai:"+k, JSON.stringify(v)); } catch(e){} } };
+  const doneSet = () => new Set(store.get("done",[]));
+
+  const calcDefaults = (c) => Object.fromEntries(c.inputs.map(i=>[i[0],i[2]]));
+  const renderCalc = (lesson) => {
+    const c = lesson.calc; if(!c) return "";
+    const inputs = c.inputs.map(i => `<label>${esc(i[1])}${i[3]===null
+      ? `<input type="text" data-key="${i[0]}" value="${esc(i[2])}">`
+      : `<input type="number" data-key="${i[0]}" value="${i[2]}" min="${i[3]}" max="${i[4]}" step="${i[5]}">`}</label>`).join("");
+    return `<div class="card calc" data-lesson="${lesson.id}"><b>Calculator</b> <span class="mute">— seeded with the worked example</span><div class="inputs">${inputs}</div><div class="outputs"></div>${c.verdictKey?'<div class="verdict"></div>':""}${c.note?`<div class="note">${inline(c.note)}</div>`:""}</div>`;
+  };
+  const runCalc = (el) => {
+    const lesson = LESSONS.find(l=>l.id===el.dataset.lesson), c=lesson.calc, v={};
+    el.querySelectorAll("input").forEach(i => { v[i.dataset.key] = i.type==="number" ? Number(i.value) : i.value; });
+    let r; try { r = c.compute(v); } catch(e){ r = {}; }
+    el.querySelector(".outputs").innerHTML = c.outputs.map(o => `<div class="out"><b>${fmt(r[o[0]],o[2])}</b><span>${esc(o[1])}</span></div>`).join("");
+    if (c.verdictKey) { const vd=el.querySelector(".verdict"); vd.textContent = r[c.verdictKey]||""; vd.className = "verdict "+(r.cls||""); }
+  };
+
+  const nav = (l) => { const i=LESSONS.indexOf(l); const prev=LESSONS[i-1], next=LESSONS[i+1];
+    return `<div class="pager"><span>${prev?`<a href="#/lesson/${prev.id}">← ${prev.id}. ${esc(prev.title)}</a>`:`<a href="#/">← Lessons</a>`}</span><span>${next?`<a href="#/lesson/${next.id}">${next.id}. ${esc(next.title)} →</a>`:`<a href="#/session">Write the session note →</a>`}</span></div>`; };
+
+  const views = {
+    home(){ const done=doneSet();
+      return `<h2>${esc(SITE.tagline)}</h2>${md(SITE.intro)}<p class="mute">${inline(SITE.howToRead)}</p><h3>The lessons</h3><ol class="roadmap">${LESSONS.map(l=>`<li><span class="letter">${l.id}</span><span><a href="#/lesson/${l.id}">${esc(l.title)}</a><small>${esc(l.question.replace(/\*\*/g,"").split(/[.?]/)[0])}.</small></span><span class="done">${done.has(l.id)?"read":""}</span></li>`).join("")}</ol>`; },
+    case(){ return `<h2>The case: ${esc(CASE.name)}</h2>${md(CASE.summary)}${md(CASE.body)}`; },
+    rules(){ return `<h2>Core reasoning rules</h2><p>Nine distinctions the lessons return to. Each is a habit, not a formula: the question to ask before a number is allowed to mean something.</p>${RULES.map((r,i)=>`<div class="rule"><b>${i+1}. Distinguish ${esc(r[0].toLowerCase())}.</b> ${inline(r[1])}</div>`).join("")}`; },
+    cards(){ return `<h2>Reference cards</h2><p>Templates the lessons ask you to fill. Copy the lines into your own documents; every line left blank is a finding.</p>${CARDS.map(c=>`<div class="card" id="card-${c.id}"><h4>${esc(c.title)} <span class="mute">(Lesson ${c.lesson})</span></h4><ul>${c.lines.map(l=>`<li>${inline(l)}</li>`).join("")}</ul></div>`).join("")}`; },
+    glossary(){ return `<h2>Glossary</h2><dl>${GLOSSARY.map(g=>`<dt><b>${esc(g[0])}</b></dt><dd>${inline(g[1])}</dd>`).join("")}</dl>`; },
+    session(){ const saved=store.get("session",{});
+      return `<h2>End-of-session note</h2><p>Every lesson ends with the same five lines. Fill them, copy the note out, keep it with the evaluation it came from.</p><div class="session">${SESSION_FIELDS.map(f=>`<label for="s-${f[0]}">${esc(f[1])} <span class="mute">— ${esc(f[2])}</span></label><textarea id="s-${f[0]}" data-key="${f[0]}">${esc(saved[f[0]]||"")}</textarea>`).join("")}<p><button type="button" id="s-build">Build the note</button> <button type="button" id="s-clear">Clear</button></p><pre id="s-out" aria-live="polite"></pre></div>`; },
+    lesson(id){ const l=LESSONS.find(x=>x.id===id); if(!l) return views.home();
+      const parts = PARTS.map((p,i)=>{ const key=p[0]; let body;
+        if(key==="diagnostic") body = md(l.diagnostic.q)+`<p><button type="button" class="reveal-btn" aria-expanded="false" aria-controls="ans-${l.id}">Show an answer</button></p><div class="reveal" id="ans-${l.id}" hidden>${md(l.diagnostic.a)}</div>`;
+        else if(key==="example") body = md(l.example)+renderCalc(l);
+        else body = md(l[key]);
+        return `<section id="part-${i+1}"><h3>${i+1}. ${esc(p[1])}</h3>${body}</section>`; }).join("");
+      return `<p class="mute">Lesson ${l.id} of ${LESSONS.length}</p><h2>${l.id}. ${esc(l.title)}</h2><ul class="parts">${PARTS.map((p,i)=>`<li><a href="#/lesson/${l.id}#part-${i+1}">${i+1}. ${esc(p[1])}</a></li>`).join("")}</ul>${parts}<p><button type="button" id="mark-done">Mark this lesson read</button> <span class="mute" id="done-msg"></span></p>${nav(l)}`; }
+  };
+
+  const route = () => {
+    const h = location.hash.replace(/^#\/?/,""); const [path, frag] = h.split("#"); const seg = path.split("/");
+    let html;
+    if (seg[0]==="lesson" && seg[1]) html = views.lesson(seg[1].toUpperCase());
+    else if (views[seg[0]] && seg[0]!=="lesson") html = views[seg[0]]();
+    else html = views.home();
+    main.innerHTML = html;
+    document.title = (seg[0]==="lesson" ? `Lesson ${seg[1].toUpperCase()} — ` : "") + SITE.title;
+    main.querySelectorAll(".calc").forEach(el => { runCalc(el); el.addEventListener("input", () => runCalc(el)); });
+    main.querySelectorAll(".reveal-btn").forEach(b => b.addEventListener("click", () => { const t=document.getElementById(b.getAttribute("aria-controls")); t.hidden=!t.hidden; b.setAttribute("aria-expanded", String(!t.hidden)); b.textContent = t.hidden ? "Show an answer" : "Hide the answer"; }));
+    const md_ = main.querySelector("#mark-done"); if (md_) md_.addEventListener("click", () => { const d=doneSet(); d.add(seg[1].toUpperCase()); store.set("done",[...d]); document.getElementById("done-msg").textContent="Marked."; });
+    const sb = main.querySelector("#s-build"); if (sb) {
+      const fields = () => { const o={}; main.querySelectorAll("textarea").forEach(t=>o[t.dataset.key]=t.value); return o; };
+      main.querySelectorAll("textarea").forEach(t => t.addEventListener("input", () => store.set("session", fields())));
+      sb.addEventListener("click", () => { const f=fields(); document.getElementById("s-out").textContent = SESSION_FIELDS.map(x=>`${x[1]}: ${f[x[0]]||"—"}`).join("\n"); });
+      main.querySelector("#s-clear").addEventListener("click", () => { main.querySelectorAll("textarea").forEach(t=>t.value=""); store.set("session",{}); document.getElementById("s-out").textContent=""; });
+    }
+    if (frag) { const t=document.getElementById(frag); if(t) t.scrollIntoView(); } else window.scrollTo(0,0);
+    main.focus({preventScroll:true});
+  };
+  window.addEventListener("hashchange", route);
+  route();
+})();
+</script>
 </body>
 </html>
