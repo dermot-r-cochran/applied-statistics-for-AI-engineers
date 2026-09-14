@@ -12,6 +12,7 @@ def test_generate_project_frog_evaluation_shape_and_label() -> None:
     assert set(dataset["dataset_label"]) == {"synthetic_project_frog"}
     assert {"truth", "baseline_prediction", "comparison_prediction"}.issubset(dataset.columns)
     assert dataset["project_id"].nunique() == 4
+    assert (dataset["latency_ms"] >= 0).all()
 
 
 def test_generate_project_frog_evaluation_is_reproducible() -> None:

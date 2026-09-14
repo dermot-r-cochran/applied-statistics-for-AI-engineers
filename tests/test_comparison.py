@@ -24,8 +24,9 @@ def test_compare_two_models_uses_paired_difference_variance() -> None:
     result = compare_two_models(y_true, predictions_a, predictions_b)
 
     difference = 0.25
-    discordant = 3
-    variance = ((discordant / 4) - difference**2) / 4
+    difference_values = [0, 1, 1, -1]
+    sample_variance = sum((value - difference) ** 2 for value in difference_values) / 3
+    variance = sample_variance / 4
     margin = norm.ppf(0.975) * variance**0.5
 
     expected_interval = (difference - margin, difference + margin)

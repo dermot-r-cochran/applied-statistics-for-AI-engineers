@@ -124,15 +124,18 @@ def generate_project_frog_evaluation(
         0,
         1,
     )
-    latency_ms = np.round(
-        rng.normal(
-            loc=np.select(
-                [complexity == 'simple', complexity == 'medium', complexity == 'complex'],
-                [180, 260, 340],
+    latency_ms = np.maximum(
+        np.round(
+            rng.normal(
+                loc=np.select(
+                    [complexity == 'simple', complexity == 'medium', complexity == 'complex'],
+                    [180, 260, 340],
+                ),
+                scale=25,
             ),
-            scale=25,
+            1,
         ),
-        1,
+        0.0,
     )
     processing_cost = np.round(
         0.0025 + latency_ms / 100_000 + rng.uniform(0, 0.0015, size=scenario.sample_size),
