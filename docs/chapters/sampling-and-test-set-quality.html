@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Sampling and Test-Set Quality</title>
+    <link rel="stylesheet" href="../assets/site.css" />
+  </head>
+  <body>
+    <div class="site-shell">
+      <aside class="sidebar">
+        <div class="eyebrow">Project Frog</div>
+        <h2><a href="../index.html">Trustworthy AI Evaluation</a></h2>
+        <nav aria-label="Book navigation">
+          <ul>
+            <li><a href="../index.html">Home</a></li>
+            <li><a href="../tutorials/project-frog-evaluation-lab.html">Interactive tutorial</a></li>
+            <li><a href="./confidence-and-calibration.html">Confidence and calibration</a></li>
+            <li><a href="./sampling-and-test-set-quality.html">Sampling and test-set quality</a></li>
+            <li><a href="./comparability-and-decisions.html">Comparability and decisions</a></li>
+          </ul>
+        </nav>
+      </aside>
+      <main class="content">
+        <section class="hero">
+          <div class="eyebrow">Chapter</div>
+          <h1>Sampling and test-set quality</h1>
+          <p class="lede">A test set is a measurement instrument. If it is biased, stale, or too narrow, the metric it produces is misleading.</p>
+        </section>
+
+        <section class="card">
+          <h2>Four checks for a teaching-grade evaluation set</h2>
+          <ol>
+            <li><strong>Coverage:</strong> include the deployment habitats, seasons, and edge cases you care about.</li>
+            <li><strong>Label quality:</strong> document how synthetic labels were assigned and where they are uncertain.</li>
+            <li><strong>Comparability:</strong> keep inclusion criteria fixed when comparing model runs.</li>
+            <li><strong>Refresh policy:</strong> review whether the sample still reflects current production conditions.</li>
+          </ol>
+        </section>
+
+        <section class="table-card">
+          <h2>Project Frog sample strata</h2>
+          <table>
+            <thead>
+              <tr>
+                <th scope="col">Stratum</th>
+                <th scope="col">Why include it</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Wetland at dusk</td>
+                <td>High event density and visually noisy conditions.</td>
+              </tr>
+              <tr>
+                <td>Urban runoff channels</td>
+                <td>Rare but operationally important false-positive source.</td>
+              </tr>
+              <tr>
+                <td>Dry forest edges</td>
+                <td>Shifted background patterns compared with wetland-heavy training data.</td>
+              </tr>
+            </tbody>
+          </table>
+        </section>
+
+        <section class="card">
+          <h2>Decision habit</h2>
+          <p>Never report a single top-line metric without stating what population it estimates and what cases were excluded from measurement.</p>
+        </section>
+      </main>
+    </div>
+  </body>
+</html>

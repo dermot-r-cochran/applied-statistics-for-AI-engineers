@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Project Frog Evaluation Lab</title>
+    <link rel="stylesheet" href="../assets/site.css" />
+    <script defer src="../assets/site.js"></script>
+  </head>
+  <body>
+    <div class="site-shell">
+      <aside class="sidebar">
+        <div class="eyebrow">Project Frog</div>
+        <h2><a href="../index.html">Trustworthy AI Evaluation</a></h2>
+        <nav aria-label="Book navigation">
+          <ul>
+            <li><a href="../index.html">Home</a></li>
+            <li><a href="./project-frog-evaluation-lab.html">Interactive tutorial</a></li>
+            <li><a href="../chapters/confidence-and-calibration.html">Confidence and calibration</a></li>
+            <li><a href="../chapters/sampling-and-test-set-quality.html">Sampling and test-set quality</a></li>
+            <li><a href="../chapters/comparability-and-decisions.html">Comparability and decisions</a></li>
+          </ul>
+        </nav>
+      </aside>
+      <main class="content">
+        <section class="hero">
+          <div class="eyebrow">Progressive tutorial</div>
+          <h1>Project Frog evaluation lab</h1>
+          <p class="lede">
+            A fictional triage model estimates whether a frog sighting needs expert review.
+            Move step by step and decide what evidence is strong enough to change the workflow.
+          </p>
+          <div class="step-actions">
+            <button class="primary" id="next-step">Show next step</button>
+            <button id="reset-steps">Restart lesson</button>
+            <span class="chip">Progress: <strong id="step-progress"></strong></span>
+          </div>
+        </section>
+
+        <section class="step-stack">
+          <article class="step-card" data-step-card>
+            <div class="step-label">Step 1</div>
+            <h2>Define the decision first</h2>
+            <p>The model does not replace experts. It decides whether to route a case to manual review within the fictional amphibian monitoring workflow.</p>
+            <p class="callout">If you cannot name the operational decision, accuracy alone will not tell you whether the system is safe or useful.</p>
+          </article>
+
+          <article class="step-card" data-step-card hidden>
+            <div class="step-label">Step 2</div>
+            <h2>Sample the environment you care about</h2>
+            <p>Project Frog has wetland, forest, and urban habitats. A test set drawn only from wetlands would overstate reliability if the production mix shifts later.</p>
+            <ul>
+              <li>Capture the intended deployment mix.</li>
+              <li>Check whether rare but high-impact cases are represented.</li>
+              <li>Document exclusions and missing labels.</li>
+            </ul>
+          </article>
+
+          <article class="step-card" data-step-card hidden>
+            <div class="step-label">Step 3</div>
+            <h2>Interrogate confidence, not just labels</h2>
+            <p>A model that assigns 0.95 to many wrong cases is harder to govern than a model that is uncertain in the right places.</p>
+            <p>Use calibration checks to ask whether predicted confidence matches observed frequency.</p>
+          </article>
+
+          <article class="step-card" data-step-card hidden>
+            <div class="step-label">Step 4</div>
+            <h2>Compare runs with the same yardstick</h2>
+            <p>When you compare model A and model B, keep the test set, label policy, and routing threshold fixed. Otherwise the comparison is confounded.</p>
+          </article>
+
+          <article class="step-card" data-step-card hidden>
+            <div class="step-label">Step 5</div>
+            <h2>Turn evidence into action</h2>
+            <p>Evaluation ends with a decision: ship, hold, or collect more evidence. Good practice makes the rationale explicit and reversible.</p>
+          </article>
+        </section>
+
+        <section class="interactive-panel">
+          <h2>Mini decision lab</h2>
+          <p>Adjust the threshold, model score, and confidence for a synthetic frog sighting.</p>
+          <div class="range-wrap">
+            <label for="threshold">Escalation threshold: <strong id="threshold-value"></strong></label>
+            <input id="threshold" type="range" min="0.3" max="0.9" step="0.01" value="0.65" />
+          </div>
+          <div class="range-wrap">
+            <label for="score">Model risk score: <strong id="score-value"></strong></label>
+            <input id="score" type="range" min="0" max="1" step="0.01" value="0.72" />
+          </div>
+          <div class="range-wrap">
+            <label for="confidence">Confidence reliability: <strong id="confidence-value"></strong></label>
+            <input id="confidence" type="range" min="0" max="1" step="0.01" value="0.74" />
+          </div>
+          <p><strong>Decision:</strong> <span id="decision-label"></span></p>
+          <p id="decision-status" aria-live="polite"></p>
+        </section>
+
+        <section class="table-card">
+          <h2>Evidence checklist</h2>
+          <table>
+            <thead>
+              <tr>
+                <th scope="col">Question</th>
+                <th scope="col">Why it matters</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Is the evaluation sample representative?</td>
+                <td>Without this, measured quality may not transfer to deployment.</td>
+              </tr>
+              <tr>
+                <td>Are confidence scores calibrated?</td>
+                <td>Thresholds and downstream automation depend on reliable probabilities.</td>
+              </tr>
+              <tr>
+                <td>Is the comparison apples-to-apples?</td>
+                <td>Comparing different datasets or label policies can create fake wins.</td>
+              </tr>
+            </tbody>
+          </table>
+        </section>
+      </main>
+    </div>
+  </body>
+</html>
