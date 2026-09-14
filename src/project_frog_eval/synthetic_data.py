@@ -127,7 +127,10 @@ def wilson_interval(
     though that observed proportion came from a smaller effective sample size.
     This is a teaching-oriented approximation for clustered or dependent rows:
     it preserves the observed rate while widening the interval under a reduced
-    independence assumption.
+    independence assumption. `confidence_level` must be strictly between 0 and
+    1. `effective_sample_size` must be at least 1 and no larger than `total`.
+    The returned `sample_size` remains the original row count, while
+    `effective_sample_size` records the value used to control interval width.
     """
     if total <= 0:
         raise ValueError("total must be positive")
@@ -175,7 +178,14 @@ def metric_interval_report(
     effective_sample_size: float | None = None,
     assumptions: Sequence[str] | None = None,
 ) -> MetricIntervalReport:
-    """Package an observed metric with interval metadata and assumptions."""
+    """Package an observed metric with interval metadata and assumptions.
+
+    When `assumptions` is `None`, repository-default teaching assumptions are
+    inserted to remind readers that rows are treated as exchangeable and that
+    dependent data may require a smaller effective sample size. When callers
+    pass an explicit sequence, including an empty tuple, that input is
+    preserved as-is.
+    """
     normalized_metric_name = metric_name.strip()
     if not normalized_metric_name:
         raise ValueError("metric_name must not be empty")
