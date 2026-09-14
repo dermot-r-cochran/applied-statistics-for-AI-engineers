@@ -68,8 +68,34 @@ def generate_project_frog_evaluation(
         project_ids = np.concatenate((project_ids, additional_ids))
     rng.shuffle(project_ids)
 
-    baseline_correct = rng.binomial(1, scenario.baseline_accuracy, size=scenario.sample_size)
-    comparison_correct = rng.binomial(1, scenario.comparison_accuracy, size=scenario.sample_size)
+    shared_slack = min(
+        0.1,
+        min(scenario.baseline_accuracy, scenario.comparison_accuracy) * 0.25,
+        1 - max(scenario.baseline_accuracy, scenario.comparison_accuracy),
+    )
+    both_correct_probability = (
+        min(scenario.baseline_accuracy, scenario.comparison_accuracy) - shared_slack
+    )
+    baseline_only_probability = scenario.baseline_accuracy - both_correct_probability
+    comparison_only_probability = scenario.comparison_accuracy - both_correct_probability
+    both_wrong_probability = (
+        1
+        - both_correct_probability
+        - baseline_only_probability
+        - comparison_only_probability
+    )
+    paired_outcomes = rng.choice(
+        4,
+        size=scenario.sample_size,
+        p=[
+            both_correct_probability,
+            baseline_only_probability,
+            comparison_only_probability,
+            both_wrong_probability,
+        ],
+    )
+    baseline_correct = np.isin(paired_outcomes, [0, 1]).astype(int)
+    comparison_correct = np.isin(paired_outcomes, [0, 2]).astype(int)
 
     baseline_prediction = np.where(baseline_correct == 1, truth, 1 - truth)
     comparison_prediction = np.where(comparison_correct == 1, truth, 1 - truth)

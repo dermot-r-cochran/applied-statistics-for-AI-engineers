@@ -37,6 +37,7 @@ packages = ["src/applied_stats_ai"]
 [tool.ruff]
 line-length = 100
 target-version = "py312"
+extend-exclude = ["docs/workshops/*.ipynb", "tutorials/**/*.ipynb"]
 
 [tool.ruff.lint]
 select = ["E", "F", "I", "N", "UP", "B", "C4"]
