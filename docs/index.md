@@ -32,7 +32,7 @@ A compact first reading path runs through:
 This path follows the intended narrative:
 
 \[
-	ext{decision} ightarrow 	ext{measurement} ightarrow 	ext{sampling uncertainty} ightarrow 	ext{metric interpretation} ightarrow 	ext{component confidence} ightarrow 	ext{experimental design} ightarrow 	ext{release decision}
+\text{decision} \rightarrow \text{measurement} \rightarrow \text{sampling uncertainty} \rightarrow \text{metric interpretation} \rightarrow \text{component confidence} \rightarrow \text{experimental design} \rightarrow \text{release decision}
 \]
 
 ### Full-book route
