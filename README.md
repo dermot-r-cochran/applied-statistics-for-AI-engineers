@@ -21,11 +21,19 @@ The book uses **Project Frog** as a continuous fictional case study. All example
 
 ## Local development
 
+### macOS / Linux
+
 ```bash
 python -m venv .venv
-# macOS / Linux
 source .venv/bin/activate
-# Windows (PowerShell)
+pip install -r requirements.txt
+mkdocs serve
+```
+
+### Windows (PowerShell)
+
+```powershell
+python -m venv .venv
 .venv\Scripts\Activate.ps1
 pip install -r requirements.txt
 mkdocs serve
