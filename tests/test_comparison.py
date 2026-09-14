@@ -1,3 +1,5 @@
+import pytest
+
 from applied_stats_ai import compare_two_models
 
 
@@ -9,4 +11,4 @@ def test_compare_two_models_reports_difference() -> None:
     assert result["accuracy_b"] >= result["accuracy_a"]
     lower, upper = result["confidence_interval"]
     assert lower <= result["difference"] <= upper
-    assert 0.0 <= result["p_value"] <= 1.0
+    assert result["p_value"] == pytest.approx(1.0)

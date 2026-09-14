@@ -37,8 +37,10 @@ def bootstrap_metric(
 
     rng = np.random.default_rng(random_state)
     estimates = np.empty(n_resamples, dtype=float)
+    row_count = data.shape[0]
     for index in range(n_resamples):
-        sample = rng.choice(data, size=data.shape[0], replace=True)
+        sampled_indices = rng.integers(0, row_count, size=row_count)
+        sample = data[sampled_indices]
         estimates[index] = float(metric(sample))
 
     alpha = 1 - confidence_level

@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import numpy as np
-from statsmodels.stats.contingency_tables import mcnemar
+from scipy.stats import binomtest, chi2
 
 from ._typing import ArrayLike
 from .bootstrap import bootstrap_metric
@@ -48,17 +48,19 @@ def compare_two_models(
     paired_differences = correct_b - correct_a
     difference = float(paired_differences.mean())
 
-    both_correct = int(np.sum((correct_a == 1) & (correct_b == 1)))
     a_only = int(np.sum((correct_a == 1) & (correct_b == 0)))
     b_only = int(np.sum((correct_a == 0) & (correct_b == 1)))
-    both_wrong = int(np.sum((correct_a == 0) & (correct_b == 0)))
     discordant = a_only + b_only
 
-    table = np.array([[both_correct, a_only], [b_only, both_wrong]], dtype=int)
-    use_exact = discordant < 25
-    p_value = float(
-        mcnemar(table, exact=use_exact, correction=not use_exact).pvalue,
-    )
+    if discordant == 0:
+        p_value = 1.0
+    elif discordant < 25:
+        p_value = float(
+            binomtest(k=min(a_only, b_only), n=discordant, p=0.5).pvalue,
+        )
+    else:
+        statistic = (abs(a_only - b_only) - 1) ** 2 / discordant
+        p_value = float(chi2.sf(statistic, df=1))
 
     bootstrap_result = bootstrap_metric(
         paired_differences,
