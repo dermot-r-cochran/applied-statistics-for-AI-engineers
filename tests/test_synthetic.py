@@ -37,6 +37,11 @@ def test_generate_project_frog_rejects_non_positive_n_cases() -> None:
         generate_project_frog_data(n_cases=0)
 
 
+def test_generate_project_frog_rejects_unknown_component_names() -> None:
+    with pytest.raises(ValueError):
+        generate_project_frog_data(component_names=["Classification", "Unknown component"])
+
+
 def test_component_summary_requires_columns() -> None:
     with pytest.raises(KeyError):
         summarize_component_performance(pd.DataFrame({"prediction_correct": [True, False]}))

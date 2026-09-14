@@ -188,6 +188,7 @@ def write_reading_path_summary() -> None:
     baseline = compare_independent_proportions(1056, 1200, 63, 75)
     later_bootstrap = bootstrap_interval([1] * 63 + [0] * 12, seed=PROJECT_FROG_SEED, n_resamples=1500)
     output = REPO_ROOT / "data" / "synthetic" / "reading_path_metrics.txt"
+    output.parent.mkdir(parents=True, exist_ok=True)
     output.write_text(
         "Synthetic metrics for chapter examples\n"
         f"Baseline vs later independent difference: {baseline['difference']:.4f} (95% approx CI {baseline['lower']:.4f}, {baseline['upper']:.4f})\n"

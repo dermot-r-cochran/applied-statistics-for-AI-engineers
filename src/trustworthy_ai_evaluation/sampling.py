@@ -259,7 +259,16 @@ def compare_paired_predictions(
     if truth.size == 0:
         raise ValueError("Paired inputs must not be empty.")
     arrays = (truth, first, second)
-    if any(value is None or (isinstance(value, float) and np.isnan(value)) for array in arrays for value in array):
+
+    def _is_missing(value: object) -> bool:
+        if value is None:
+            return True
+        try:
+            return bool(np.isnan(value))
+        except TypeError:
+            return False
+
+    if any(_is_missing(value) for array in arrays for value in array):
         raise ValueError("Paired inputs contain missing values.")
 
     correct_a = first == truth

@@ -166,7 +166,7 @@ def subgroup_metric_report(
                 "rows": int(len(subset)),
                 "observed_rate": float(np.mean(y_true)),
                 "mean_probability": float(np.mean(y_prob)),
-                "ece": expected_calibration_error(y_true, y_prob, n_bins=min(n_bins, len(subset))),
+                "ece": expected_calibration_error(y_true, y_prob, n_bins=max(1, min(n_bins, len(subset)))),
                 "brier_score": brier_score_summary(y_true, y_prob)["brier_score"],
             }
         )
