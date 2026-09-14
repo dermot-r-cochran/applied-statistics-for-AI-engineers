@@ -14,5 +14,5 @@ Applied Statistics and Metrics for AI Engineers, rebuilt as a practical book-sty
 
 ```bash
 python -m pip install -r requirements.txt
-~/.local/bin/jb build . -W
+python -m jupyter_book.cli.main build . -W
 ```
