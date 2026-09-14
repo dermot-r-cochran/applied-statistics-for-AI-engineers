@@ -12,7 +12,10 @@ Applied Statistics and Metrics for AI Engineers, rebuilt as a practical book-sty
 
 ## Local build
 
+Use an environment where the `jb` script from the `jupyter-book` install is on `PATH`.
+
+
 ```bash
 python -m pip install -r requirements.txt
-python -m jupyter_book.cli.main build . -W
+jb build . -W
 ```
