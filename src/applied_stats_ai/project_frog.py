@@ -66,8 +66,11 @@ def generate_project_frog_evaluation(
 
     evidence_quality = np.clip(
         rng.normal(
-            loc=0.72 + 0.08 * baseline_correct,
-            scale=0.08,
+            loc=np.select(
+                [complexity == "simple", complexity == "medium", complexity == "complex"],
+                [0.86, 0.76, 0.64],
+            ),
+            scale=0.06,
             size=scenario.sample_size,
         ),
         0,
@@ -75,8 +78,11 @@ def generate_project_frog_evaluation(
     )
     confidence_like_score = np.clip(
         rng.normal(
-            loc=0.62 + 0.2 * baseline_correct,
-            scale=0.1,
+            loc=np.select(
+                [complexity == "simple", complexity == "medium", complexity == "complex"],
+                [0.81, 0.69, 0.57],
+            ),
+            scale=0.08,
             size=scenario.sample_size,
         ),
         0,

@@ -44,8 +44,8 @@ def effective_sample_size(
         if not 0 <= intra_cluster_correlation < 1:
             raise ValueError("intra_cluster_correlation must be between 0 and 1")
         _, counts = np.unique(clusters, return_counts=True)
-        average_cluster_size = counts.mean()
-        design_effect = 1 + (average_cluster_size - 1) * intra_cluster_correlation
+        mean_squared_cluster_size = np.sum(counts**2) / counts.sum()
+        design_effect = 1 + (mean_squared_cluster_size - 1) * intra_cluster_correlation
         return float(clusters.size / design_effect)
 
     if sample_size is None or sample_size <= 0:

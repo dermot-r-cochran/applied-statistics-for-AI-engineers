@@ -55,7 +55,8 @@ def compare_two_models(
     if discordant == 0:
         interval = (difference, difference)
     else:
-        margin = z_value * np.sqrt(discordant / (len(y) ** 2))
+        variance = ((discordant / len(y)) - difference**2) / len(y)
+        margin = z_value * np.sqrt(max(variance, 0.0))
         interval = (difference - margin, difference + margin)
 
     return {

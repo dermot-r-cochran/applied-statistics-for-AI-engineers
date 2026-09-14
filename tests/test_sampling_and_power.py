@@ -11,6 +11,11 @@ def test_effective_sample_size_with_clusters() -> None:
     assert value < 6.0
 
 
+def test_effective_sample_size_uses_observed_cluster_sizes() -> None:
+    value = effective_sample_size(cluster_ids=[1, 1, 1, 1, 1, 2], intra_cluster_correlation=0.2)
+    assert round(value, 2) == 3.6
+
+
 def test_power_analysis_and_mde_are_positive() -> None:
     power = power_analysis(0.84, 0.88, 400)
     mde = minimum_detectable_effect(0.85, 500)
