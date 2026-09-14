@@ -22,3 +22,27 @@ packages = ["trustworthy_ai_evaluation"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
+description = "Synthetic teaching materials and utilities for the Trustworthy AI Evaluation book"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+  "numpy==2.1.1",
+  "scikit-learn==1.5.2",
+  "matplotlib==3.9.2",
+  "mkdocs==1.6.1",
+]
+
+[project.optional-dependencies]
+dev = [
+  "pytest==9.0.3",
+]
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]

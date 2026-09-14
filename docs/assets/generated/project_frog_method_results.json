@@ -1,0 +1,451 @@
+{
+  "scalar_method_results": [
+    {
+      "method": "anti_pattern_average_raw",
+      "output_meaning": "Unvalidated average of four semantically different raw scores.",
+      "assumptions": "Pretends the four scores share a common meaning and scale.",
+      "brier_score": 0.32561587489935095,
+      "expected_calibration_error": 0.38274286985323636,
+      "roc_auc": 0.8396397395132587,
+      "decision_utility": -3.3870967741935485,
+      "coverage": 1.0,
+      "selective_risk": 0.6445409429280398,
+      "suitable_applications": "None for consequential trust estimation; only as a didactic anti-pattern.",
+      "unsuitable_applications": "Any operational release or automation decision.",
+      "failure_mode": "Looks numerically plausible while hiding component incompatibility and dependence."
+    },
+    {
+      "method": "minimum_calibrated_probability",
+      "output_meaning": "Weakest calibrated component probability.",
+      "assumptions": "The weakest component should dominate the decision threshold.",
+      "brier_score": 0.20576591981434947,
+      "expected_calibration_error": 0.1793181173884153,
+      "roc_auc": 0.8104114071289517,
+      "decision_utility": -0.45905707196029777,
+      "coverage": 1.0,
+      "selective_risk": 0.6445409429280398,
+      "suitable_applications": "Conservative gating and safety-focused review triggers.",
+      "unsuitable_applications": "Estimating end-to-end probability of success.",
+      "failure_mode": "Over-penalizes cases with one noisy but non-critical component."
+    },
+    {
+      "method": "maximum_calibrated_probability",
+      "output_meaning": "Strongest calibrated component probability.",
+      "assumptions": "One strong signal can dominate the decision.",
+      "brier_score": 0.44151599037654793,
+      "expected_calibration_error": 0.49902824212566665,
+      "roc_auc": 0.7892002479226401,
+      "decision_utility": -8.027295285359802,
+      "coverage": 1.0,
+      "selective_risk": 0.6445409429280398,
+      "suitable_applications": "Finding cases for deeper review where at least one component is promising.",
+      "unsuitable_applications": "Automation confidence or release decisions.",
+      "failure_mode": "Masks weak upstream components."
+    },
+    {
+      "method": "arithmetic_mean_calibrated_probability",
+      "output_meaning": "Simple average of calibrated component event probabilities.",
+      "assumptions": "Averaged component probabilities summarize the desired system event.",
+      "brier_score": 0.2963034157235049,
+      "expected_calibration_error": 0.34991315260481304,
+      "roc_auc": 0.8357134578657489,
+      "decision_utility": -2.5186104218362284,
+      "coverage": 1.0,
+      "selective_risk": 0.6445409429280398,
+      "suitable_applications": "Coarse monitoring after empirical validation.",
+      "unsuitable_applications": "General trust estimation without end-to-end labels.",
+      "failure_mode": "Still ignores dependence and event mismatch."
+    },
+    {
+      "method": "weighted_mean_calibrated_probability",
+      "output_meaning": "Weighted average of calibrated component event probabilities.",
+      "assumptions": "Weights reflect component importance and remain stable.",
+      "brier_score": 0.29799197837803665,
+      "expected_calibration_error": 0.3559891212409411,
+      "roc_auc": 0.8451214165856216,
+      "decision_utility": -2.7884615384615383,
+      "coverage": 1.0,
+      "selective_risk": 0.6445409429280398,
+      "suitable_applications": "Policy scorecards with fixed, reviewed semantics.",
+      "unsuitable_applications": "Transportable probability estimates across datasets.",
+      "failure_mode": "The output meaning changes with arbitrary weight choices."
+    },
+    {
+      "method": "geometric_mean_calibrated_probability",
+      "output_meaning": "Multiplicative-style average that penalizes low components.",
+      "assumptions": "Scores share probabilistic semantics and partial independence.",
+      "brier_score": 0.2794787144356025,
+      "expected_calibration_error": 0.323567735459008,
+      "roc_auc": 0.8341412655140616,
+      "decision_utility": -2.1991315136476426,
+      "coverage": 1.0,
+      "selective_risk": 0.6445409429280398,
+      "suitable_applications": "Soft conservative ranking after validation.",
+      "unsuitable_applications": "Any setting where components target different events.",
+      "failure_mode": "Collapses for dependent low-probability components."
+    },
+    {
+      "method": "product_of_calibrated_probabilities",
+      "output_meaning": "Naive product of component event probabilities.",
+      "assumptions": "Marginal probabilities can be multiplied as if independent and aligned.",
+      "brier_score": 0.16132976354023373,
+      "expected_calibration_error": 0.05736078277299614,
+      "roc_auc": 0.8341412655140616,
+      "decision_utility": 0.043424317617866005,
+      "coverage": 1.0,
+      "selective_risk": 0.6445409429280398,
+      "suitable_applications": "Rare narrow cases where chain assumptions are justified.",
+      "unsuitable_applications": "This Project Frog pipeline, which has correlated failures.",
+      "failure_mode": "Severe underestimation under dependence."
+    },
+    {
+      "method": "calibrated_meta_model",
+      "output_meaning": "Learned estimate of end-to-end correctness from the full score vector.",
+      "assumptions": "Development labels and deployment conditions are relevant to the target setting.",
+      "brier_score": 0.15461474113427676,
+      "expected_calibration_error": 0.041016814603116056,
+      "roc_auc": 0.8444831333659194,
+      "decision_utility": 0.08995037220843673,
+      "coverage": 1.0,
+      "selective_risk": 0.6445409429280398,
+      "suitable_applications": "End-to-end probability estimation when training data and monitoring exist.",
+      "unsuitable_applications": "Zero-label settings or settings with large distribution shift.",
+      "failure_mode": "Can drift when score semantics or populations change."
+    },
+    {
+      "method": "bayesian_composition",
+      "output_meaning": "Naive-Bayes estimate of end-to-end correctness from the component vector.",
+      "assumptions": "Conditional independence and approximate Gaussian feature behavior given the outcome.",
+      "brier_score": 0.20845130709283546,
+      "expected_calibration_error": 0.18635961324039996,
+      "roc_auc": 0.8284874199416477,
+      "decision_utility": -1.4857320099255582,
+      "coverage": 1.0,
+      "selective_risk": 0.6445409429280398,
+      "suitable_applications": "Fast baseline when those assumptions are defensible enough to test.",
+      "unsuitable_applications": "Claims of universal trust aggregation.",
+      "failure_mode": "Breaks when conditional dependence dominates."
+    }
+  ],
+  "policy_results": [
+    {
+      "method": "rule_based_policy",
+      "output_meaning": "Accept automatically only when all component-specific thresholds are met; otherwise abstain.",
+      "assumptions": "Thresholds reflect review policy rather than probability theory.",
+      "brier_score": null,
+      "expected_calibration_error": null,
+      "roc_auc": null,
+      "decision_utility": -2.140198511166253,
+      "coverage": 0.2524813895781638,
+      "selective_risk": 0.3022113022113022,
+      "suitable_applications": "Governed review workflows with explicit abstention.",
+      "unsuitable_applications": "Reporting a single numeric trust probability.",
+      "failure_mode": "Can be brittle around manually chosen thresholds."
+    },
+    {
+      "method": "retain_score_vector",
+      "output_meaning": "Keep the four scores separate and review them jointly.",
+      "assumptions": "Humans or downstream policies can use structured evidence better than a single scalar.",
+      "brier_score": null,
+      "expected_calibration_error": null,
+      "roc_auc": null,
+      "decision_utility": -1.0,
+      "coverage": 0.0,
+      "selective_risk": null,
+      "suitable_applications": "High-stakes review, auditing, debugging, and failure analysis.",
+      "unsuitable_applications": "Fully automated ranking that requires one scalar score.",
+      "failure_mode": "Needs governance and can slow down throughput."
+    },
+    {
+      "method": "risk_category",
+      "output_meaning": "Convert the score vector into low/medium/high system risk bands.",
+      "assumptions": "The category boundaries are decision artifacts, not latent truths.",
+      "brier_score": null,
+      "expected_calibration_error": null,
+      "roc_auc": null,
+      "decision_utility": -1.8920595533498759,
+      "coverage": 0.02481389578163772,
+      "selective_risk": 0.07499999999999996,
+      "suitable_applications": "Triage and operational dashboards.",
+      "unsuitable_applications": "Fine-grained probability statements.",
+      "failure_mode": "Hides uncertainty inside coarse categories."
+    },
+    {
+      "method": "abstention_and_human_review",
+      "output_meaning": "Accept only high-confidence cases under a learned end-to-end model and abstain on the rest.",
+      "assumptions": "Human review is available and better than unsafe automation.",
+      "brier_score": null,
+      "expected_calibration_error": null,
+      "roc_auc": null,
+      "decision_utility": -1.8728287841191067,
+      "coverage": 0.02481389578163772,
+      "selective_risk": 0.07499999999999996,
+      "suitable_applications": "Selective prediction and escalation workflows.",
+      "unsuitable_applications": "Contexts that forbid abstention.",
+      "failure_mode": "Coverage can collapse on hard subgroups."
+    }
+  ],
+  "subgroup_rows": [
+    {
+      "group": "Complex",
+      "count": 492,
+      "positive_rate": 0.16260162601626016,
+      "accuracy_at_0_5": 0.8536585365853658,
+      "mean_score": 0.16467502901236278,
+      "brier_score": 0.10360993330083691,
+      "expected_calibration_error": 0.009228836362607327
+    },
+    {
+      "group": "Moderate",
+      "count": 580,
+      "positive_rate": 0.31896551724137934,
+      "accuracy_at_0_5": 0.7344827586206897,
+      "mean_score": 0.36708661882795496,
+      "brier_score": 0.16637149275362093,
+      "expected_calibration_error": 0.050669382770157326
+    },
+    {
+      "group": "Simple",
+      "count": 540,
+      "positive_rate": 0.5703703703703704,
+      "accuracy_at_0_5": 0.7074074074074074,
+      "mean_score": 0.571369031349181,
+      "brier_score": 0.18845816616174482,
+      "expected_calibration_error": 0.05814672549217747
+    }
+  ],
+  "calibration_report": {
+    "classification_raw": {
+      "ece": 0.05809433802903735,
+      "brier": {
+        "brier_score": 0.1492383266618575,
+        "uncertainty": 0.19384393722022797,
+        "resolution": 0.04803041296592242,
+        "reliability": 0.004237307562023919,
+        "mean_probability": 0.7790674357299361,
+        "observed_rate": 0.7369727047146402
+      }
+    },
+    "classification_calibrated": {
+      "ece": 0.022922542901567734,
+      "brier": {
+        "brier_score": 0.1494757656872327,
+        "uncertainty": 0.19384393722022797,
+        "resolution": 0.042962346738153086,
+        "reliability": 0.0013019985316017645,
+        "mean_probability": 0.7319180554327582,
+        "observed_rate": 0.7369727047146402
+      }
+    }
+  },
+  "failure_rows": [
+    {
+      "case_id": 2,
+      "difficulty": "Moderate",
+      "source_type": "scan",
+      "anti_pattern_average_raw": 0.8163614023730694,
+      "meta_model_probability": 0.5278723663749825,
+      "system_correct": 0,
+      "raw_scores": {
+        "document_extraction": 0.9077380630804798,
+        "classification": 0.9683474604320027,
+        "evidence_retrieval": 0.5746915913850711,
+        "explanation_generation": 0.8146684945947238
+      }
+    },
+    {
+      "case_id": 6,
+      "difficulty": "Moderate",
+      "source_type": "native_pdf",
+      "anti_pattern_average_raw": 0.9045245754759004,
+      "meta_model_probability": 0.7715912458896597,
+      "system_correct": 0,
+      "raw_scores": {
+        "document_extraction": 0.8967716478488367,
+        "classification": 0.9836351451026071,
+        "evidence_retrieval": 0.852243511339564,
+        "explanation_generation": 0.8854479976125935
+      }
+    },
+    {
+      "case_id": 44,
+      "difficulty": "Simple",
+      "source_type": "scan",
+      "anti_pattern_average_raw": 0.8566132611787262,
+      "meta_model_probability": 0.6297908481245585,
+      "system_correct": 0,
+      "raw_scores": {
+        "document_extraction": 0.8240919951681333,
+        "classification": 0.9193367646443182,
+        "evidence_retrieval": 0.878470193113185,
+        "explanation_generation": 0.8045540917892681
+      }
+    },
+    {
+      "case_id": 69,
+      "difficulty": "Moderate",
+      "source_type": "native_pdf",
+      "anti_pattern_average_raw": 0.8330039377313729,
+      "meta_model_probability": 0.5671478853671714,
+      "system_correct": 0,
+      "raw_scores": {
+        "document_extraction": 0.8766778147722777,
+        "classification": 0.9448680485097204,
+        "evidence_retrieval": 0.5941717554123631,
+        "explanation_generation": 0.9162981322311303
+      }
+    },
+    {
+      "case_id": 73,
+      "difficulty": "Moderate",
+      "source_type": "native_pdf",
+      "anti_pattern_average_raw": 0.8221547399736508,
+      "meta_model_probability": 0.5049776025592866,
+      "system_correct": 0,
+      "raw_scores": {
+        "document_extraction": 0.883594777700139,
+        "classification": 0.8347685796554584,
+        "evidence_retrieval": 0.7471460959461353,
+        "explanation_generation": 0.8231095065928706
+      }
+    },
+    {
+      "case_id": 82,
+      "difficulty": "Moderate",
+      "source_type": "native_pdf",
+      "anti_pattern_average_raw": 0.8109140506258402,
+      "meta_model_probability": 0.478827301991903,
+      "system_correct": 0,
+      "raw_scores": {
+        "document_extraction": 0.874641432456671,
+        "classification": 0.9496984453269011,
+        "evidence_retrieval": 0.5652312911353792,
+        "explanation_generation": 0.8540850335844093
+      }
+    },
+    {
+      "case_id": 85,
+      "difficulty": "Simple",
+      "source_type": "scan",
+      "anti_pattern_average_raw": 0.8753035873652397,
+      "meta_model_probability": 0.7158309861240323,
+      "system_correct": 0,
+      "raw_scores": {
+        "document_extraction": 0.8185745198831769,
+        "classification": 0.9823322958280643,
+        "evidence_retrieval": 0.8758250466279356,
+        "explanation_generation": 0.8244824871217822
+      }
+    },
+    {
+      "case_id": 122,
+      "difficulty": "Simple",
+      "source_type": "native_pdf",
+      "anti_pattern_average_raw": 0.8632364133922024,
+      "meta_model_probability": 0.66681884237758,
+      "system_correct": 0,
+      "raw_scores": {
+        "document_extraction": 0.939046302082235,
+        "classification": 0.9863550590054634,
+        "evidence_retrieval": 0.6479116727114641,
+        "explanation_generation": 0.8796326197696471
+      }
+    },
+    {
+      "case_id": 135,
+      "difficulty": "Simple",
+      "source_type": "scan",
+      "anti_pattern_average_raw": 0.8098859345912927,
+      "meta_model_probability": 0.5713469236240294,
+      "system_correct": 0,
+      "raw_scores": {
+        "document_extraction": 0.7826615933670421,
+        "classification": 0.9938665869627681,
+        "evidence_retrieval": 0.6495660584532706,
+        "explanation_generation": 0.8134494995820898
+      }
+    },
+    {
+      "case_id": 179,
+      "difficulty": "Moderate",
+      "source_type": "scan",
+      "anti_pattern_average_raw": 0.8274848527984295,
+      "meta_model_probability": 0.5405335928505948,
+      "system_correct": 0,
+      "raw_scores": {
+        "document_extraction": 0.8143459878285875,
+        "classification": 0.8901420610711508,
+        "evidence_retrieval": 0.8412872895136739,
+        "explanation_generation": 0.7641640727803057
+      }
+    }
+  ],
+  "semantics_cards": {
+    "document_extraction": {
+      "score_name": "extraction quality index",
+      "producing_component": "Document extraction",
+      "intended_meaning": "Heuristic estimate that required fields were read cleanly enough to attempt downstream processing.",
+      "mathematical_range": "0 to 1",
+      "generation_method": "Rule-based blend of OCR completeness, field coverage, and parser stability checks.",
+      "claims_probability": false,
+      "calibration_method": "Isotonic mapping to extraction success for descriptive analysis only.",
+      "calibration_population": "Synthetic development split with milder difficulty mix than deployment.",
+      "dependency_assumptions": "Downstream classifiers behave similarly when extraction succeeds at the same observed index.",
+      "known_failure_modes": "High scores on template-like scans with systematic field swaps.",
+      "valid_comparisons": "Compare only to the same score on the same extraction pipeline and population.",
+      "invalid_interpretations": "Not the probability the final system answer is correct.",
+      "supported_decisions": "Whether to request re-scan or proceed to classification.",
+      "unsupported_decisions": "Whether the overall case is safe to auto-approve."
+    },
+    "classification": {
+      "score_name": "class confidence",
+      "producing_component": "Classification",
+      "intended_meaning": "Model-reported confidence that the predicted case class is correct.",
+      "mathematical_range": "0 to 1",
+      "generation_method": "Softmax-like score from a multi-class classifier.",
+      "claims_probability": true,
+      "calibration_method": "Isotonic regression fitted on the synthetic development split.",
+      "calibration_population": "Synthetic development split; complex cases are under-represented.",
+      "dependency_assumptions": "Prediction quality is conditionally stable given similar extraction quality and case difficulty.",
+      "known_failure_modes": "Overconfidence on difficult or ambiguous cases.",
+      "valid_comparisons": "Compare with later classifier outputs only after checking calibration drift.",
+      "invalid_interpretations": "Not directly comparable to retrieval margin or explanation self-check scores.",
+      "supported_decisions": "Whether to abstain or request reviewer confirmation of the predicted class.",
+      "unsupported_decisions": "Whether the end-to-end Project Frog packet is trustworthy without more evidence."
+    },
+    "evidence_retrieval": {
+      "score_name": "retrieval relevance margin",
+      "producing_component": "Evidence retrieval",
+      "intended_meaning": "Margin between the top retrieved evidence chunk and the next-best chunk.",
+      "mathematical_range": "0 to 1",
+      "generation_method": "Normalized ranking-margin statistic from the retrieval stack.",
+      "claims_probability": false,
+      "calibration_method": "Isotonic mapping to evidence relevance for descriptive analysis only.",
+      "calibration_population": "Synthetic development split built from the same fictional policy corpus.",
+      "dependency_assumptions": "The margin is informative only for the same query formulation and corpus quality.",
+      "known_failure_modes": "Looks confident when all candidate passages are consistently wrong.",
+      "valid_comparisons": "Compare only across the same retrieval system and corpus snapshot.",
+      "invalid_interpretations": "Not the probability the predicted class or explanation is correct.",
+      "supported_decisions": "Whether to ask for broader retrieval or human evidence search.",
+      "unsupported_decisions": "Whether to multiply directly with classifier confidence."
+    },
+    "explanation_generation": {
+      "score_name": "explanation self-check score",
+      "producing_component": "Explanation generation",
+      "intended_meaning": "Internal consistency score saying the generated rationale matches the retrieved evidence and output template.",
+      "mathematical_range": "0 to 1",
+      "generation_method": "Self-consistency and rubric matching score from the explanation model.",
+      "claims_probability": false,
+      "calibration_method": "Isotonic mapping to explanation adequacy for descriptive analysis only.",
+      "calibration_population": "Synthetic development split with shorter explanations than the evaluation split.",
+      "dependency_assumptions": "Template conformity is associated with adequate explanations.",
+      "known_failure_modes": "High scores for polished but unsupported rationales.",
+      "valid_comparisons": "Compare within the same explanation model and rubric version.",
+      "invalid_interpretations": "Not a calibrated probability of end-to-end correctness.",
+      "supported_decisions": "Whether to request a stronger explanation or route to human review.",
+      "unsupported_decisions": "Whether to auto-release a case packet without checking evidence and class correctness."
+    }
+  },
+  "seed": 7,
+  "synthetic_notice": "All values in this file are fully synthetic and generated for teaching only."
+}
