@@ -57,19 +57,28 @@ class SyntheticDataTests(unittest.TestCase):
         smaller = wilson_interval(successes=89, total=100)
         larger = wilson_interval(successes=890, total=1000)
 
-        smaller_width = round(smaller.upper - smaller.lower, 4)
-        larger_width = round(larger.upper - larger.lower, 4)
+        smaller_width = smaller.upper - smaller.lower
+        larger_width = larger.upper - larger.lower
 
         self.assertEqual(smaller.point_estimate, larger.point_estimate)
+        self.assertAlmostEqual(smaller.lower, 0.8136870349691969)
+        self.assertAlmostEqual(smaller.upper, 0.9374580364293543)
+        self.assertAlmostEqual(larger.lower, 0.8690945010531241)
+        self.assertAlmostEqual(larger.upper, 0.9079206273281428)
         self.assertGreater(smaller_width, larger_width)
 
     def test_wilson_interval_can_widen_for_clustered_rows(self) -> None:
         row_count_interval = wilson_interval(successes=89, total=100)
         clustered_interval = wilson_interval(successes=89, total=100, effective_sample_size=40)
 
-        row_count_width = round(row_count_interval.upper - row_count_interval.lower, 4)
-        clustered_width = round(clustered_interval.upper - clustered_interval.lower, 4)
+        row_count_width = row_count_interval.upper - row_count_interval.lower
+        clustered_width = clustered_interval.upper - clustered_interval.lower
 
+        self.assertEqual(clustered_interval.sample_size, 100)
+        self.assertEqual(clustered_interval.effective_sample_size, 40)
+        self.assertEqual(clustered_interval.method, "Wilson")
+        self.assertAlmostEqual(clustered_interval.lower, 0.7571062032210649)
+        self.assertAlmostEqual(clustered_interval.upper, 0.9545489478450515)
         self.assertGreater(clustered_width, row_count_width)
 
     def test_interval_report_carries_assumptions(self) -> None:

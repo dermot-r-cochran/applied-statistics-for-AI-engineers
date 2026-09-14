@@ -120,6 +120,15 @@ def wilson_interval(
     confidence_level: float = 0.95,
     effective_sample_size: float | None = None,
 ) -> ProportionInterval:
+    """Estimate a Wilson interval for an observed proportion.
+
+    The observed point estimate is always computed from `successes / total`.
+    When `effective_sample_size` is provided, the interval width is computed as
+    though that observed proportion came from a smaller effective sample size.
+    This is a teaching-oriented approximation for clustered or dependent rows:
+    it preserves the observed rate while widening the interval under a reduced
+    independence assumption.
+    """
     if total <= 0:
         raise ValueError("total must be positive")
     if successes < 0 or successes > total:
@@ -132,23 +141,28 @@ def wilson_interval(
         raise ValueError("effective_sample_size must be positive and no larger than total")
 
     point_estimate = successes / total
+    effective_successes = point_estimate * n
+    effective_point_estimate = effective_successes / n
     z_score = NormalDist().inv_cdf(0.5 + (confidence_level / 2))
     z_squared = z_score**2
     denominator = 1 + (z_squared / n)
-    adjusted_center = (point_estimate + (z_squared / (2 * n))) / denominator
+    adjusted_center = (effective_point_estimate + (z_squared / (2 * n))) / denominator
     adjusted_margin = (
         z_score
-        * sqrt((point_estimate * (1 - point_estimate) / n) + (z_squared / (4 * n**2)))
+        * sqrt(
+            (effective_point_estimate * (1 - effective_point_estimate) / n)
+            + (z_squared / (4 * n**2))
+        )
         / denominator
     )
 
     return ProportionInterval(
-        lower=round(max(0.0, adjusted_center - adjusted_margin), 4),
-        upper=round(min(1.0, adjusted_center + adjusted_margin), 4),
-        point_estimate=round(point_estimate, 4),
+        lower=max(0.0, adjusted_center - adjusted_margin),
+        upper=min(1.0, adjusted_center + adjusted_margin),
+        point_estimate=point_estimate,
         sample_size=total,
-        effective_sample_size=round(n, 2),
-        confidence_level=round(confidence_level, 4),
+        effective_sample_size=n,
+        confidence_level=confidence_level,
         method="Wilson",
     )
 
@@ -161,6 +175,7 @@ def metric_interval_report(
     effective_sample_size: float | None = None,
     assumptions: Sequence[str] | None = None,
 ) -> MetricIntervalReport:
+    """Package an observed metric with interval metadata and assumptions."""
     if not metric_name.strip():
         raise ValueError("metric_name must not be empty")
 
