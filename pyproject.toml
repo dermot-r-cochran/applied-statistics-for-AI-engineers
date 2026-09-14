@@ -1,0 +1,24 @@
+[build-system]
+requires = ["setuptools>=69", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "trustworthy-ai-evaluation"
+version = "0.1.0"
+description = "Utilities and book content for the Trustworthy AI Evaluation project."
+readme = "README.md"
+requires-python = ">=3.11"
+authors = [{ name = "Project Frog Editorial Team" }]
+dependencies = []
+
+[project.optional-dependencies]
+docs = [
+  "mkdocs==1.6.1",
+  "pymdown-extensions==11.0.1",
+]
+
+[tool.setuptools]
+packages = ["trustworthy_ai_evaluation"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
