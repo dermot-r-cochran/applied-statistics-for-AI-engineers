@@ -28,4 +28,5 @@ def test_compare_two_models_interval_matches_paired_difference_formula() -> None
     margin = NormalDist().inv_cdf(0.975) * variance**0.5
 
     assert result["difference"] == pytest.approx(difference)
-    assert result["confidence_interval"] == pytest.approx((difference - margin, difference + margin))
+    expected_interval = (difference - margin, difference + margin)
+    assert result["confidence_interval"] == pytest.approx(expected_interval)
