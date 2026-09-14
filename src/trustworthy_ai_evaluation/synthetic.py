@@ -100,8 +100,9 @@ def generate_project_frog_data(
     latent_dependency = rng.normal(0.0, 0.45, size=n_cases)
     retrieval_relevance = np.clip(_sigmoid(0.7 * difficulty_penalty + latent_case_quality) + rng.normal(0.0, 0.08, size=n_cases), 0.0, 1.0)
 
-    rows: list[dict[str, object]] = []
+    component_frames: list[pd.DataFrame] = []
     predicted_class_options = np.array(PROJECT_CLASSES)
+    case_id_labels = np.array([f"PF-C{case_id:05d}" for case_id in case_ids])
 
     for component_index, profile in enumerate(profiles):
         component_noise = rng.normal(0.0, 0.35, size=n_cases)
@@ -144,27 +145,27 @@ def generate_project_frog_data(
             0.0005,
             None,
         )
-
-        for idx in range(n_cases):
-            rows.append(
+        component_frames.append(
+            pd.DataFrame(
                 {
-                    "project_id": project_ids[idx],
-                    "document_id": document_ids[idx],
-                    "case_id": f"PF-C{case_ids[idx]:05d}",
-                    "difficulty": difficulty[idx],
-                    "predicted_class": predicted_class[idx],
-                    "reference_class": reference_class[idx],
-                    "prediction_correct": bool(prediction_correct[idx]),
+                    "project_id": project_ids,
+                    "document_id": document_ids,
+                    "case_id": case_id_labels,
+                    "difficulty": difficulty,
+                    "predicted_class": predicted_class,
+                    "reference_class": reference_class,
+                    "prediction_correct": prediction_correct.astype(bool),
                     "component_name": profile.name,
-                    "raw_confidence": float(raw_confidence[idx]),
-                    "calibrated_probability": float(calibrated_probability[idx]),
-                    "evidence_relevance": float(evidence_relevance[idx]),
-                    "processing_latency": float(processing_latency[idx]),
-                    "processing_cost": float(processing_cost[idx]),
+                    "raw_confidence": raw_confidence.astype(float),
+                    "calibrated_probability": calibrated_probability.astype(float),
+                    "evidence_relevance": evidence_relevance.astype(float),
+                    "processing_latency": processing_latency.astype(float),
+                    "processing_cost": processing_cost.astype(float),
                 }
             )
+        )
 
-    data = pd.DataFrame(rows)
+    data = pd.concat(component_frames, ignore_index=True)
     ordered_columns = [
         "project_id",
         "document_id",

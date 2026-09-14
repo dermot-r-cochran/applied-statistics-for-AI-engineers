@@ -336,9 +336,7 @@ def compare_independent_proportions(
     z_value = norm.ppf(0.5 + confidence_level / 2.0)
     lower = difference - z_value * se
     upper = difference + z_value * se
-    pooled = (successes_a + successes_b) / (trials_a + trials_b)
-    pooled_se = sqrt(pooled * (1.0 - pooled) * ((1.0 / trials_a) + (1.0 / trials_b)))
-    z_stat = 0.0 if pooled_se == 0.0 else difference / pooled_se
+    z_stat = 0.0 if se == 0.0 else difference / se
     p_value = 2.0 * (1.0 - norm.cdf(abs(z_stat)))
     return {
         "rate_a": float(p_a),

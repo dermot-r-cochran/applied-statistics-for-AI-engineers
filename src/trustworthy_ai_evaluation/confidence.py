@@ -160,14 +160,16 @@ def subgroup_metric_report(
     for group_value, subset in frame.groupby(group_column, dropna=False):
         y_true = subset[outcome_column].astype(int).to_numpy()
         y_prob = subset[probability_column].astype(float).to_numpy()
+        curve = calibration_curve_data(y_true, y_prob, n_bins=max(1, min(n_bins, len(subset))))
+        total = curve["count"].sum()
         rows.append(
             {
                 "group": group_value,
                 "rows": int(len(subset)),
                 "observed_rate": float(np.mean(y_true)),
                 "mean_probability": float(np.mean(y_prob)),
-                "ece": expected_calibration_error(y_true, y_prob, n_bins=max(1, min(n_bins, len(subset)))),
-                "brier_score": brier_score_summary(y_true, y_prob)["brier_score"],
+                "ece": float(((curve["count"] / total) * (curve["mean_prediction"] - curve["observed_rate"]).abs()).sum()),
+                "brier_score": float(np.mean((y_prob - y_true) ** 2)),
             }
         )
     return pd.DataFrame(rows).sort_values("group").reset_index(drop=True)
