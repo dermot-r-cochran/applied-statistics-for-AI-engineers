@@ -246,7 +246,7 @@ def _fit_meta_models(data: dict[str, np.ndarray], probs: dict[str, np.ndarray]) 
     X = _feature_matrix(data, probs)
     dev = data["split"] == "development"
     y = data["end_to_end_ok"]
-    meta_model = LogisticRegression(max_iter=2000)
+    meta_model = LogisticRegression(max_iter=2000, solver="liblinear")
     meta_model.fit(X[dev], y[dev])
     bayes_model = GaussianNB()
     bayes_model.fit(X[dev], y[dev])
