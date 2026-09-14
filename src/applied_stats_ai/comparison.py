@@ -52,9 +52,13 @@ def compare_two_models(
     a_only = int(np.sum((correct_a == 1) & (correct_b == 0)))
     b_only = int(np.sum((correct_a == 0) & (correct_b == 1)))
     both_wrong = int(np.sum((correct_a == 0) & (correct_b == 0)))
+    discordant = a_only + b_only
 
     table = np.array([[both_correct, a_only], [b_only, both_wrong]], dtype=int)
-    p_value = float(mcnemar(table, exact=False, correction=True).pvalue)
+    use_exact = discordant < 25
+    p_value = float(
+        mcnemar(table, exact=use_exact, correction=not use_exact).pvalue,
+    )
 
     bootstrap_result = bootstrap_metric(
         paired_differences,

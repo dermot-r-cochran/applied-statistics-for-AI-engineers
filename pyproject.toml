@@ -37,6 +37,9 @@ target-version = "py312"
 [tool.ruff.lint]
 select = ["E", "F", "I", "N", "UP", "B", "C4"]
 
+[tool.ruff.lint.per-file-ignores]
+"tutorials/confidence_intervals/confidence_intervals_for_accuracy.ipynb" = ["B905"]
+
 [tool.pytest.ini_options]
 pythonpath = ["src"]
 testpaths = ["tests"]

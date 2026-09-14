@@ -14,6 +14,8 @@ from sklearn.metrics import (
 from ._typing import ArrayLike
 from .bootstrap import bootstrap_metric
 
+BINARY_LABELS = np.array([0, 1])
+
 
 def confusion_matrix_uncertainty(
     y_true: ArrayLike,
@@ -40,6 +42,10 @@ def confusion_matrix_uncertainty(
         raise ValueError("y_true and y_pred must have equal length")
     if len(y_true_array) == 0:
         raise ValueError("inputs must not be empty")
+
+    observed_labels = set(np.unique(np.concatenate((y_true_array, y_pred_array))).tolist())
+    if not observed_labels <= {0, 1}:
+        raise ValueError("y_true and y_pred must be binary labels encoded as 0/1")
 
     pairs = np.column_stack((y_true_array, y_pred_array))
 
@@ -71,6 +77,10 @@ def confusion_matrix_uncertainty(
     }
 
     return {
-        "confusion_matrix": confusion_matrix(y_true_array, y_pred_array),
+        "confusion_matrix": confusion_matrix(
+            y_true_array,
+            y_pred_array,
+            labels=BINARY_LABELS,
+        ),
         "metrics": metric_results,
     }
