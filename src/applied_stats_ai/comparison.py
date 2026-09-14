@@ -1,10 +1,10 @@
 from __future__ import annotations
 
 import numpy as np
-from scipy.stats import norm
 from statsmodels.stats.contingency_tables import mcnemar
 
 from ._typing import ArrayLike
+from .bootstrap import bootstrap_metric
 
 
 def compare_two_models(
@@ -12,11 +12,13 @@ def compare_two_models(
     predictions_a: ArrayLike,
     predictions_b: ArrayLike,
     confidence_level: float = 0.95,
+    n_resamples: int = 2_000,
+    random_state: int | None = 0,
 ) -> dict[str, float | bool | tuple[float, float]]:
     """Compare two classifiers on the same labeled examples.
 
     The function reports accuracy for each model, the observed difference in accuracy,
-    a confidence interval for the difference, and a paired McNemar test p-value.
+    a bootstrap confidence interval for the paired difference, and a McNemar test p-value.
 
     Examples:
         >>> y_true = [1, 0, 1, 1]
@@ -35,6 +37,8 @@ def compare_two_models(
         raise ValueError("inputs must not be empty")
     if not 0 < confidence_level < 1:
         raise ValueError("confidence_level must be between 0 and 1")
+    if n_resamples <= 0:
+        raise ValueError("n_resamples must be positive")
 
     correct_a = (a == y).astype(int)
     correct_b = (b == y).astype(int)
@@ -54,16 +58,15 @@ def compare_two_models(
         [b_only, neither],
     ]
     p_value = float(mcnemar(table, exact=False, correction=True).pvalue)
-
-    discordant = a_only + b_only
-    z_value = norm.ppf(0.5 + confidence_level / 2)
-    if discordant == 0:
-        interval = (difference, difference)
-    else:
-        difference_count = b_only - a_only
-        variance = (discordant - (difference_count**2 / len(y))) / (len(y) ** 2)
-        margin = z_value * np.sqrt(max(variance, 0.0))
-        interval = (difference - margin, difference + margin)
+    paired_differences = correct_b - correct_a
+    interval_result = bootstrap_metric(
+        paired_differences,
+        np.mean,
+        n_resamples=n_resamples,
+        confidence_level=confidence_level,
+        random_state=random_state,
+    )
+    interval = (float(interval_result["lower"]), float(interval_result["upper"]))
 
     return {
         "accuracy_a": accuracy_a,

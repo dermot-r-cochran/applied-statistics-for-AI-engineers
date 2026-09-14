@@ -11,7 +11,11 @@ def power_analysis(
     sample_size_per_group: int,
     alpha: float = 0.05,
 ) -> float:
-    """Return power for a two-sample comparison of proportions.
+    """Return power for an independent two-sample comparison of proportions.
+
+    This helper assumes the baseline and treatment groups are independent.
+    For paired evaluations on the same examples, use a paired comparison method
+    instead of this function.
 
     Examples:
         >>> round(power_analysis(0.84, 0.88, 400), 3)
@@ -37,7 +41,11 @@ def minimum_detectable_effect(
     target_power: float = 0.8,
     alpha: float = 0.05,
 ) -> float:
-    """Return the minimum absolute lift detectable with the requested power.
+    """Return the minimum absolute effect detectable for independent groups.
+
+    This helper assumes two independent groups of equal size. It searches for the
+    smallest absolute difference above or below ``baseline_rate`` that reaches the
+    requested power under that design.
 
     Examples:
         >>> round(minimum_detectable_effect(0.85, 500), 3)
