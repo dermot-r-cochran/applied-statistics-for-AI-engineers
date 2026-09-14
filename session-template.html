@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>End-of-session Output Template</title>
+  <link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+<main>
+  <p><a href="index.html">← Back to roadmap</a></p>
+  <h1>End-of-session output builder</h1>
+  <p>Use this interactive template to publish the required session closeout structure.</p>
+
+  <section class="card">
+    <label class="field-label" for="core">Core principle</label>
+    <input id="core" type="text" placeholder="e.g., Point estimates require uncertainty quantification">
+
+    <label class="field-label" for="frg">FRG application</label>
+    <input id="frg" type="text" placeholder="e.g., Report row-level accuracy with Wilson interval per verdict class">
+
+    <label class="field-label" for="assumption">Assumption to check</label>
+    <input id="assumption" type="text" placeholder="e.g., Independence across rows within a document is unlikely">
+
+    <label class="field-label" for="task">One practice task</label>
+    <input id="task" type="text" placeholder="e.g., Choose paired vs unpaired comparison for two FRG runs">
+
+    <label class="field-label" for="guide">Suggested note for statistical interpretation guide</label>
+    <textarea id="guide" rows="4" placeholder="e.g., Do not adjust observed accuracy upward for small samples; report interval and limitations."></textarea>
+
+    <button type="button" onclick="buildSessionSummary()">Generate output</button>
+  </section>
+
+  <section class="card">
+    <h2>Generated output</h2>
+    <pre id="session-output"></pre>
+  </section>
+
+  <script src="assets/app.js"></script>
+</main>
+</body>
+</html>

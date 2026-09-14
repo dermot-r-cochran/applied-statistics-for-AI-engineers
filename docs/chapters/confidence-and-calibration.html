@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Confidence and Calibration</title>
+    <link rel="stylesheet" href="../assets/site.css" />
+  </head>
+  <body>
+    <div class="site-shell">
+      <aside class="sidebar">
+        <div class="eyebrow">Project Frog</div>
+        <h2><a href="../index.html">Trustworthy AI Evaluation</a></h2>
+        <nav aria-label="Book navigation">
+          <ul>
+            <li><a href="../index.html">Home</a></li>
+            <li><a href="../tutorials/project-frog-evaluation-lab.html">Interactive tutorial</a></li>
+            <li><a href="./confidence-and-calibration.html">Confidence and calibration</a></li>
+            <li><a href="./sampling-and-test-set-quality.html">Sampling and test-set quality</a></li>
+            <li><a href="./comparability-and-decisions.html">Comparability and decisions</a></li>
+          </ul>
+        </nav>
+      </aside>
+      <main class="content">
+        <section class="hero">
+          <div class="eyebrow">Chapter</div>
+          <h1>Confidence and calibration</h1>
+          <p class="lede">A trustworthy score is not just discriminative. It should also mean roughly what it says across the slices that matter.</p>
+        </section>
+
+        <section class="card">
+          <h2>Core idea</h2>
+          <p>
+            In Project Frog, a confidence score of 0.8 should imply that roughly eight out of ten comparable cases are genuinely high risk.
+            If the observed rate is much lower, the model is overconfident; if much higher, it is underconfident.
+          </p>
+          <p>
+            The same habit applies to top-line metrics. A smaller test set should usually lead to a wider uncertainty interval, not the same level of confidence in the point estimate.
+            Observed accuracy should be reported with an interval and assumptions, not treated as a fixed property of the system.
+          </p>
+        </section>
+
+        <section class="chapter-grid">
+          <article>
+            <h3>Why engineers care</h3>
+            <p>Thresholds, queue sizes, human workload, and automated fallbacks all assume the score maps cleanly to real outcomes.</p>
+          </article>
+          <article>
+            <h3>How it fails</h3>
+            <p>Shifted data, selective labeling, class imbalance, and score clipping can all make apparent confidence unreliable.</p>
+          </article>
+          <article>
+            <h3>What to check</h3>
+            <p>Inspect bins, compare slices, track expected versus observed frequency, and review failure cases around operating thresholds.</p>
+          </article>
+        </section>
+
+        <section class="code-card">
+          <h2>Supporting utility</h2>
+          <pre><code>from project_frog_eval.synthetic_data import (
+    calibration_bins,
+    generate_project_frog_examples,
+    wilson_interval,
+)
+
+examples = generate_project_frog_examples(size=120, seed=7)
+bins = calibration_bins(examples, bins=5)
+accuracy_band = wilson_interval(successes=89, total=100)</code></pre>
+          <p>The repository includes small Python helpers to generate synthetic labeled records, aggregate calibration bins, and report interval-aware proportion estimates for teaching examples.</p>
+        </section>
+
+        <section class="table-card">
+          <h2>Worked example: same observed accuracy, different stability</h2>
+          <table>
+            <thead>
+              <tr>
+                <th scope="col">Synthetic evaluation set</th>
+                <th scope="col">Observed accuracy</th>
+                <th scope="col">95% Wilson interval</th>
+                <th scope="col">Why it differs</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Project Frog field trial A: 890 correct out of 1,000 sightings</td>
+                <td>89%</td>
+                <td>86.9% to 90.8%</td>
+                <td>More rows make the uncertainty band narrower under the same independence assumption.</td>
+              </tr>
+              <tr>
+                <td>Project Frog field trial B: 89 correct out of 100 sightings</td>
+                <td>89%</td>
+                <td>81.4% to 93.8%</td>
+                <td>Fewer rows mean the point estimate is less stable, so the interval should widen.</td>
+              </tr>
+            </tbody>
+          </table>
+          <p>The point estimate is identical in both fictional trials. The interval width changes because sample size changes.</p>
+        </section>
+
+        <section class="card">
+          <h2>Questions to ask before trusting a score</h2>
+          <ul>
+            <li>Does calibration hold for each important habitat or season?</li>
+            <li>Is the threshold chosen for a real operational trade-off?</li>
+            <li>Are abstentions or missing labels distorting the observed outcome rate?</li>
+            <li>Is score behavior stable between the current test set and the intended deployment conditions?</li>
+            <li>Are repeated rows, shared collection sessions, or clustered habitats making row-count-based intervals too narrow?</li>
+          </ul>
+        </section>
+      </main>
+    </div>
+  </body>
+</html>
