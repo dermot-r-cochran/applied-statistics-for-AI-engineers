@@ -66,7 +66,7 @@ footer{border-top:1px solid var(--line);color:var(--mute);font-size:.82rem;paddi
 <body>
 <header>
   <h1><a href="#/">Applied Statistics for AI Engineers</a></h1>
-  <nav aria-label="Sections"><a href="#/">Lessons</a><a href="#/case">The case</a><a href="#/rules">Rules</a><a href="#/cards">Cards</a><a href="#/glossary">Glossary</a><a href="#/session">Session note</a></nav>
+  <nav aria-label="Sections"><a href="#/">Lessons</a><a href="#/case">The case</a><a href="#/rules">Rules</a><a href="#/cards">Cards</a><a href="#/glossary">Glossary</a><a href="#/reading">Reading</a><a href="#/session">Session note</a></nav>
 </header>
 <main id="main" tabindex="-1"></main>
 <footer>One file, no dependencies, no network. Every number on this site is synthetic and labelled as such. Text CC BY 4.0, engine MIT. <a href="https://github.com/dermot-r-cochran/applied-statistics-for-AI-engineers">Source</a>.</footer>
@@ -680,6 +680,45 @@ const GLOSSARY = [
   ["Unit of inference","The level a conclusion is about: row, document, project, or period. Intervals must be computed at that level. Lessons G, J."]
 ];
 
+const READING = [
+  { cite:"Evan Miller, \"Adding Error Bars to Evals: A Statistical Approach to Language Model Evaluations\", arXiv:2411.00640, 2024.", lessons:["A","E","F","J"],
+    why:"The closest thing to this course in one paper: standard errors for evaluation scores, paired differences between models, clustering by question, and power. Read it first." },
+  { cite:"Edwin B. Wilson, \"Probable Inference, the Law of Succession, and Statistical Inference\", Journal of the American Statistical Association 22 (1927), 209–212.", lessons:["B"],
+    why:"The interval that Lesson B recommends by default, in four pages." },
+  { cite:"Lawrence D. Brown, T. Tony Cai and Anirban DasGupta, \"Interval Estimation for a Binomial Proportion\", Statistical Science 16 (2001), 101–133.", lessons:["B"],
+    why:"Why the Wald interval fails, with coverage plots, and why Wilson and a few others are the ones to use." },
+  { cite:"C. J. Clopper and E. S. Pearson, \"The Use of Confidence or Fiducial Limits Illustrated in the Case of the Binomial\", Biometrika 26 (1934), 404–413.", lessons:["B"],
+    why:"The exact interval." },
+  { cite:"Bradley Efron and Robert J. Tibshirani, \"An Introduction to the Bootstrap\", Chapman & Hall, 1993.", lessons:["C","G"],
+    why:"The standard text. Chapters on the percentile interval and on what to resample are the ones Lessons C and G lean on." },
+  { cite:"Phillip Good, \"Permutation, Parametric, and Bootstrap Tests of Hypotheses\", 3rd edition, Springer, 2005.", lessons:["G"],
+    why:"Permutation tests, including the sign-flip test for paired differences." },
+  { cite:"Jacob Cohen, \"Statistical Power Analysis for the Behavioral Sciences\", 2nd edition, Lawrence Erlbaum, 1988.", lessons:["D","E"],
+    why:"Effect sizes, including h for proportions, and power tables. The small/medium/large conventions come from here and are exactly the conventions Lesson D says not to rely on." },
+  { cite:"Quinn McNemar, \"Note on the sampling error of the difference between correlated proportions or percentages\", Psychometrika 12 (1947), 153–157.", lessons:["F"],
+    why:"The paired test, in its original two pages." },
+  { cite:"Thomas G. Dietterich, \"Approximate Statistical Tests for Comparing Supervised Classification Learning Algorithms\", Neural Computation 10 (1998), 1895–1923.", lessons:["F","E"],
+    why:"Compares McNemar's test with the alternatives for exactly the situation of Lesson F and shows which have the right false-alarm rate." },
+  { cite:"E. H. Simpson, \"The Interpretation of Interaction in Contingency Tables\", Journal of the Royal Statistical Society B 13 (1951), 238–241.", lessons:["H"],
+    why:"The paradox Lesson H demonstrates, from the paper it is named for." },
+  { cite:"Leslie Kish, \"Survey Sampling\", Wiley, 1965.", lessons:["I","J"],
+    why:"The design effect, post-stratification and weighting come from survey statistics, and this is where they were worked out." },
+  { cite:"Xavier Bouthillier and others, \"Accounting for Variance in Machine Learning Benchmarks\", Proceedings of Machine Learning and Systems 3 (2021).", lessons:["A","J","K"],
+    why:"How much benchmark scores move under sources of variance that evaluations usually ignore, measured across many tasks." },
+  { cite:"Jacob Cohen, \"A coefficient of agreement for nominal scales\", Educational and Psychological Measurement 20 (1960), 37–46.", lessons:["K"],
+    why:"Cohen's κ, the annotator-agreement measure Lesson K uses to put error bars on the ground truth." },
+  { cite:"Glenn W. Brier, \"Verification of forecasts expressed in terms of probability\", Monthly Weather Review 78 (1950), 1–3.", lessons:["M"],
+    why:"The Brier score, from weather forecasting, where calibration was a practical problem long before it was a machine-learning one." },
+  { cite:"Chuan Guo, Geoff Pleiss, Yu Sun and Kilian Q. Weinberger, \"On Calibration of Modern Neural Networks\", International Conference on Machine Learning, 2017.", lessons:["M"],
+    why:"Reliability diagrams and expected calibration error as Lesson M uses them, and the finding that modern classifiers are typically over-confident." },
+  { cite:"Jose G. Moreno-Torres and others, \"A unifying view on dataset shift in classification\", Pattern Recognition 45 (2012), 521–530.", lessons:["N","I"],
+    why:"The vocabulary Lesson N uses: covariate shift, prior-probability shift and concept drift, and why they need different responses." },
+  { cite:"E. S. Page, \"Continuous inspection schemes\", Biometrika 41 (1954), 100–115.", lessons:["N"],
+    why:"CUSUM, the sequential method Lesson N names as the alternative to testing every week at 0.05." },
+  { cite:"Min, Song, Zheng, King, Deng and Hong, \"Applied Statistics in the Era of Artificial Intelligence: A Review and Vision\", arXiv:2412.10331, 2024.", lessons:["L","N"],
+    why:"Context rather than method: a survey of where applied statistics and AI meet. Its section on statistics for AI assurance and test planning is the part that touches this course." }
+];
+
 const SESSION_FIELDS = [
   ["principle","Core principle","One sentence: the statistical idea this session turned on."],
   ["application","Application to the case","Where it bites in the evaluation you are actually running."],
@@ -758,7 +797,7 @@ const md = (text) => {
 
 const PARTS = [["question","Engineering question"],["principle","Core statistical principle"],["maths","Essential mathematics"],["assumptions","Assumptions"],["example","Worked example (synthetic)"],["pitfall","Common interpretation error"],["application","Application to the case"],["diagnostic","One diagnostic question"],["exercise","One applied exercise"]];
 
-const BOOK = { SITE, CASE, RULES, LESSONS, CARDS, GLOSSARY, SESSION_FIELDS, PARTS, S, fmt, md };
+const BOOK = { SITE, CASE, RULES, LESSONS, CARDS, GLOSSARY, READING, SESSION_FIELDS, PARTS, S, fmt, md };
 
 if (typeof document !== "undefined") (function page(){
   const main = document.getElementById("main");
@@ -791,6 +830,7 @@ if (typeof document !== "undefined") (function page(){
     rules(){ return `<h2>Core reasoning rules</h2><p>Nine distinctions the lessons return to. Each is a habit, not a formula: the question to ask before a number is allowed to mean something.</p>${RULES.map((r,i)=>`<div class="rule"><b>${i+1}. Distinguish ${esc(r[0].toLowerCase())}.</b> ${inline(r[1])}</div>`).join("")}`; },
     cards(){ return `<h2>Reference cards</h2><p>Templates the lessons ask you to fill. Copy the lines into your own documents; every line left blank is a finding.</p>${CARDS.map(c=>`<div class="card" id="card-${c.id}"><h4>${esc(c.title)} <span class="mute">(Lesson ${c.lesson})</span></h4><ul>${c.lines.map(l=>`<li>${inline(l)}</li>`).join("")}</ul></div>`).join("")}`; },
     glossary(){ return `<h2>Glossary</h2><dl>${GLOSSARY.map(g=>`<dt><b>${esc(g[0])}</b></dt><dd>${inline(g[1])}</dd>`).join("")}</dl>`; },
+    reading(){ return `<h2>Further reading</h2><p>The lessons derive everything they use, so none of this is required. These are the sources behind the methods, for when a derivation is not enough, in roughly the order the lessons meet them. Nothing here is about the fictional case.</p><ol>${READING.map(r=>`<li><p>${esc(r.cite)}<br><span class="mute">${inline(r.why)} Lessons ${r.lessons.map(id=>`<a href="#/lesson/${id}">${id}</a>`).join(", ")}.</span></p></li>`).join("")}</ol>`; },
     session(){ const saved=store.get("session",{});
       return `<h2>End-of-session note</h2><p>Every lesson ends with the same five lines. Fill them, copy the note out, keep it with the evaluation it came from.</p><div class="session">${SESSION_FIELDS.map(f=>`<label for="s-${f[0]}">${esc(f[1])} <span class="mute">— ${esc(f[2])}</span></label><textarea id="s-${f[0]}" data-key="${f[0]}">${esc(saved[f[0]]||"")}</textarea>`).join("")}<p><button type="button" id="s-build">Build the note</button> <button type="button" id="s-clear">Clear</button></p><pre id="s-out" aria-live="polite"></pre></div>`; },
     lesson(id){ const l=LESSONS.find(x=>x.id===id); if(!l) return views.home();
