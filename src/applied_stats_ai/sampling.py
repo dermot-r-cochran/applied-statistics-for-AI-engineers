@@ -20,7 +20,13 @@ def effective_sample_size(
     Examples:
         >>> round(effective_sample_size(weights=[1, 1, 2, 2]), 2)
         3.6
-        >>> round(effective_sample_size(cluster_ids=[1, 1, 2, 2, 3, 3], intra_cluster_correlation=0.2), 2)
+        >>> round(
+        ...     effective_sample_size(
+        ...         cluster_ids=[1, 1, 2, 2, 3, 3],
+        ...         intra_cluster_correlation=0.2,
+        ...     ),
+        ...     2,
+        ... )
         5.0
     """
     if weights is not None:
@@ -38,8 +44,8 @@ def effective_sample_size(
         if not 0 <= intra_cluster_correlation < 1:
             raise ValueError("intra_cluster_correlation must be between 0 and 1")
         _, counts = np.unique(clusters, return_counts=True)
-        average_cluster_size = counts.mean()
-        design_effect = 1 + (average_cluster_size - 1) * intra_cluster_correlation
+        adjusted_cluster_size = float(np.sum(counts**2) / np.sum(counts))
+        design_effect = 1 + (adjusted_cluster_size - 1) * intra_cluster_correlation
         return float(clusters.size / design_effect)
 
     if sample_size is None or sample_size <= 0:

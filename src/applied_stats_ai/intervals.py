@@ -16,7 +16,11 @@ def _validate_binomial_inputs(successes: int, trials: int, confidence_level: flo
         raise ValueError("confidence_level must be between 0 and 1")
 
 
-def wilson_interval(successes: int, trials: int, confidence_level: float = 0.95) -> tuple[float, float]:
+def wilson_interval(
+    successes: int,
+    trials: int,
+    confidence_level: float = 0.95,
+) -> tuple[float, float]:
     """Return a Wilson score interval for a binomial proportion.
 
     Examples:
@@ -47,7 +51,11 @@ def clopper_pearson_interval(
     _validate_binomial_inputs(successes, trials, confidence_level)
     alpha = 1 - confidence_level
     lower = 0.0 if successes == 0 else beta.ppf(alpha / 2, successes, trials - successes + 1)
-    upper = 1.0 if successes == trials else beta.ppf(1 - alpha / 2, successes + 1, trials - successes)
+    upper = (
+        1.0
+        if successes == trials
+        else beta.ppf(1 - alpha / 2, successes + 1, trials - successes)
+    )
     return float(lower), float(upper)
 
 

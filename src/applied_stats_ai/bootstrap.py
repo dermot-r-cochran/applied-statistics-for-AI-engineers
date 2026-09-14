@@ -18,7 +18,12 @@ def bootstrap_metric(
 
     Examples:
         >>> import numpy as np
-        >>> result = bootstrap_metric(np.array([1, 0, 1, 1]), np.mean, n_resamples=100, random_state=0)
+        >>> result = bootstrap_metric(
+        ...     np.array([1, 0, 1, 1]),
+        ...     np.mean,
+        ...     n_resamples=100,
+        ...     random_state=0,
+        ... )
         >>> sorted(result.keys())
         ['bootstrap_distribution', 'estimate', 'lower', 'upper']
     """

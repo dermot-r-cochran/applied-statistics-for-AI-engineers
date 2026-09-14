@@ -54,12 +54,32 @@ def minimum_detectable_effect(
 
     analysis = NormalIndPower()
 
-    def objective(delta: float) -> float:
-        treatment = min(max(baseline_rate + delta, 1e-6), 1 - 1e-6)
-        effect_size = proportion_effectsize(treatment, baseline_rate)
-        return analysis.power(effect_size=effect_size, nobs1=sample_size_per_group, alpha=alpha) - target_power
+    def solve(direction: int) -> float | None:
+        upper_bound = (
+            min(1 - baseline_rate - 1e-6, 0.499999)
+            if direction > 0
+            else min(baseline_rate - 1e-6, 0.499999)
+        )
+        if upper_bound <= 1e-6:
+            return None
 
-    upper_bound = min(1 - baseline_rate - 1e-6, 0.499999)
-    if objective(upper_bound) < 0:
-        raise ValueError("sample size is too small to reach target_power within valid proportion bounds")
-    return float(brentq(objective, 1e-6, upper_bound))
+        def objective(delta: float) -> float:
+            treatment = baseline_rate + (direction * delta)
+            effect_size = proportion_effectsize(treatment, baseline_rate)
+            power = analysis.power(
+                effect_size=effect_size,
+                nobs1=sample_size_per_group,
+                alpha=alpha,
+            )
+            return power - target_power
+
+        if objective(upper_bound) < 0:
+            return None
+        return float(brentq(objective, 1e-6, upper_bound))
+
+    candidates = [value for value in (solve(1), solve(-1)) if value is not None]
+    if not candidates:
+        raise ValueError(
+            "sample size is too small to reach target_power within valid proportion bounds"
+        )
+    return min(candidates)
