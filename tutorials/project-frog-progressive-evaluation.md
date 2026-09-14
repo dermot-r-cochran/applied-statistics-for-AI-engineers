@@ -1,3 +1,10 @@
+---
+jupytext:
+  text_representation:
+    extension: .md
+    format_name: myst
+---
+
 # Project Frog: a progressive evaluation walkthrough
 
 ## Why this page exists
