@@ -58,7 +58,15 @@ def generate_project_frog_evaluation(
     complexities = np.array(['simple', 'medium', 'complex'])
     complexity = rng.choice(complexities, size=scenario.sample_size, p=[0.5, 0.3, 0.2])
     truth = rng.integers(0, 2, size=scenario.sample_size)
-    project_ids = rng.integers(1, scenario.project_count + 1, size=scenario.sample_size)
+    project_ids = np.arange(1, scenario.project_count + 1)
+    if scenario.project_count < scenario.sample_size:
+        additional_ids = rng.integers(
+            1,
+            scenario.project_count + 1,
+            size=scenario.sample_size - scenario.project_count,
+        )
+        project_ids = np.concatenate((project_ids, additional_ids))
+    rng.shuffle(project_ids)
 
     baseline_correct = rng.binomial(1, scenario.baseline_accuracy, size=scenario.sample_size)
     comparison_correct = rng.binomial(1, scenario.comparison_accuracy, size=scenario.sample_size)

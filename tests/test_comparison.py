@@ -1,6 +1,7 @@
 from math import isclose
 
 from scipy.stats import norm
+from statsmodels.stats.contingency_tables import mcnemar
 
 from applied_stats_ai import compare_two_models
 
@@ -30,3 +31,14 @@ def test_compare_two_models_uses_paired_difference_variance() -> None:
     expected_interval = (difference - margin, difference + margin)
     assert isclose(result["difference"], difference)
     assert result["confidence_interval"] == expected_interval
+
+
+def test_compare_two_models_reports_mcnemar_p_value() -> None:
+    y_true = [1, 1, 0, 0, 1, 0]
+    predictions_a = [1, 0, 0, 1, 0, 0]
+    predictions_b = [1, 1, 1, 0, 1, 0]
+    result = compare_two_models(y_true, predictions_a, predictions_b)
+
+    table = [[2, 2], [2, 0]]
+    expected_p_value = float(mcnemar(table, exact=False, correction=True).pvalue)
+    assert isclose(result["p_value"], expected_p_value)
