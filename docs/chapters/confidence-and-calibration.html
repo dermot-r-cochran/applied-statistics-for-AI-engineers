@@ -34,6 +34,10 @@
             In Project Frog, a confidence score of 0.8 should imply that roughly eight out of ten comparable cases are genuinely high risk.
             If the observed rate is much lower, the model is overconfident; if much higher, it is underconfident.
           </p>
+          <p>
+            The same habit applies to top-line metrics. A smaller test set should usually lead to a wider uncertainty interval, not the same level of confidence in the point estimate.
+            Observed accuracy should be reported with an interval and assumptions, not treated as a fixed property of the system.
+          </p>
         </section>
 
         <section class="chapter-grid">
@@ -53,11 +57,45 @@
 
         <section class="code-card">
           <h2>Supporting utility</h2>
-          <pre><code>from project_frog_eval.synthetic_data import calibration_bins, generate_project_frog_examples
+          <pre><code>from project_frog_eval.synthetic_data import (
+    calibration_bins,
+    generate_project_frog_examples,
+    wilson_interval,
+)
 
 examples = generate_project_frog_examples(size=120, seed=7)
-bins = calibration_bins(examples, bins=5)</code></pre>
-          <p>The repository now includes a small Python helper to generate synthetic labeled records and aggregate simple calibration bins for teaching examples.</p>
+bins = calibration_bins(examples, bins=5)
+accuracy_band = wilson_interval(successes=89, total=100)</code></pre>
+          <p>The repository includes small Python helpers to generate synthetic labeled records, aggregate calibration bins, and report interval-aware proportion estimates for teaching examples.</p>
+        </section>
+
+        <section class="table-card">
+          <h2>Worked example: same observed accuracy, different stability</h2>
+          <table>
+            <thead>
+              <tr>
+                <th scope="col">Synthetic evaluation set</th>
+                <th scope="col">Observed accuracy</th>
+                <th scope="col">95% Wilson interval</th>
+                <th scope="col">Why it differs</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Project Frog field trial A: 890 correct out of 1,000 sightings</td>
+                <td>89%</td>
+                <td>86.9% to 90.8%</td>
+                <td>More rows make the uncertainty band narrower under the same independence assumption.</td>
+              </tr>
+              <tr>
+                <td>Project Frog field trial B: 89 correct out of 100 sightings</td>
+                <td>89%</td>
+                <td>81.4% to 93.8%</td>
+                <td>Fewer rows mean the point estimate is less stable, so the interval should widen.</td>
+              </tr>
+            </tbody>
+          </table>
+          <p>The point estimate is identical in both fictional trials. The interval width changes because sample size changes.</p>
         </section>
 
         <section class="card">
@@ -67,6 +105,7 @@ bins = calibration_bins(examples, bins=5)</code></pre>
             <li>Is the threshold chosen for a real operational trade-off?</li>
             <li>Are abstentions or missing labels distorting the observed outcome rate?</li>
             <li>Is score behavior stable between the current test set and the intended deployment conditions?</li>
+            <li>Are repeated rows, shared collection sessions, or clustered habitats making row-count-based intervals too narrow?</li>
           </ul>
         </section>
       </main>

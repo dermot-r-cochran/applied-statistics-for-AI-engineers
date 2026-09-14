@@ -60,6 +60,20 @@ uv run jupyter-book build .
 ## Preservation note
 
 Useful existing educational material, notebooks, examples, utilities, and tests were retained and integrated into the book structure rather than deleted. The main change is the addition of a coherent book navigation layer and GitHub Pages publishing workflow.
+Synthetic book materials and Python utilities for teaching applied statistics and metrics to AI engineers.
+
+## Quick start
+
+```bash
+python -m venv .venv
+source .venv/bin/activate
+pip install -e .[dev]
+python -m trustworthy_ai_evaluation.project_frog_experiment
+pytest
+mkdocs build --strict
+```
+
+All datasets, figures, and examples in this repository are fully synthetic.
 # applied-statistics-for-AI-engineers
 Applied Statistics and Metrics for AI Engineers
 
@@ -76,7 +90,7 @@ All examples in this repository are synthetic and fictional under the Project Fr
 ## Repository layout
 
 - `docs/` - static GitHub Pages site with book-style navigation and interactive lesson pages
-- `src/project_frog_eval/` - small Python utilities for synthetic evaluation data and summaries
+- `src/project_frog_eval/` - small Python utilities for synthetic evaluation data, summaries, and interval-aware metric reporting
 - `tests/` - unit tests for the supporting utilities
 
 ## Local preview
