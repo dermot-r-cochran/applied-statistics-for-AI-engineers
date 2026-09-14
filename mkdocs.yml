@@ -75,6 +75,7 @@ nav:
       - '23. Communicating What the Evidence Does Not Prove': part-vi-from-evidence-to-decisions/23-communicating-what-the-evidence-does-not-prove.md
       - '24. Building an AI Evaluation Strategy': part-vi-from-evidence-to-decisions/24-building-an-ai-evaluation-strategy.md
   - 'Appendices and Reference Material':
+      - Overview: appendices/index.md
       - Glossary: appendices/glossary.md
       - Metric-selection guide: appendices/metric-selection-guide.md
       - Confidence-interval selection guide: appendices/confidence-interval-selection-guide.md
