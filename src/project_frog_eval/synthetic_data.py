@@ -137,8 +137,8 @@ def wilson_interval(
         raise ValueError("confidence_level must be between 0 and 1")
 
     n = float(total if effective_sample_size is None else effective_sample_size)
-    if n <= 0 or n > total:
-        raise ValueError("effective_sample_size must be positive and no larger than total")
+    if n < 1 or n > total:
+        raise ValueError("effective_sample_size must be at least 1 and no larger than total")
 
     point_estimate = successes / total
     effective_successes = point_estimate * n

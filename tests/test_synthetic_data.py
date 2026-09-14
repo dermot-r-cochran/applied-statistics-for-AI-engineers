@@ -108,6 +108,9 @@ class SyntheticDataTests(unittest.TestCase):
             wilson_interval(successes=9, total=10, effective_sample_size=12)
 
         with self.assertRaises(ValueError):
+            wilson_interval(successes=9, total=10, effective_sample_size=0.5)
+
+        with self.assertRaises(ValueError):
             metric_interval_report(metric_name=" ", successes=9, total=10)
 
 
