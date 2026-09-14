@@ -2,6 +2,7 @@ import unittest
 
 from tutorial_examples import (
     FrogCase,
+    _allocate_counts,
     class_error_table,
     difficulty_summary,
     generate_project_frog_cases,
@@ -94,6 +95,21 @@ class TutorialExampleTests(unittest.TestCase):
             release_recommendation(0.9, (0.95, 0.9), target=0.9)
         with self.assertRaises(ValueError):
             release_recommendation(0.9, (-0.1, 0.9), target=0.9)
+
+    def test_allocate_counts_handles_zero_total(self) -> None:
+        self.assertEqual(_allocate_counts(0, {"a": 0.5, "b": 0.5}), {"a": 0, "b": 0})
+
+    def test_allocate_counts_rejects_invalid_weights(self) -> None:
+        with self.assertRaises(ValueError):
+            _allocate_counts(3, {"a": -1.0, "b": 2.0})
+        with self.assertRaises(ValueError):
+            _allocate_counts(3, {})
+
+    def test_allocate_counts_distributes_remainder_by_fraction(self) -> None:
+        self.assertEqual(
+            _allocate_counts(5, {"a": 0.5, "b": 0.3, "c": 0.2}),
+            {"a": 3, "b": 1, "c": 1},
+        )
 
 
 if __name__ == "__main__":

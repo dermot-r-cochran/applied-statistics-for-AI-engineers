@@ -59,9 +59,10 @@ All examples on this page are synthetic, fictional, and reproducible. They use a
 import sys
 from pathlib import Path
 
-repo_root = Path.cwd()
-if not (repo_root / "tutorial_examples.py").exists():
-    repo_root = repo_root.parent
+repo_root = next(
+    path for path in (Path.cwd(), *Path.cwd().parents)
+    if (path / "tutorial_examples.py").exists()
+)
 sys.path.insert(0, str(repo_root))
 
 from tutorial_examples import difficulty_summary, generate_project_frog_cases

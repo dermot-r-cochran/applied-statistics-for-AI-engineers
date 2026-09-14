@@ -52,6 +52,7 @@ class FrogCase:
 
 CLASSES = ("Clear", "Review", "Insufficient", "Escalate")
 DIFFICULTIES = ("Simple", "Moderate", "Complex")
+INSUFFICIENT_MARGIN = 0.05
 
 
 def generate_project_frog_cases(seed: int = 7, n: int = 36) -> list[FrogCase]:
@@ -191,7 +192,10 @@ def class_error_table(cases: Sequence[FrogCase]) -> dict[str, int]:
 
 
 def release_recommendation(
-    accuracy: float, interval: tuple[float, float], target: float = 0.90
+    accuracy: float,
+    interval: tuple[float, float],
+    target: float = 0.90,
+    insufficient_margin: float = INSUFFICIENT_MARGIN,
 ) -> str:
     """Map an observed metric summary to a simple tutorial recommendation.
 
@@ -205,7 +209,9 @@ def release_recommendation(
 
     A caveated release requires the observed accuracy to meet the target while
     the lower bound still falls short. A high upper bound alone is not treated
-    as positive release evidence.
+    as positive release evidence. ``insufficient_margin`` defines how close a
+    below-target point estimate can be before the result is treated as clearly
+    risky instead of merely insufficient.
     """
 
     lower, upper = interval
@@ -217,12 +223,14 @@ def release_recommendation(
         raise ValueError("accuracy must be between 0 and 1")
     if not 0.0 <= target <= 1.0:
         raise ValueError("target must be between 0 and 1")
+    if insufficient_margin < 0:
+        raise ValueError("insufficient_margin must be non-negative")
 
     if lower >= target:
         return "Evidence supports release"
     if accuracy >= target:
         return "Evidence supports release with caveats"
-    if upper >= target or accuracy >= target - 0.05:
+    if upper >= target or accuracy >= target - insufficient_margin:
         return "Evidence is insufficient"
     return "Evidence indicates release risk"
 
