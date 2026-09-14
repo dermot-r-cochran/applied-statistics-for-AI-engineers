@@ -172,4 +172,10 @@ def subgroup_metric_report(
                 "brier_score": float(np.mean((y_prob - y_true) ** 2)),
             }
         )
-    return pd.DataFrame(rows).reset_index(drop=True)
+    report = pd.DataFrame(rows)
+    return (
+        report.assign(_sort_key=report["group"].astype(str))
+        .sort_values("_sort_key")
+        .drop(columns="_sort_key")
+        .reset_index(drop=True)
+    )

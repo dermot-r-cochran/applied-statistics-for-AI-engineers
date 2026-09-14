@@ -25,3 +25,16 @@ def test_metric_comparability_not_direct() -> None:
         same_operating_conditions=True,
     )
     assert result["classification"] == "Not directly comparable"
+
+
+def test_metric_comparability_with_limitations() -> None:
+    result = metric_comparability_check(
+        same_examples=True,
+        same_ground_truth=True,
+        same_scoring_code=True,
+        same_metric_definition=True,
+        same_thresholds=True,
+        same_preprocessing=False,
+        same_operating_conditions=True,
+    )
+    assert result["classification"] == "Comparable with limitations"

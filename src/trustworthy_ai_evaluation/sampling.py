@@ -368,6 +368,7 @@ def minimum_detectable_effect(
     sample_size_per_group: int,
     power: float = 0.8,
     alpha: float = 0.05,
+    direction: Literal["increase", "decrease", "either"] = "either",
 ) -> float:
     """Approximate the minimum detectable effect for two independent proportions.
 
@@ -389,22 +390,42 @@ def minimum_detectable_effect(
         raise ValueError("power must be between 0 and 1.")
     if not 0.0 < alpha < 1.0:
         raise ValueError("alpha must be between 0 and 1.")
+    if direction not in {"increase", "decrease", "either"}:
+        raise ValueError("direction must be 'increase', 'decrease', or 'either'.")
 
     z_alpha = norm.ppf(1.0 - alpha / 2.0)
     z_beta = norm.ppf(power)
 
-    def objective(delta: float) -> float:
-        comparison_rate = min(0.999999, max(0.000001, baseline_rate + delta))
-        se = sqrt(
-            baseline_rate * (1.0 - baseline_rate) / sample_size_per_group
-            + comparison_rate * (1.0 - comparison_rate) / sample_size_per_group
-        )
-        return delta - (z_alpha + z_beta) * se
+    def solve(selected_direction: Literal["increase", "decrease"]) -> float:
+        sign = 1.0 if selected_direction == "increase" else -1.0
+        upper_bound = (1.0 - baseline_rate - 1e-6) if sign > 0 else (baseline_rate - 1e-6)
+        if upper_bound <= 0.0:
+            raise ValueError("baseline_rate leaves no room for the requested detectable effect.")
 
-    upper_bound = 1.0 - baseline_rate - 1e-6
-    if upper_bound <= 0.0:
-        raise ValueError("baseline_rate leaves no room for a positive detectable effect.")
-    return float(brentq(objective, 1e-6, upper_bound))
+        def objective(delta: float) -> float:
+            comparison_rate = baseline_rate + sign * delta
+            se = sqrt(
+                baseline_rate * (1.0 - baseline_rate) / sample_size_per_group
+                + comparison_rate * (1.0 - comparison_rate) / sample_size_per_group
+            )
+            return delta - (z_alpha + z_beta) * se
+
+        if objective(upper_bound) < 0.0:
+            raise ValueError("Requested direction has no detectable effect within the feasible probability range.")
+        return float(brentq(objective, 1e-6, upper_bound))
+
+    if direction == "either":
+        candidates = []
+        for selected_direction in ("increase", "decrease"):
+            try:
+                candidates.append(solve(selected_direction))
+            except ValueError:
+                continue
+        if not candidates:
+            raise ValueError("No detectable effect was found within the feasible probability range.")
+        return min(candidates)
+
+    return solve(direction)
 
 
 def required_sample_size(
