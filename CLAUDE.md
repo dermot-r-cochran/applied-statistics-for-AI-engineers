@@ -103,6 +103,23 @@ require and no claims beyond what they support. Every lesson points at
 at least one other lesson (the check requires it), because the course is
 a web, not a list.
 
+## The two tracks
+
+Added 2026-09-19 at Dermot's direction (*a lighter, gentler optional
+introduction track based on a few calibration questions at the start*).
+`CALIBRATION` holds the start page: four scored questions (`q`, `o`, `a`),
+one self-report question about notation (`self`, with `gentleAt` the
+option index from which "words first" is inferred), `passAt` (the score
+below which the gentle track is suggested) and the two verdicts. Every
+lesson carries a `gentle` page: the engineering question in everyday
+terms, the one idea in bold, the worked example told in words with the
+lesson's own numbers, and "so the answer is". It is words: the check
+refuses backtick notation in it and requires it to be substantial. The
+gentle track renders that page above the nine parts and changes nothing
+else; the track is a localStorage preference, switchable at the top of
+any lesson, and the suggestion never locks anything. Keep the gentle
+page's numbers the same as the example's, so the two never disagree.
+
 ## Adding a lesson
 
 Append to `LESSONS` with the next letter, all nine parts and a calculator

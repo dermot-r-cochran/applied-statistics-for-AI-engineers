@@ -32,6 +32,9 @@ if (BOOK) {
     const want = String.fromCharCode(65 + i);
     if (l.id !== want) fail(`lesson ${i} has id ${l.id}, expected ${want}`);
     if (!l.title) fail(`lesson ${l.id} has no title`);
+    // the gentle track's plain-words page: present, substantial, and in words (no backtick mathematics)
+    if (typeof l.gentle !== "string" || l.gentle.trim().length < 300) fail(`lesson ${l.id}: gentle page missing or too short`);
+    else if (l.gentle.includes("`")) fail(`lesson ${l.id}: the gentle page is words, not notation`);
     for (const [key, name] of PARTS) {
       if (key === "diagnostic") {
         if (!l.diagnostic || !l.diagnostic.q || !l.diagnostic.a) fail(`lesson ${l.id}: diagnostic needs q and a`);
@@ -88,6 +91,15 @@ if (BOOK) {
 
   // ---- rules, cards, glossary, session -------------------------------
   if (RULES.length !== 9) fail(`expected nine reasoning rules, found ${RULES.length}`);
+  const CAL = BOOK.CALIBRATION;
+  if (!CAL || !Array.isArray(CAL.questions) || CAL.questions.length < 3) fail("the start page needs at least three calibration questions");
+  else {
+    CAL.questions.forEach((x, i) => { if (!x.q || !Array.isArray(x.o) || x.o.length < 3 || !Number.isInteger(x.a) || x.a < 0 || x.a >= x.o.length) fail(`calibration question ${i + 1} is malformed`); });
+    if (new Set(CAL.questions.map(x => x.a)).size < 2) fail("every calibration answer is in the same position");
+    if (!CAL.self || !Array.isArray(CAL.self.o) || !Number.isInteger(CAL.self.gentleAt)) fail("the calibration's self-report question is malformed");
+    if (!Number.isInteger(CAL.passAt) || CAL.passAt < 1 || CAL.passAt > CAL.questions.length) fail("calibration passAt out of range");
+    if (!CAL.verdict || !CAL.verdict.gentle || !CAL.verdict.standard) fail("the calibration needs both verdicts");
+  }
   CARDS.forEach(c => { if (!LESSONS.find(l => l.id === c.lesson)) fail(`card ${c.id} points at lesson ${c.lesson}`); if (!c.lines || c.lines.length < 5) fail(`card ${c.id} is thin`); });
   GLOSSARY.forEach(g => { if (!/Lessons? [A-N]/.test(g[1])) fail(`glossary entry "${g[0]}" names no lesson`); });
   if (SESSION_FIELDS.length !== 5) fail("the session note has five lines");
