@@ -25,6 +25,17 @@ reactivated rather than taught from zero; every formula is derived far
 enough to be re-derived; every assumption is stated; every example is
 synthetic and says so.
 
+## Two tracks
+
+The start page asks four short calibration questions and one about
+notation, and suggests a track. The **standard track** is each lesson's
+nine parts, expert to expert. The **gentle track** is the same nine
+parts with a plain-words page in front of each lesson first: the question
+in everyday terms, the one idea, and the worked example told in words
+with the same numbers. Nothing is left out of the gentle track; it starts
+softer. The suggestion is only a suggestion, the track can be switched at
+the top of any lesson, and either can be chosen without answering.
+
 ## The lessons
 
 Fourteen, in the same nine parts each: the engineering question, the

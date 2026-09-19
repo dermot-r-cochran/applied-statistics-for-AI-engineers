@@ -68,6 +68,15 @@ button:focus-visible,input:focus-visible,a:focus-visible{outline:2px solid var(-
 .roadmap .exam-score.pass{color:var(--ok)}
 .pager{display:flex;justify-content:space-between;gap:1rem;margin-top:2.5rem;padding-top:1rem;border-top:1px solid var(--line);font-family:system-ui,sans-serif;font-size:.92rem}
 .mute{color:var(--mute)}
+.gentle{border-left:3px solid var(--ok);background:var(--soft);padding:.5rem 1rem .7rem;border-radius:0 6px 6px 0;margin:.8rem 0 1.2rem}
+.gentle h3{margin-top:.6rem;color:var(--ok)}
+.track{font-family:system-ui,sans-serif;font-size:.85rem;color:var(--mute);margin:.4rem 0 .8rem}
+.start{font-family:system-ui,sans-serif;font-size:.95rem}
+.start ol{padding-left:1.4rem}.start li{margin:.9rem 0}
+.start .q{font-family:Georgia,"Times New Roman",serif;font-size:1rem;margin-bottom:.3rem}
+.start label{display:block;padding:.2rem 0;cursor:pointer}.start input{margin-right:.4rem}
+.start .rec{margin:1rem 0;padding:.7rem .9rem;border-radius:6px;background:var(--soft);border-left:4px solid var(--accent)}
+.start .rec button{margin:.4rem .6rem .2rem 0}
 .rule{border-left:3px solid var(--accent);padding:.2rem .8rem;margin:.6rem 0;background:var(--soft);border-radius:0 5px 5px 0}
 textarea{width:100%;min-height:4.5rem;font:inherit;font-size:.95rem;padding:.4rem .5rem;border:1px solid var(--line);border-radius:4px;background:var(--bg);color:var(--fg)}
 .session label{display:block;margin:.8rem 0 .2rem;font-family:system-ui,sans-serif;font-size:.85rem;color:var(--mute)}
@@ -79,7 +88,7 @@ footer{border-top:1px solid var(--line);color:var(--mute);font-size:.82rem;paddi
 <body>
 <header>
   <h1><a href="#/">Applied Statistics for AI Engineers</a></h1>
-  <nav aria-label="Sections"><a href="#/">Lessons</a><a href="#/case">The case</a><a href="#/rules">Rules</a><a href="#/cards">Cards</a><a href="#/glossary">Glossary</a><a href="#/reading">Reading</a><a href="#/session">Session note</a></nav>
+  <nav aria-label="Sections"><a href="#/start">Start here</a><a href="#/">Lessons</a><a href="#/case">The case</a><a href="#/rules">Rules</a><a href="#/cards">Cards</a><a href="#/glossary">Glossary</a><a href="#/reading">Reading</a><a href="#/session">Session note</a></nav>
 </header>
 <main id="main" tabindex="-1"></main>
 <footer>One file, no dependencies, no network. Every number on this site is synthetic and labelled as such. Text CC BY 4.0, engine MIT. <a href="https://github.com/dermot-r-cochran/applied-statistics-for-AI-engineers">Source</a>.</footer>
@@ -134,6 +143,40 @@ const CASE = {
 **The second example.** Where text is the output — the \`note\` and \`reason\` fields, and the whole of a fictional AI that reads short-story drafts and returns editorial notes — the lessons say what a similarity score does and does not measure, and how much two competent editors disagree. That example is smaller and appears only where it is needed.`
 };
 
+/* The start page: a few calibration questions, and the two tracks they
+   choose between. Neither track changes a lesson's nine parts. The gentle
+   track puts a plain-words page in front of each lesson first; the
+   standard track goes straight to the nine parts. The reader may switch
+   at any lesson, whatever the questions said. Added 2026-09-19 at
+   Dermot's direction: a lighter, gentler optional introduction track
+   based on a few calibration questions at the start. */
+const CALIBRATION = {
+  intro: `Four short questions and one about you. They take about three minutes and are not an exam: nothing is scored for keeps and nothing is hidden behind them. They only decide which of two tracks to suggest.
+
+**Standard track.** Each lesson is its nine parts, expert to expert: the engineering question, the principle, the mathematics derived, the assumptions, a worked example with a live calculator, the common misreading, the application to the case, a diagnostic question and an exercise.
+
+**Gentle track.** The same nine parts, but each lesson opens with a plain-words page first: what the question is in everyday terms, the one idea, and the worked example told in words with the same numbers. Then the nine parts, which say the same thing exactly. Nothing is left out of the gentle track; it just starts softer.
+
+You can switch tracks at the top of any lesson.`,
+  questions: [
+    { q:"An evaluation run reports verdict accuracy 0.84 on 500 frames. Which reading is right?",
+      o:["0.84 is the reviewer's accuracy","0.84 is one draw; another 500 frames from the same system would give a slightly different number","the number is exact, because 500 is a large sample"], a:1 },
+    { q:"A 95% confidence interval for a rate is best read as:",
+      o:["the true rate has a 95% chance of being inside this interval","a range from a method that captures the true rate in 95% of repeated samples","95% of the frames fall inside it"], a:1 },
+    { q:"Keepers are 16% of frames. A reviewer that calls every frame 'not a keeper' has an accuracy of about:",
+      o:["0.16","0.50","0.84"], a:2 },
+    { q:"Two model versions were scored on the same 500 frames. The fairest comparison:",
+      o:["treats them as two independent samples","compares them frame by frame, since every frame was seen by both","cannot be made without a third sample"], a:1 }
+  ],
+  self: { q:"And one about you. A line like SE = sqrt(p(1 - p) / n) is:",
+          o:["fine; I read that kind of thing daily","something I can follow, slowly","something I would rather have in words first"], gentleAt:2 },
+  passAt: 3,
+  verdict: {
+    gentle: `The suggestion is the **gentle track**: a plain-words page opens each lesson, then the nine parts. It is the same course; it starts softer. Switch at any lesson if it feels slow.`,
+    standard: `The suggestion is the **standard track**: straight to the nine parts. The plain-words pages are still there on the gentle track if a lesson ever lands awkwardly; switch at the top of any lesson.`
+  }
+};
+
 const RULES = [
   ["A point estimate from its uncertainty", "0.84 is not a fact about the system; it is a fact about the system and this sample. Report the interval or the standard error with it, always."],
   ["A smaller sample from a biased sample", "A small sample is imprecise and the interval says so. A biased sample is wrong in a direction the interval cannot see. No amount of data fixes the second."],
@@ -148,6 +191,13 @@ const RULES = [
 
 const LESSONS = [
 { id:"A", title:"Sampling distributions and standard error",
+  gentle:`Two runs, two numbers: 0.84 for the last release and 0.81 for the candidate, both on 500 frames. Did it get worse?
+
+**The one idea.** A score from 500 frames is like a count of heads from 500 coin tosses: run it again on another 500 frames from the same system and it comes out a little different. That wobble has a size, and the size is called the **standard error**. Nothing about the system changed to produce it; it is what sampling does.
+
+**The example in words.** The release got 420 of 500 right, the candidate 405 of 500. The wobble on each score is about 0.017, and the wobble on the gap between them is about 0.024. The gap is 0.03, so it is about one and a quarter wobbles wide. Gaps that big appear between two draws of an unchanged system roughly one time in five.
+
+**So the answer is** not "it got worse" and not "nothing changed" either. It is "this evaluation cannot tell", which is a real answer and the honest one. The nine parts below show how to size the wobble for any score you have.`,
   question:`Verdict accuracy on Reference Set 1 was **0.84** for the last release and is **0.81** for the candidate. Both runs used 500 frames. Did the candidate get worse, or is a three-point gap what two draws from the same system look like?`,
   principle:`A metric computed on a finite sample is a random variable. If the same system were scored on another 500 frames drawn the same way, the accuracy would differ. The distribution of the metric over such re-draws is its **sampling distribution**, and the standard deviation of that distribution is the **standard error** (SE). The standard error is the unit in which any observed difference must be measured before it means anything.`,
   maths:`For a binary outcome per row, \`X_i ∈ {0, 1}\` (verdict right or wrong), the accuracy is the mean \`p̂ = (1/n) Σ X_i\`. If rows are independent with the same success probability \`p\`, each \`X_i\` has variance \`p(1 − p)\`, so the mean has variance \`p(1 − p)/n\` and
@@ -181,6 +231,13 @@ The standard error of the difference is \`√(0.0164² + 0.0175²) = 0.0240\`. T
     note:"Independent-draws formula. If both runs scored the same rows, Lesson F's paired calculator is the right one." } },
 
 { id:"B", title:"Estimation and confidence intervals",
+  gentle:`Nine verdicts right out of ten. Someone wants to write "90% accurate" on the report.
+
+**The one idea.** Ninety percent is what happened on those ten frames. The reviewer's true rate is unknown, and with ten frames a wide range of true rates could easily have produced 9 of 10. A **confidence interval** is that range, drawn by a method that captures the true value most of the time.
+
+**The example in words.** With 9 of 10, the plausible true rates run from somewhere in the fifties up to nearly certain. Ten frames cannot narrow it further. The simplest way of drawing the range breaks down when the score is near 100%; two better ways behave, and the lesson shows all three so you can see the difference.
+
+**So the answer is** to write the range, with the ten beside it, rather than the single number. The nine parts derive the three intervals and let you compare them on the calculator.`,
   question:`A single contact sheet of 10 frames came back with 9 verdicts right. Someone wants to write "90% accurate" on the sheet's report. What range of true accuracies is consistent with 9 of 10, and which interval formula should produce it?`,
   principle:`A **confidence interval** is the output of a procedure that, over repeated samples, captures the true value a stated fraction of the time. The interval is a property of the procedure, not of this one sample: a 95% interval does not have a 95% chance of containing the truth; the procedure has a 95% success rate. Different procedures with the same nominal level can behave very differently at small \`n\` or near 0% and 100%, which is exactly where AI evaluation lives — rare classes, small slices, high accuracies.`,
   maths:`**Wald (normal approximation):** \`p̂ ± z √(p̂(1 − p̂)/n)\`. Simple, and wrong where it matters: at \`p̂ = 1\` its width is zero, and it can run past 1.
@@ -218,6 +275,13 @@ The Wald interval is nonsense above 1 and too narrow below. Wilson and the exact
     note:"Try 48 of 50, and 0 of 12." } },
 
 { id:"C", title:"Proportion and classification-metric uncertainty",
+  gentle:`Keepers are about 16% of frames. Verdict accuracy is 0.916, which sounds fine, and the photographer says it misses keepers. Both can be true.
+
+**The one idea.** When most frames are not keepers, a reviewer that says "not a keeper" to everything scores well on accuracy while missing every keeper there is. So the keeper class needs its own numbers: **precision** (of the frames it called keepers, how many really were), **recall** (of the real keepers, how many it found) and **F1**, a balance of the two.
+
+**The example in words.** Those three numbers are computed on the keeper group, which is about 80 frames, not on all 500. A number from 80 frames wobbles about two and a half times more than the same number from 500. That is why their uncertainty is larger than accuracy's, and why a keeper recall that looks solid can be much less certain than it reads.
+
+**So the answer is** to report the keeper metrics with their own intervals. The nine parts show how to compute each one and how wide it really is.`,
   question:`Keepers are about 16% of frames. The reviewer's verdict accuracy on Reference Set 1 is 0.916, which sounds fine, but the photographer says it misses keepers. What do precision, recall and F1 on the Keeper class say, how uncertain are they, and why is their uncertainty not the same as accuracy's?`,
   principle:`Accuracy is a proportion over all rows, so Lesson B's intervals apply directly. Precision and recall are proportions over **subsets whose sizes are themselves random** — the rows the system flagged, the rows that are truly positive — and F1 is a nonlinear function of both. Their sampling distributions are not binomial, their denominators are small when the class is rare, and the analytic standard errors are approximations. The bootstrap gives honest intervals for all of them with one method.`,
   maths:`With true positives \`TP\`, false positives \`FP\` and false negatives \`FN\` on the positive class:
@@ -251,6 +315,13 @@ A row bootstrap with 2,000 resamples (seeded, so the calculator reproduces it) g
     note:"Row bootstrap, 2,000 resamples, fixed seed. Percentile interval." } },
 
 { id:"D", title:"Effect sizes and practical significance",
+  gentle:`Suppose the three-point gap from Lesson A were real. Is a three-point drop something to block a release over?
+
+**The one idea.** Statistics can say whether a change is probably real. It cannot say whether the change matters; that is a judgement about consequences, and someone has to own it. The size of a change, on a scale that means something to the people affected, is its **effect size**.
+
+**The example in words.** Three points of verdict accuracy on 500 frames is fifteen frames. If they are fifteen keepers sent to the folder, the photographer loses fifteen pictures a trip. If they are fifteen near-misses filed one shelf over, nobody notices. The same number is a big deal or nothing depending on which frames they are.
+
+**So the answer is** to decide before the evaluation what size of change would matter, and in which frames, and write it down. The nine parts give the scales and the way to state the threshold.`,
   question:`Suppose Lesson A's three-point gap were real. Is a three-point drop in verdict accuracy something to block a release over, or something nobody would notice? Who decides, and on what scale?`,
   principle:`Statistical evidence answers "is there a difference?"; an **effect size** answers "how big?"; and **practical significance** answers "does a difference that big change what we do?". The third question has no statistical answer. It has an operational one — reviewer hours, missed keepers per month, barred frames published — and it must be written down as a **minimum meaningful effect** before the data are looked at, or the data will be allowed to choose it.`,
   maths:`For two proportions the natural effect sizes are the **absolute difference** \`p_A − p_B\` (0.03: thirty more wrong verdicts per thousand frames), the **relative difference** \`(p_A − p_B)/p_B\` (3.7% more errors relative to the candidate), and the **odds ratio** \`[p_A/(1−p_A)] / [p_B/(1−p_B)]\` (1.23). **Cohen's h** \`= 2 asin√p_A − 2 asin√p_B\` puts differences on a scale where equal values are equally detectable at equal \`n\` regardless of where \`p\` sits; 0.2 is conventionally small, and 0.03 at these accuracies is \`h = 0.079\`, very small.
@@ -275,6 +346,13 @@ The photographer reviews about 2,000 frames a month and spends about half a minu
     note:"The last two outputs are the effect size that a decision can use." } },
 
 { id:"E", title:"Hypothesis tests and statistical power",
+  gentle:`Lesson A said the gap was "not significant". Before concluding the candidate is fine, ask the other question: if it really were three points worse, how likely was this evaluation to notice?
+
+**The one idea.** An evaluation that would miss a real change most of the time cannot clear a candidate by not finding one. The chance that an evaluation notices a change of a given size is its **power**. Low power turns "not significant" into "did not look hard enough".
+
+**The example in words.** With 500 frames a side, a real three-point drop is caught only about as often as not: roughly a coin toss. To catch it reliably, say nine times in ten, takes several times as many frames. The lesson computes the number.
+
+**So the answer is** to size the evaluation for the change you need to see before running it, and to say the power beside any "no significant difference". The nine parts derive power and the sample size from the effect you care about.`,
   question:`Lesson A said the three-point gap was 1.25 standard errors: "not significant". Before concluding the candidate is fine, ask the other question. If the candidate really were three points worse, how likely was this evaluation to notice? And how many frames would it take to notice reliably?`,
   principle:`A **test** fixes a false-alarm rate α (the chance of calling a difference when there is none) and reports whether the data cross that bar. **Power** is the chance of crossing it when a difference of a stated size really exists. A non-significant result from a low-powered evaluation is not evidence of no difference; it is an evaluation that could not have found one. Power is decided by sample size, effect size and α, and it must be computed *before* the run, for the minimum meaningful effect of Lesson D.`,
   maths:`Two-proportion z-test, independent samples, pooled under the null: \`p̄ = (k_A + k_B)/(n_A + n_B)\`, \`SE_0 = √( p̄(1 − p̄)(1/n_A + 1/n_B) )\`, \`z = (p̂_A − p̂_B)/SE_0\`, two-sided \`p = 2(1 − Φ(|z|))\`.
@@ -303,6 +381,13 @@ Power to detect a true three-point drop with 500 frames per arm is **0.239**: th
     note:"Independent two-arm design. A paired design on the same rows needs far fewer; see Lesson F." } },
 
 { id:"F", title:"Paired comparison of model versions",
+  gentle:`It turns out both releases were scored on the same 500 frames. Lesson A treated them as two separate draws. Does that change the answer?
+
+**The one idea.** When every frame was seen by both versions, compare them **frame by frame**. Frames both got right and frames both got wrong say nothing about the difference; the information is in the frames where they disagree. Pairing takes out the wobble the two runs share, because they share the frames.
+
+**The example in words.** Count the frames the release got right and the candidate wrong, and the frames the other way round. If those two counts are far apart the candidate really is different; if they are close it is not. The shared frames make this a much sharper test than comparing two totals, and Lesson A's "cannot tell" can become a definite answer.
+
+**So the answer is** yes: the design changes the test and usually the verdict. The nine parts derive the paired test and its interval.`,
   question:`Both releases were, in fact, scored on the *same* 500 frames. Lesson A treated them as two independent draws and found nothing. Does the shared design change the answer?`,
   principle:`When two systems are scored on the same rows, the row-to-row variation — hard sheets, easy sheets — is shared, and it cancels in the comparison. The evidence about the *difference* lives entirely in the rows where the two systems **disagree**. A paired analysis uses only those rows and is far more sensitive than the independent comparison, which lets the shared variation blur the picture. Always pair when you can, and you almost always can.`,
   maths:`Cross-tabulate the 500 rows by (A right?, B right?). Let \`b\` be the rows A got right and B wrong, \`c\` the rows B got right and A wrong; the rows where both were right or both wrong say nothing about the difference. Under the null of no difference, each discordant row is equally likely to fall either way, so \`b ~ Binomial(b + c, ½)\`.
@@ -329,6 +414,13 @@ McNemar: \`χ² = (35 − 20)²/55 = 4.09\`, \`p = 0.043\`; exact binomial on 35
     note:"Use the exact p when b + c is under about 25." } },
 
 { id:"G", title:"Bootstrap and permutation methods",
+  gentle:`The photographer's favourite metric is the sheet pass rate: did the reviewer catch every barred frame on the sheet. There are 40 sheets, the two releases differ on it, and no formula so far was made for it.
+
+**The one idea.** When no formula fits, let the computer re-draw the data. **Bootstrap:** draw 40 sheets at random from the 40, with repeats allowed, compute the pass rate, and do it thousands of times; the spread of those pass rates is the uncertainty. **Permutation:** shuffle which release each result belongs to, compute the gap, repeat; that shows how big a gap chance alone makes.
+
+**The example in words.** Both are just repetition. Neither needs a formula for the metric, only a way to compute it once. The machine does the repeating; what you supply is the judgement of what to resample, which here is sheets, not frames.
+
+**So the answer is** resample at the level of the thing that is independent. The nine parts set the two methods up and the calculator runs them, seeded so the numbers repeat.`,
   question:`The sheet-level pass rate — did the reviewer catch every Barred frame on the sheet — is the metric the photographer trusts most. It is a proportion of sheets, there are 40 of them, and the two releases differ on it. No formula in Lessons A to F was derived for it. What now?`,
   principle:`When the metric is awkward — a ratio, a maximum, an F-score, a pass rate over documents — or the sampling unit is not a row, stop deriving and **resample**. The **bootstrap** re-draws the data with replacement from itself, recomputes the metric each time, and uses the spread of those recomputations as the sampling distribution. A **permutation test** asks a different question: if the labels "A" and "B" were meaningless, how often would a reshuffle produce a difference this large? Both are exact in spirit, need no formula, and inherit their honesty from one decision: **what unit gets resampled**.`,
   maths:`**Paired bootstrap for a difference over units.** For units \`i = 1..m\` (sheets) with paired outcomes \`(a_i, b_i)\`, compute \`d_i = a_i − b_i\`. Draw \`m\` units with replacement, compute the mean difference, repeat \`B\` times (2,000 is plenty for a 95% interval), take the 2.5th and 97.5th percentiles. Resampling *pairs* keeps the within-unit correlation that makes the paired design powerful.
@@ -372,6 +464,13 @@ The two methods disagree at the margin, and that is the lesson of a twelve-unit 
     note:"Up to 16 units the permutation test enumerates every sign assignment exactly; beyond that it samples 20,000." } },
 
 { id:"H", title:"Class imbalance and metric aggregation",
+  gentle:`Verdict accuracy is 0.892 and the release note says "near 90%". Barred frames are 2% of rows and the reviewer catches 3 in 10 of them.
+
+**The one idea.** An average over everything is dominated by whatever is common. The barred frames are rare, so their catastrophe barely moves the average. Which **aggregate** you report decides what can hide in it.
+
+**The example in words.** Of 500 frames about ten are barred. Missing seven of them costs the accuracy about one point, and the note still says near 90%. Report the barred recall on its own line and the story is 3 in 10, which is the story that matters, because a barred frame published is the one mistake that cannot be undone.
+
+**So the answer is** to report per-class numbers and to choose the average deliberately. The nine parts compare the ways of averaging and show what each one hides.`,
   question:`Verdict accuracy is 0.892 and the release note calls it "near 90%". Barred frames are 2% of rows and the reviewer catches 3 in 10 of them. How does one number hide the other, and which aggregate should have been reported?`,
   principle:`Every aggregate is a weighted sum, and the weights are a decision. **Micro** averages weight by rows, so the majority class sets the number. **Macro** averages weight classes equally, so a 2% class counts as much as a 78% one. Neither is right in general; the right weights are the costs of the errors, and when the costs are unknown, report per class. Aggregating across groups with different mixes can even reverse the ranking of two systems — **Simpson's paradox** — and it does so in evaluation more often than in textbooks, because reference sets are built from whatever was available.`,
   maths:`With classes \`c\` having \`n_c\` true rows and \`k_c\` correctly recovered: micro-averaged recall \`= Σ k_c / Σ n_c\` (which for single-label classification equals accuracy), macro-averaged recall \`= (1/C) Σ k_c/n_c\`. Macro-F1 is the mean of per-class F1s; micro-F1 collapses to accuracy. A **cost-weighted** aggregate \`Σ w_c k_c/n_c\` with weights from the minimum-meaningful-effect statement is the only one that answers an operational question.
@@ -411,6 +510,13 @@ B is better on safari *and* on home ground, and worse pooled, because B was eval
     note:"The cost weight is a decision, made before the data. Set it to 1 to see macro recall; to 0 to see how the aggregate looks when Barred is ignored." } },
 
 { id:"I", title:"Sampling bias, stratification and weighting",
+  gentle:`Reference Set 1 is 70% safari frames, because that is where the photographer had been. Production is nearer 40% safari, and the reviewer is much better on safari.
+
+**The one idea.** A headline accuracy is the accuracy of the mixture in the set. If production has a different mixture, the headline describes a world that does not exist. The fix is to compute the accuracy for each kind of shooting and recombine them in production's proportions: **reweighting**.
+
+**The example in words.** Say the reviewer is very good on safari frames and only fair on home-ground frames. A set that is mostly safari flatters it; a production stream that is mostly home ground will disappoint. Weighting the two accuracies by 40 and 60 instead of 70 and 30 gives the number production will actually see, and a wider interval, because the home-ground slice is smaller in the set.
+
+**So the answer is** to know the mixture in the set and the mixture in production, and to report the reweighted figure. The nine parts show the arithmetic and what it does to the interval.`,
   question:`Reference Set 1 is 70% safari frames because that is where the photographer had been. Production is closer to 40% safari, 60% home ground, and the reviewer is much better on safari. What does the set's headline accuracy estimate, and how is the production accuracy recovered from it?`,
   principle:`A sample estimates the population it was drawn from, not the one you meant. When the reference set's mix of strata differs from the target population's, the naive metric is **biased** for the target, and no confidence interval will show it — the interval measures precision, not aim. If the strata are known and their target weights are known, **post-stratification** re-weights the per-stratum estimates to the target mix. What it cannot do is fix strata that are missing, or a bias inside a stratum.`,
   maths:`With strata \`s\`, per-stratum accuracy \`p̂_s\` on \`n_s\` rows and target weights \`W_s\` (summing to 1):
@@ -440,6 +546,13 @@ The set said 0.84 and production will experience about 0.80. The interval was ne
     note:"Two strata; the second's target weight is 1 minus the first's." } },
 
 { id:"J", title:"Clustered and repeated observations",
+  gentle:`Every standard error so far used 500 as the number of observations. The 500 frames came from 40 outings, and frames from one outing share the light, the subject and the photographer's mood that day.
+
+**The one idea.** Frames from the same outing are alike, so 500 of them carry less information than 500 frames from 500 different days. The effective number of independent observations is somewhere between 40 and 500. Standard errors computed with 500 are too small: the intervals are narrower than the truth.
+
+**The example in words.** If frames within an outing tend to agree with each other, a run that does badly on one hard outing loses many frames at once; that is one bad day, not many bad frames. Treating it as many independent misses overstates how sure you can be. The lesson estimates how much frames within an outing agree and shrinks the effective count accordingly.
+
+**So the answer is** to compute uncertainty on the unit that is actually independent, which here is closer to the outing than the frame. The nine parts derive the correction.`,
   question:`Reference Set 1 has 500 frames, and every standard error so far has used \`n = 500\`. The frames come from 40 outings, and frames from one outing share the light, the subject and the photographer's judgement that day. How many independent observations are there really?`,
   principle:`Rows that share a cause are **clustered**, and clustered rows carry less information than independent ones because part of what each row tells you, its neighbours already told you. The **intra-cluster correlation** ρ measures how much rows within a cluster resemble each other; the **design effect** converts it into how much larger the standard error is than the independent formula claims; and the **effective sample size** is the number of independent rows that would carry the same information. A thousand rows from six projects can be worth sixty.`,
   maths:`For clusters of average size \`m\` and intra-cluster correlation \`ρ\`,
@@ -467,6 +580,13 @@ The cluster bootstrap (Lesson G) sidesteps the formula: resample outings, keep t
     note:"Try 1,000 rows in 6 clusters with ρ = 0.3." } },
 
 { id:"K", title:"Test-set governance and reproducibility",
+  gentle:`The candidate scored 0.818 on "the reference set" and the release 0.84 on "the reference set". Between the two runs sixty frames from a new trip were added and one barred label was changed.
+
+**The one idea.** Two numbers from two different sets are not comparable, however similar the sets' names. **Governance** means the set has a version, a comparison is made on one frozen version, and every change to a label is recorded with a reason and a date.
+
+**The example in words.** The sixty new frames may be harder than the old ones; the changed label flips one frame for both runs. Either could explain part of the two-point gap, and nothing in the two numbers says which. Rerun both versions on the same frozen set and the question answers itself.
+
+**So the answer is** version the reference set, freeze it for the comparison, and log the labels. The nine parts give the checklist and the reporting lines.`,
   question:`The candidate scored 0.818 on "the reference set" and the release scored 0.84 on "the reference set". Sixty frames from a new trip were added between the two runs, and one Barred label was re-adjudicated. Is the two-point drop the candidate's, the new frames', or the label's?`,
   principle:`A metric is a function of four things: the system, the data, the ground truth and the scorer. Change any one and the number changes, and if two changed at once the comparison is **confounded** — it cannot be attributed. Evaluation is only measurement when the other three are held fixed and versioned, which is what a reference set's **governance** is for: a frozen, named, hashed set; ground truth under change control with an adjudication log; scoring code with a version; and a manifest that says what population the set claims to represent and what it does not cover. Ground truth is itself a measurement, with its own error, and the manifest says how much.`,
   maths:`Composition change decomposes exactly. If a set of \`n_1\` rows on which the candidate scores \`p_1\` is extended by \`n_2\` rows on which it scores \`p_2\`, the pooled score is \`(n_1 p_1 + n_2 p_2)/(n_1 + n_2)\` — the old score diluted toward the new rows' score. Report the shared-rows comparison first and the added rows separately.
@@ -494,6 +614,13 @@ Second example, the story-draft reader: two editors annotate 200 draft notes as 
     note:"κ here assumes both annotators use the positive label at the same marginal rate." } },
 
 { id:"L", title:"Decision-oriented evaluation reporting",
+  gentle:`Everything from A to K is on the table for the candidate. The release meeting is in an hour and wants one page.
+
+**The one idea.** A decision needs the metric, its interval, the unit it was computed on, what changed in the set, the rule agreed in advance, and what evidence would change the decision. Everything else is background. Writing the rule down before the numbers arrive is what keeps the numbers from being read to taste.
+
+**The example in words.** The paired difference is 0.03 with an interval from 0.001 to 0.059, which is a real but small change; the barred recall may have fallen, which is the thing that cannot be undone; and there is a kind of shooting the candidate has never seen. The page says those three things, in that order, and then the rule: what the group said, before the run, it would take to ship.
+
+**So the answer is** one page with the six items. The nine parts give the template, and the reference card holds it.`,
   question:`Everything from A to K is on the table for the candidate: a paired difference of 0.03 with interval 0.001 to 0.059, a Barred recall that may have fallen, an air show it has never seen. The release meeting is in an hour and wants one page. What goes on it, and what is the decision rule?`,
   principle:`An evaluation report exists to support a decision, and the decision has a small number of outcomes: **ship**, **hold**, **collect specific evidence**. The report's job is to put the evidence in the form that rule needs — an interval compared against a minimum meaningful effect, per class, on the frozen set, with the assumptions and the uncovered scenarios stated — and to say plainly what the evidence does *not* show. A point estimate compared to zero is not a decision rule. A lower confidence bound compared to a written threshold is.`,
   maths:`Let \`d\` be the paired improvement (candidate minus release) with standard error \`SE\`, and δ the minimum meaningful effect. Because the decision is one-sided — we need to know the candidate is not worse — use the one-sided lower bound:
@@ -528,6 +655,13 @@ Had the sign been the other way — an improvement of 0.030 with the same standa
     note:"Enter d = −0.03 for the worked example's actual sign." } },
 
 { id:"M", title:"Confidence, calibration and combining scores",
+  gentle:`Beside every verdict the reviewer gives a confidence. The photographer wants to auto-accept anything above 0.9. Does 0.9 mean nine in ten are right?
+
+**The one idea.** Only if the reviewer is **calibrated**: group its verdicts by the confidence it stated and count how often each group was right. If the frames it called 0.9 are right 70% of the time, 0.9 is a label, not a probability. And when several component scores combine, the product, the mean and the minimum are three different claims about the whole.
+
+**The example in words.** Take every verdict the reviewer marked between 0.85 and 0.95 and check them against the photographer. If about nine in ten are right, the threshold can be trusted; if fewer, the auto-accept rule needs a higher bar or a corrected score. For the combined confidence: a product says every component must be right, a minimum says the weakest link decides, a mean says they trade off. Pick the one that matches what "the whole verdict is right" means.
+
+**So the answer is** measure calibration before trusting a threshold, and combine scores by the meaning you need. The nine parts show the reliability table and the three combinations.`,
   question:`Beside every verdict the reviewer emits a confidence, and the photographer wants to auto-accept verdicts above 0.9 without looking. Does 0.9 mean nine in ten are right? And when the reviewer's four components each emit a score, is the product, the mean or the minimum the confidence of the whole?`,
   principle:`A score is a **probability** only if, among rows given that score, the stated fraction turn out right; that property is **calibration**, and it is an empirical claim to be tested on the reference set, per slice, not a property of the number being between 0 and 1. Scores from different components have different semantics — one is a softmax margin, one a retrieval similarity, one a self-reported estimate — and there is no formula for combining them that does not inherit assumptions about what each means and whether their errors are independent. **System-level trust is not the average of component confidence.** It is measured end to end, like any other metric, and expressed in the vocabulary of Lessons A to L.`,
   maths:`Bin rows by stated confidence. In bin \`j\` with \`n_j\` rows, mean stated confidence \`c̄_j\` and observed accuracy \`o_j\`, the **expected calibration error** is
@@ -584,6 +718,13 @@ Prefer keeping the vector of scores and learning a calibrated combiner on held-o
     note:"Bin centres are fixed at 0.1, 0.3, 0.5, 0.7, 0.9; the Brier score uses the bin centre as each row's stated score." } },
 
 { id:"N", title:"Drift and monitoring",
+  gentle:`The reviewer shipped. Three months on, the keeper rate it reports has fallen from 12% to 7%, and someone asks whether it has degraded. The reviewer has not changed.
+
+**The one idea.** The system is the same; the world it sees is not. A new camera, a month of macro, a photographer in a mood: each changes what comes in, and a reviewer built on last year's frames answers today's frames differently. That is **drift**, and it comes in kinds: the inputs changed, the truth changed, or the link between them changed.
+
+**The example in words.** Compare this month's frames to the reference set: the light, the subjects, the kinds of shooting. If the mix has moved, the reported rate should move with it and says nothing about the reviewer. Where truth arrives late, keep scoring a small labelled sample every week; that line, not the raw rate, says whether the reviewer still agrees with the photographer.
+
+**So the answer is** to monitor the inputs and a small labelled stream separately, and to read the raw rate as a symptom, not a verdict. The nine parts set the monitors up.`,
   question:`The reviewer shipped. Three months later the weekly Keeper rate it reports has fallen from 12% to 7%, and someone asks whether the reviewer has degraded. The reviewer has not changed. The photographer has a new camera, has been shooting macro all month, and has been in a mood. Which of these is drift, and what does monitoring have to establish before anyone touches the model?`,
   principle:`Monitoring is the reference-set evaluation continued into a population that is allowed to change. Everything in Lessons A to M still applies, with one addition: a difference between this week and the baseline can come from the **system**, from the **inputs** (covariate shift: a new camera, a macro month), from the **relationship** between inputs and truth (concept drift: the photographer's taste moved), or from the **labels** arriving late and biased (only the frames that got looked at have ground truth). Monitoring's first job is to tell those apart, and its second is not to raise false alarms every week, because weekly tests at α = 0.05 will.`,
   maths:`For a monitored proportion with baseline \`p_0\` and this week's \`k\` of \`n\`: \`z = (k/n − p_0)/√(p_0(1 − p_0)/n)\`. But 52 weekly tests at α = 0.05 raise at least one false alarm with probability \`1 − 0.95⁵² = 0.93\` in a year of an unchanged system. Options: a stricter per-check α (Bonferroni: 0.05/52 ≈ 0.001), a **sequential** method such as CUSUM that accumulates evidence across weeks, or — the engineering answer — alarms defined on the minimum meaningful effect rather than on significance, since with enough production rows everything is significant.
@@ -899,7 +1040,7 @@ const md = (text) => {
 
 const PARTS = [["question","Engineering question"],["principle","Core statistical principle"],["maths","Essential mathematics"],["assumptions","Assumptions"],["example","Worked example (synthetic)"],["pitfall","Common interpretation error"],["application","Application to the case"],["diagnostic","One diagnostic question"],["exercise","One applied exercise"]];
 
-const BOOK = { SITE, CASE, RULES, LESSONS, EXAMS, CARDS, GLOSSARY, READING, SESSION_FIELDS, PARTS, S, fmt, md };
+const BOOK = { SITE, CASE, CALIBRATION, RULES, LESSONS, EXAMS, CARDS, GLOSSARY, READING, SESSION_FIELDS, PARTS, S, fmt, md };
 
 if (typeof document !== "undefined") (function page(){
   const main = document.getElementById("main");
@@ -907,6 +1048,8 @@ if (typeof document !== "undefined") (function page(){
   const doneSet = () => new Set(store.get("done",[]));
   const examRecord = (id) => (store.get("exams",{})[id]) || {best:0,attempts:0};
   const passMark = (id) => Math.ceil((EXAMS[id]||[]).length*0.75);
+  const track = () => store.get("track","standard");
+  const trackLine = (l) => `<div class="track">Track: <b>${track()==="gentle"?"gentle":"standard"}</b> · <a href="#" class="track-toggle">${track()==="gentle"?"switch this lesson to the standard track":"switch to the gentle track: a plain-words page first"}</a> · <a href="#/start">start page</a></div>`;
   const scorecard = () => { const rows=LESSONS.map(l=>({l,ex:EXAMS[l.id]||[],rec:examRecord(l.id)})); const taken=rows.filter(r=>r.rec.attempts);
     if(!taken.length) return `<div class="scorecard">No exams marked yet. Each lesson ends with four questions; your best score per lesson and the total appear here.</div>`;
     const got=taken.reduce((a,r)=>a+r.rec.best,0), of=taken.reduce((a,r)=>a+r.ex.length,0), passed=taken.filter(r=>r.rec.best>=passMark(r.l.id)).length;
@@ -932,8 +1075,14 @@ if (typeof document !== "undefined") (function page(){
     return `<div class="pager"><span>${prev?`<a href="#/lesson/${prev.id}">← ${prev.id}. ${esc(prev.title)}</a>`:`<a href="#/">← Lessons</a>`}</span><span>${next?`<a href="#/lesson/${next.id}">${next.id}. ${esc(next.title)} →</a>`:`<a href="#/session">Write the session note →</a>`}</span></div>`; };
 
   const views = {
+    start(){ const c=CALIBRATION, saved=store.get("calib",null);
+      const qs = c.questions.map((x,i)=>`<li data-q="${i}"><div class="q">${inline(x.q)}</div>${x.o.map((o,j)=>`<label><input type="radio" name="q${i}" value="${j}" required>${inline(o)}</label>`).join("")}</li>`).join("");
+      const sq = `<li data-q="self"><div class="q">${inline(c.self.q)}</div>${c.self.o.map((o,j)=>`<label><input type="radio" name="self" value="${j}" required>${inline(o)}</label>`).join("")}</li>`;
+      const prev = saved ? `<p class="mute">Last time: ${saved.score} of ${c.questions.length}${saved.wordsFirst?", and words first":""}; the track is set to <b>${track()}</b>. Answer again to reconsider, or just pick a track below.</p>` : "";
+      return `<h2>Start here</h2>${md(c.intro)}${prev}<form id="start-form" class="start"><ol>${qs}${sq}</ol><p><button type="submit">See the suggestion</button></p></form><div id="start-rec" class="rec" hidden></div>
+        <div class="rec"><b>Or choose now.</b><br><button type="button" class="track-btn" data-track="gentle">Take the gentle track</button><button type="button" class="track-btn" data-track="standard">Take the standard track</button><span class="mute">Either way, every lesson has a switch at the top.</span></div>`; },
     home(){ const done=doneSet();
-      return `<h2>${esc(SITE.tagline)}</h2>${md(SITE.intro)}<p class="mute">${inline(SITE.howToRead)}</p><h3>The lessons</h3>${scorecard()}<ol class="roadmap">${LESSONS.map(l=>{ const r=examRecord(l.id), n=(EXAMS[l.id]||[]).length;
+      return `<h2>${esc(SITE.tagline)}</h2>${md(SITE.intro)}<p class="mute">${inline(SITE.howToRead)}</p><div class="track">Track: <b>${track()}</b> · <a href="#/start">start page: three minutes of calibration questions, and the two tracks</a></div><h3>The lessons</h3>${scorecard()}<ol class="roadmap">${LESSONS.map(l=>{ const r=examRecord(l.id), n=(EXAMS[l.id]||[]).length;
         return `<li><span class="letter">${l.id}</span><span><a href="#/lesson/${l.id}">${esc(l.title)}</a><small>${esc(l.question.replace(/\*\*/g,"").split(/[.?]/)[0])}.</small></span><span class="done">${done.has(l.id)?"read ":""}<span class="exam-score${r.attempts&&r.best>=passMark(l.id)?" pass":""}">${r.attempts?`exam ${r.best}/${n}`:""}</span></span></li>`; }).join("")}</ol>`; },
     case(){ return `<h2>The case: ${esc(CASE.name)}</h2>${md(CASE.summary)}${md(CASE.body)}`; },
     rules(){ return `<h2>Core reasoning rules</h2><p>Nine distinctions the lessons return to. Each is a habit, not a formula: the question to ask before a number is allowed to mean something.</p>${RULES.map((r,i)=>`<div class="rule"><b>${i+1}. Distinguish ${esc(r[0].toLowerCase())}.</b> ${inline(r[1])}</div>`).join("")}`; },
@@ -950,7 +1099,8 @@ if (typeof document !== "undefined") (function page(){
         return `<section id="part-${i+1}"><h3>${i+1}. ${esc(p[1])}</h3>${body}</section>`; }).join("");
       const ex = EXAMS[l.id] || []; const rec = examRecord(l.id);
       const exam = `<section id="part-10" class="exam"><h3>10. Exam</h3><p class="mute">${ex.length} questions, one answer each. Mark it as often as you like; the lessons page keeps your best score.${rec.attempts?` Best so far: ${rec.best} of ${ex.length} in ${rec.attempts} attempt${rec.attempts===1?"":"s"}.`:""}</p><form id="exam-form"><ol>${ex.map((x,i)=>`<li data-q="${i}"><div class="q">${inline(x.q)}</div>${x.o.map((opt,j)=>`<label><input type="radio" name="q${i}" value="${j}">${inline(opt)}</label>`).join("")}<div class="why" hidden></div></li>`).join("")}</ol><button type="submit" class="mark">Mark the exam</button> <span class="score" id="exam-score" aria-live="polite"></span></form></section>`;
-      return `<p class="mute">Lesson ${l.id} · ${LESSONS.indexOf(l)+1} of ${LESSONS.length}</p><h2>${l.id}. ${esc(l.title)}</h2><ul class="parts">${PARTS.map((p,i)=>`<li><a href="#/lesson/${l.id}#part-${i+1}">${i+1}. ${esc(p[1])}</a></li>`).join("")}<li><a href="#/lesson/${l.id}#part-10">10. Exam</a></li></ul>${parts}${exam}<p><button type="button" id="mark-done">Mark this lesson read</button> <span class="mute" id="done-msg"></span></p>${nav(l)}`; }
+      const gentle = track()==="gentle" && l.gentle ? `<section id="part-0" class="gentle"><h3>In plain words, first</h3>${md(l.gentle)}<p class="mute">Then the nine parts, which say the same thing exactly.</p></section>` : "";
+      return `<p class="mute">Lesson ${l.id} · ${LESSONS.indexOf(l)+1} of ${LESSONS.length}</p><h2>${l.id}. ${esc(l.title)}</h2>${trackLine(l)}${gentle}<ul class="parts">${PARTS.map((p,i)=>`<li><a href="#/lesson/${l.id}#part-${i+1}">${i+1}. ${esc(p[1])}</a></li>`).join("")}<li><a href="#/lesson/${l.id}#part-10">10. Exam</a></li></ul>${parts}${exam}<p><button type="button" id="mark-done">Mark this lesson read</button> <span class="mute" id="done-msg"></span></p>${nav(l)}`; }
   };
 
   const route = () => {
@@ -968,6 +1118,16 @@ if (typeof document !== "undefined") (function page(){
         li.classList.remove("right","wrong"); li.classList.add(ok?"right":"wrong"); const w=li.querySelector(".why"); w.hidden=false; w.innerHTML=(ok?"<b>Right.</b> ":picked?`<b>Not this one.</b> The answer is "${inline(x.o[x.a])}". `:`<b>Unanswered.</b> The answer is "${inline(x.o[x.a])}". `)+inline(x.why); });
       const all=store.get("exams",{}); const prev=all[id]||{best:0,attempts:0}; all[id]={best:Math.max(prev.best,score),attempts:prev.attempts+1,last:score}; store.set("exams",all);
       document.getElementById("exam-score").textContent=`${score} of ${ex.length}${score>=passMark(id)?" — passed":""}. Best: ${all[id].best} of ${ex.length}.`; });
+    const sf = main.querySelector("#start-form"); if (sf) sf.addEventListener("submit", (e) => { e.preventDefault(); const c=CALIBRATION; let score=0;
+      c.questions.forEach((x,i)=>{ const p=sf.querySelector(`input[name="q${i}"]:checked`); if(p&&Number(p.value)===x.a) score++; });
+      const sp=sf.querySelector('input[name="self"]:checked'); const wordsFirst = !!sp && Number(sp.value)>=c.self.gentleAt;
+      const gentle = score < c.passAt || wordsFirst; store.set("calib",{score,wordsFirst,when:Date.now()});
+      const rec=document.getElementById("start-rec"); rec.hidden=false;
+      rec.innerHTML = `<p>${score} of ${c.questions.length}${wordsFirst?", and words first":""}.</p>${md(gentle?c.verdict.gentle:c.verdict.standard)}<button type="button" class="track-btn" data-track="${gentle?"gentle":"standard"}">Take the ${gentle?"gentle":"standard"} track</button><button type="button" class="track-btn" data-track="${gentle?"standard":"gentle"}">Take the ${gentle?"standard":"gentle"} track instead</button>`;
+      wireTrack(); rec.scrollIntoView(); });
+    const wireTrack = () => main.querySelectorAll(".track-btn").forEach(b => b.addEventListener("click", () => { store.set("track", b.dataset.track); location.hash = "#/"; }));
+    wireTrack();
+    const tt = main.querySelector(".track-toggle"); if (tt) tt.addEventListener("click", (e) => { e.preventDefault(); store.set("track", track()==="gentle"?"standard":"gentle"); route(); });
     const md_ = main.querySelector("#mark-done"); if (md_) md_.addEventListener("click", () => { const d=doneSet(); d.add(seg[1].toUpperCase()); store.set("done",[...d]); document.getElementById("done-msg").textContent="Marked."; });
     const sb = main.querySelector("#s-build"); if (sb) {
       const fields = () => { const o={}; main.querySelectorAll("textarea").forEach(t=>o[t.dataset.key]=t.value); return o; };
