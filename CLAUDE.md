@@ -11,8 +11,9 @@ uncertainty, effect sizes, power, paired comparison, resampling,
 aggregation, stratification, clustering, test-set governance, decision
 reporting, calibration and drift. Open `index.html` in any browser: no
 server, no build, no dependencies, no network. Each lesson has the same
-nine parts and a live calculator seeded with its worked example, so the
-numbers in the text are the numbers on screen.
+nine parts, a live calculator seeded with its worked example, and a
+figure drawn from that calculator, so the numbers in the text, on screen
+and in the picture are the same numbers.
 
 **It is about statistics, not about any AI framework or product** —
 evaluation metrics and confidence intervals, and the reasoning that goes
@@ -103,6 +104,49 @@ require and no claims beyond what they support. Every lesson points at
 at least one other lesson (the check requires it), because the course is
 a web, not a list.
 
+## The figures
+
+Added 2026-09-21 at Dermot's direction (*make the tutorial more visual
+with diagrams and examples, especially the gentle introduction*). Every
+lesson carries a `figure`: `title`, `gentle` (a caption in words for the
+gentle page; the check refuses backtick notation in it and requires it to
+be substantial), `caption` (for the standard track, notation allowed) and
+`draw(v, r)`, a function of the calculator's inputs `v` and its
+`compute(v)` result `r` that returns a figure spec, or an array of specs
+for stacked panels. The engine's `FIG` (pure section, exported in
+`BOOK`) turns a spec into inline SVG as a string, so the check draws
+every figure without a DOM and the page redraws one on every input. The
+figure is the worked example as a picture: it is drawn from the same
+numbers as the calculator, which is what keeps it from ever disagreeing
+with the prose, and the check renders it at the defaults and fails on a
+spec that does not draw or is not finite.
+
+Eight kinds, all 640 units wide: `grid` (rows as squares, flat `cells`
+or clustered `blocks`; `FIG.cells` scales counts so a million rows still
+draws), `intervals` (bars on one axis, with `bands`, `marks` and
+stacked `dots`), `curves` (normal sampling distributions with optional
+shaded regions), `bars` (widths optional, so a mosaic; a legend replaces
+under-bar labels when bars are narrow), `hist`, `xy` (points with error
+bars, lines, a diagonal), `steps` (boxes and arrows in rows) and `nest`
+(boxes inside boxes). Colour is by class, and the palette was validated
+for colour-vision deficiency in both modes: `f1` and `f2` are the two
+runs (blue, orange), `f3` a third category, `f0` the neutral majority,
+`fx` a darker neutral, and `ok` / `warn` / `bad` the site's status
+colours for decision zones. Every class is named on the figure itself,
+so nothing is carried by colour alone. A new lesson reuses these kinds;
+a new kind is an engine change and goes in `FIG` with the others. The
+case page and the start page carry one static figure each (`spec`,
+no `draw`), and the check draws those too.
+
+Two rules for authoring one. The gentle caption tells the reader what
+the picture shows in the same words the gentle page uses, with the
+lesson's numbers; it is not a description of the chart type. And the
+figure follows the calculator wherever it can: a panel that uses fixed
+example numbers instead (Lesson N's two mosaics) says so in its caption.
+Read the figures back in a browser after changing one: layout faults
+(clipped legends, colliding labels) are exactly what the check cannot
+see.
+
 ## The two tracks
 
 Added 2026-09-19 at Dermot's direction (*a lighter, gentler optional
@@ -110,10 +154,13 @@ introduction track based on a few calibration questions at the start*).
 `CALIBRATION` holds the start page: four scored questions (`q`, `o`, `a`),
 one self-report question about notation (`self`, with `gentleAt` the
 option index from which "words first" is inferred), `passAt` (the score
-below which the gentle track is suggested) and the two verdicts. Every
-lesson carries a `gentle` page: the engineering question in everyday
-terms, the one idea in bold, the worked example told in words with the
-lesson's own numbers, and "so the answer is". It is words: the check
+below which the gentle track is suggested), the two verdicts and a
+static `figure` of the two tracks. Every lesson carries a `gentle` page:
+the engineering question in everyday terms, the one idea in bold, the
+worked example told in words with the lesson's own numbers, an everyday
+version of it (a coin, a café, a smoke detector: an analogy with no
+numbers in it, added 2026-09-21), and "so the answer is"; the lesson's
+figure renders under it with its `gentle` caption. It is words: the check
 refuses backtick notation in it and requires it to be substantial. The
 gentle track renders that page above the nine parts and changes nothing
 else; the track is a localStorage preference, switchable at the top of
@@ -122,8 +169,9 @@ page's numbers the same as the example's, so the two never disagree.
 
 ## Adding a lesson
 
-Append to `LESSONS` with the next letter, all nine parts and a calculator
-with `expect` values that the prose quotes. Add glossary entries that name
+Append to `LESSONS` with the next letter, all nine parts, a `gentle`
+page, a calculator with `expect` values that the prose quotes, and a
+`figure` drawn from that calculator. Add glossary entries that name
 the lesson and, if it introduces a template, a card that points at it.
 Update the table in `README.md`. Then `node tools/check.js`.
 

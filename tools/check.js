@@ -2,8 +2,10 @@
 // The CI gate. Loads index.html's script into a bare VM context (no
 // document, so the page never boots) and checks the book: every lesson
 // has its nine parts, every calculator reproduces the numbers its worked
-// example quotes, every card and glossary entry points at a lesson, and
-// the repository never uses the name of the framework the case replaced.
+// example quotes, every lesson's figure draws from its calculator's
+// defaults with a caption in words, every card and glossary entry points
+// at a lesson, and the repository never uses the name of the framework
+// the case replaced.
 // No dependencies; runs on the Node that ships with the CI runner.
 "use strict";
 const fs = require("fs");
@@ -24,7 +26,8 @@ let BOOK;
 try { BOOK = vm.runInContext(src + "\nBOOK", ctx); } catch (e) { fail("script failed to load: " + e.message); }
 
 if (BOOK) {
-  const { LESSONS, CARDS, GLOSSARY, PARTS, RULES, SESSION_FIELDS, fmt, md } = BOOK;
+  const { LESSONS, CARDS, GLOSSARY, PARTS, RULES, SESSION_FIELDS, fmt, md, FIG } = BOOK;
+  if (!FIG || typeof FIG.render !== "function") fail("the engine has lost FIG, the figure renderer");
 
   // ---- lessons ---------------------------------------------------------
   if (LESSONS.length < 12) fail(`expected at least 12 lessons (A–L), found ${LESSONS.length}`);
@@ -48,6 +51,17 @@ if (BOOK) {
         if ((t.match(/\*\*/g) || []).length % 2) fail(`lesson ${l.id}: unbalanced ** in ${key}`);
         try { md(t); } catch (e) { fail(`lesson ${l.id}: ${key} does not render: ${e.message}`); }
       }
+    }
+    // the figure: the worked example as a picture, drawn from the calculator's defaults, with a caption in words for the gentle page
+    const f = l.figure;
+    if (!f || typeof f.draw !== "function" || !f.title) fail(`lesson ${l.id}: figure missing (title, gentle, caption, draw)`);
+    else {
+      if (typeof f.gentle !== "string" || f.gentle.trim().length < 120) fail(`lesson ${l.id}: the figure's gentle caption is missing or too short`);
+      else if (f.gentle.includes("`")) fail(`lesson ${l.id}: the figure's gentle caption is words, not notation`);
+      if (typeof f.caption !== "string" || f.caption.trim().length < 40) fail(`lesson ${l.id}: the figure's caption is missing or too short`);
+      for (const t of [f.gentle, f.caption]) if (typeof t === "string" && ((t.match(/`/g) || []).length % 2 || (t.match(/\*\*/g) || []).length % 2)) fail(`lesson ${l.id}: unbalanced markup in a figure caption`);
+      if (l.calc) { try { const d = Object.fromEntries(l.calc.inputs.map(x => [x[0], x[2]])); const out = FIG.render(f.draw(d, l.calc.compute(d)), f.title);
+          if (!/<svg /.test(out)) fail(`lesson ${l.id}: the figure drew nothing`); } catch (e) { fail(`lesson ${l.id}: the figure does not draw: ${e.message}`); } }
     }
     // every lesson refers to at least one other lesson, so the book is a web not a list
     const refs = new Set(); for (const key of ["principle", "maths", "assumptions", "pitfall", "application"]) for (const m of String(l[key]).matchAll(/Lessons? ([A-N])/g)) refs.add(m[1]);
@@ -100,6 +114,9 @@ if (BOOK) {
     if (!Number.isInteger(CAL.passAt) || CAL.passAt < 1 || CAL.passAt > CAL.questions.length) fail("calibration passAt out of range");
     if (!CAL.verdict || !CAL.verdict.gentle || !CAL.verdict.standard) fail("the calibration needs both verdicts");
   }
+  // the static figures on the case and start pages draw too
+  for (const [name, obj] of [["case", BOOK.CASE], ["start", CAL]]) { if (!obj || !obj.figure) continue;
+    try { if (!/<svg /.test(FIG.render(obj.figure.spec, obj.figure.title))) fail(`the ${name} page's figure drew nothing`); } catch (e) { fail(`the ${name} page's figure does not draw: ${e.message}`); } }
   CARDS.forEach(c => { if (!LESSONS.find(l => l.id === c.lesson)) fail(`card ${c.id} points at lesson ${c.lesson}`); if (!c.lines || c.lines.length < 5) fail(`card ${c.id} is thin`); });
   GLOSSARY.forEach(g => { if (!/Lessons? [A-N]/.test(g[1])) fail(`glossary entry "${g[0]}" names no lesson`); });
   if (SESSION_FIELDS.length !== 5) fail("the session note has five lines");
@@ -131,4 +148,4 @@ for (const f of walk(root)) {
 // ---- report ---------------------------------------------------------
 if (problems.length) { console.error("check failed:\n  " + problems.join("\n  ")); process.exit(1); }
 const n = BOOK ? BOOK.LESSONS.length : 0;
-console.log(`ok: ${n} lessons, every calculator reproduces its worked example, ${BOOK ? BOOK.CARDS.length : 0} cards, ${BOOK ? BOOK.GLOSSARY.length : 0} glossary entries, one file, no network, no replaced name`);
+console.log(`ok: ${n} lessons, every calculator reproduces its worked example, every figure draws, ${BOOK ? BOOK.CARDS.length : 0} cards, ${BOOK ? BOOK.GLOSSARY.length : 0} glossary entries, one file, no network, no replaced name`);

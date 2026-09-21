@@ -31,18 +31,19 @@ The start page asks four short calibration questions and one about
 notation, and suggests a track. The **standard track** is each lesson's
 nine parts, expert to expert. The **gentle track** is the same nine
 parts with a plain-words page in front of each lesson first: the question
-in everyday terms, the one idea, and the worked example told in words
-with the same numbers. Nothing is left out of the gentle track; it starts
-softer. The suggestion is only a suggestion, the track can be switched at
+in everyday terms, the one idea, the worked example told in words with
+the same numbers, an everyday version of it, and a picture of it. Nothing
+is left out of the gentle track; it starts softer. The suggestion is only a suggestion, the track can be switched at
 the top of any lesson, and either can be chosen without answering.
 
 ## The lessons
 
 Fourteen, in the same nine parts each: the engineering question, the
 statistical principle, the essential mathematics, the assumptions, a
-worked synthetic example with a live calculator seeded to it, the common
-misreading, the application to the case, one diagnostic question with a
-hidden answer, and one exercise. Each ends with a four-question exam,
+worked synthetic example with a live calculator seeded to it and a figure that
+follows it, the common misreading, the application to the case, one
+diagnostic question with a hidden answer, and one exercise. Each ends
+with a four-question exam,
 marked in the browser with a reason for every answer; the lessons page
 keeps your best score per lesson and a scorecard for the course.
 
@@ -62,6 +63,16 @@ keeps your best score per lesson and a scorecard for the course.
 | L | Decision-oriented evaluation reporting | One page, one hour, one decision rule. |
 | M | Confidence, calibration and combining scores | Does 0.9 mean nine in ten, and is the product the system's confidence? |
 | N | Drift and monitoring | The weekly rate fell; what must be established before anyone touches the model? |
+
+Every lesson carries a **figure**: the worked example as a picture,
+drawn by the page from the calculator's own numbers and redrawn whenever
+an input changes, so the picture can never disagree with the text. The
+two coin-toss humps of Lesson A, the frames of the confusion table, the
+disagreements that carry a paired comparison, the mosaic that shows what
+an average is made of, the zones a release decision falls into, the
+reliability diagram: each is inline SVG with a caption, in words on the
+gentle track and in the lesson's notation on the standard one, and the
+check draws every one of them in CI.
 
 Alongside them: the **case** the examples follow, nine **core reasoning
 rules**, six **reference cards** (the reference-set manifest, the
@@ -94,7 +105,8 @@ disagreeing editors need it. The case is described in full on the site's
   ENGINE section that renders them and runs the calculators.
 - `tools/check.js` — the CI gate. It loads the script without a DOM and
   checks that every lesson has its nine parts, that every calculator
-  reproduces the numbers its worked example quotes, that cards and
+  reproduces the numbers its worked example quotes, that every figure
+  draws from its calculator's defaults with a caption in words, that cards and
   glossary entries point at lessons, and that the page is one file with
   no network. Run it with `node tools/check.js`; it installs nothing.
 - `.github/workflows/ci.yml` runs the check on every push and pull

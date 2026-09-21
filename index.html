@@ -7,8 +7,8 @@
 <meta name="description" content="Applied statistical concepts for evaluating AI systems: sampling variation, confidence intervals, paired comparison, bootstrap, aggregation, clustering, test-set governance, calibration and drift. Fourteen lessons with a live calculator each, in one file.">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Crect width='16' height='16' rx='3' fill='%23245'/%3E%3Ctext x='8' y='12' font-size='10' text-anchor='middle' fill='%23fff' font-family='serif'%3E%CF%83%3C/text%3E%3C/svg%3E">
 <style>
-:root{--bg:#f7f6f2;--fg:#1d1f22;--mute:#5d6470;--line:#d8d5cc;--card:#fff;--accent:#1f4e79;--soft:#e9eef5;--ok:#2a7a3b;--warn:#a05a00;--bad:#9b2c2c;--code:#eef0f3}
-@media (prefers-color-scheme:dark){:root{--bg:#15171a;--fg:#e6e4dd;--mute:#a1a7b1;--line:#33373d;--card:#1d2024;--accent:#8fb6e0;--soft:#232a33;--ok:#7fcf8f;--warn:#e0a54d;--bad:#e08080;--code:#24282e}}
+:root{--bg:#f7f6f2;--fg:#1d1f22;--mute:#5d6470;--line:#d8d5cc;--card:#fff;--accent:#1f4e79;--soft:#e9eef5;--ok:#2a7a3b;--warn:#a05a00;--bad:#9b2c2c;--code:#eef0f3;--f0:#cfcbc0;--fx:#8a8f98;--f1:#2a78d6;--f2:#eb6834;--f3:#1baf7a}
+@media (prefers-color-scheme:dark){:root{--bg:#15171a;--fg:#e6e4dd;--mute:#a1a7b1;--line:#33373d;--card:#1d2024;--accent:#8fb6e0;--soft:#232a33;--ok:#7fcf8f;--warn:#e0a54d;--bad:#e08080;--code:#24282e;--f0:#3d424a;--fx:#7d848f;--f1:#3987e5;--f2:#d95926;--f3:#199e70}}
 *{box-sizing:border-box}
 html{font-size:17px}
 body{margin:0;background:var(--bg);color:var(--fg);font-family:Georgia,"Times New Roman",serif;line-height:1.55}
@@ -70,6 +70,22 @@ button:focus-visible,input:focus-visible,a:focus-visible{outline:2px solid var(-
 .mute{color:var(--mute)}
 .gentle{border-left:3px solid var(--ok);background:var(--soft);padding:.5rem 1rem .7rem;border-radius:0 6px 6px 0;margin:.8rem 0 1.2rem}
 .gentle h3{margin-top:.6rem;color:var(--ok)}
+.fig{margin:1rem 0}
+.fig-svg{overflow-x:auto}
+.fig svg{display:block;width:100%;min-width:30rem;height:auto;font-family:system-ui,sans-serif;font-size:13px;overflow:visible}
+.fig text{fill:var(--fg)}.fig .sm{font-size:11.5px}.fig text.mute{fill:var(--mute)}
+.fig figcaption{font-family:system-ui,sans-serif;font-size:.86rem;color:var(--mute);margin-top:.45rem;line-height:1.45}
+.fig figcaption b{color:var(--fg);font-weight:600}
+.fig .f0{fill:var(--f0)}.fig .fx{fill:var(--fx)}.fig .f1{fill:var(--f1)}.fig .f2{fill:var(--f2)}.fig .f3{fill:var(--f3)}.fig .ok{fill:var(--ok)}.fig .warn{fill:var(--warn)}.fig .bad{fill:var(--bad)}
+.fig .ax{stroke:var(--mute);stroke-width:1;fill:none}.fig .grid{stroke:var(--line);stroke-width:1}
+.fig .mark{stroke:var(--mute);stroke-width:1.5;stroke-dasharray:4 3;fill:none}.fig .mark.f1{stroke:var(--f1)}.fig .mark.f2{stroke:var(--f2)}
+.fig .line{fill:none;stroke-width:2.5;stroke:var(--f1)}.fig .line.f2{stroke:var(--f2)}.fig .line.f3{stroke:var(--f3)}
+.fig .area{fill-opacity:.14}.fig .shade{fill-opacity:.55}.fig .band{fill-opacity:.16}
+.fig .pt{stroke:var(--card);stroke-width:2}.fig .dot{fill-opacity:.65;stroke:var(--card);stroke-width:1.5}
+.fig text.val{paint-order:stroke;stroke:var(--card);stroke-width:3px;stroke-linejoin:round}
+.fig .err{stroke-width:2;stroke:var(--f1)}.fig .err.f2{stroke:var(--f2)}
+.fig .box{fill-opacity:.15;stroke:var(--mute);stroke-width:1.2}.fig .box.f1{stroke:var(--f1)}.fig .box.f2{stroke:var(--f2)}.fig .box.ok{stroke:var(--ok)}.fig .box.bad{stroke:var(--bad)}.fig .box.warn{stroke:var(--warn)}
+.gentle .fig figcaption{color:var(--mute)}
 .track{font-family:system-ui,sans-serif;font-size:.85rem;color:var(--mute);margin:.4rem 0 .8rem}
 .start{font-family:system-ui,sans-serif;font-size:.95rem}
 .start ol{padding-left:1.4rem}.start li{margin:.9rem 0}
@@ -100,7 +116,12 @@ footer{border-top:1px solid var(--line);color:var(--mute);font-size:.82rem;paddi
    cards and the glossary. The engine below renders them and never needs
    editing to add a lesson. Prose uses a small markup: blank line between
    paragraphs, `code`, **bold**, "- " for list items, "| " rows for a
-   table (first row is the header), "> " for a rule box.
+   table (first row is the header), "> " for a rule box. Each lesson also
+   carries a `figure`: a title, a caption in words for the gentle page, a
+   caption for the standard track, and `draw(v, r)`, which turns the
+   calculator's inputs and outputs into a small figure spec that the engine
+   draws as SVG (the kinds are listed above FIG in the engine). The figure
+   is the worked example as a picture, so its numbers are the calculator's.
    ===================================================================== */
 
 const SITE = {
@@ -140,7 +161,10 @@ const CASE = {
 
 **Why this example.** Frames from one outing share light, subject and the photographer's mood, so rows are clustered, not independent. Keepers are rare, so accuracy flatters. Barred frames are rarer still and matter most, so class weighting is not academic. Two annotators disagree, so ground truth has error bars of its own. A new camera body changes the frames without changing the reviewer, so drift and composition change are natural. And nothing about it needs domain knowledge beyond what a hobbyist has.
 
-**The second example.** Where text is the output — the \`note\` and \`reason\` fields, and the whole of a fictional AI that reads short-story drafts and returns editorial notes — the lessons say what a similarity score does and does not measure, and how much two competent editors disagree. That example is smaller and appears only where it is needed.`
+**The second example.** Where text is the output — the \`note\` and \`reason\` fields, and the whole of a fictional AI that reads short-story drafts and returns editorial notes — the lessons say what a similarity score does and does not measure, and how much two competent editors disagree. That example is smaller and appears only where it is needed.`,
+  figure:{ title:"How the rows nest",
+    caption:`Reference Set 1 as the lessons see it: frames inside contact sheets inside projects, one row of reviewer output per frame. Each level is a place to aggregate, and a place to be wrong about independence.`,
+    spec:{type:"nest",cells:8,levels:[{label:"Reference Set 1",sub:"500 frames, frozen with their ground truth on a stated date",cls:"f0"},{label:"6 projects",sub:"a trip or a season, many outings each",cls:"f0"},{label:"40 outings, one contact sheet each",sub:"8–25 frames each; one outing shares light, subject and mood",cls:"f1"},{label:"frames, one row of reviewer output each",sub:"frame, verdict, category, note, reason, evidence, relations",cls:"f2"}]} }
 };
 
 /* The start page: a few calibration questions, and the two tracks they
@@ -155,7 +179,7 @@ const CALIBRATION = {
 
 **Standard track.** Each lesson is its nine parts, expert to expert: the engineering question, the principle, the mathematics derived, the assumptions, a worked example with a live calculator, the common misreading, the application to the case, a diagnostic question and an exercise.
 
-**Gentle track.** The same nine parts, but each lesson opens with a plain-words page first: what the question is in everyday terms, the one idea, and the worked example told in words with the same numbers. Then the nine parts, which say the same thing exactly. Nothing is left out of the gentle track; it just starts softer.
+**Gentle track.** The same nine parts, but each lesson opens with a plain-words page first: what the question is in everyday terms, the one idea, the worked example told in words with the same numbers, an everyday version of it, and a picture of it. Then the nine parts, which say the same thing exactly. Nothing is left out of the gentle track; it just starts softer.
 
 You can switch tracks at the top of any lesson.`,
   questions: [
@@ -174,7 +198,10 @@ You can switch tracks at the top of any lesson.`,
   verdict: {
     gentle: `The suggestion is the **gentle track**: a plain-words page opens each lesson, then the nine parts. It is the same course; it starts softer. Switch at any lesson if it feels slow.`,
     standard: `The suggestion is the **standard track**: straight to the nine parts. The plain-words pages are still there on the gentle track if a lesson ever lands awkwardly; switch at the top of any lesson.`
-  }
+  },
+  figure:{ title:"Two tracks, one course",
+    caption:`Five questions choose a suggestion; either track then reads the same nine parts and exam. The gentle track puts a plain-words page with a picture of the worked example in front of each lesson, and the switch at the top of any lesson moves between the two.`,
+    spec:{type:"steps",rows:[{label:"start here",boxes:[{text:"five questions",sub:"about three minutes"},{text:"a suggestion",sub:"never a lock"}]},{label:"gentle track",boxes:[{text:"plain words first",sub:"idea, example, picture",cls:"ok"},{text:"the nine parts",sub:"the same, exactly"},{text:"the exam",sub:"four questions"}]},{label:"standard track",boxes:[{text:"the nine parts",sub:"expert to expert"},{text:"the exam",sub:"four questions"}]}]} }
 };
 
 const RULES = [
@@ -197,7 +224,15 @@ const LESSONS = [
 
 **The example in words.** The release got 420 of 500 right, the candidate 405 of 500. The wobble on each score is about 0.017, and the wobble on the gap between them is about 0.024. The gap is 0.03, so it is about one and a quarter wobbles wide. Gaps that big appear between two draws of an unchanged system roughly one time in five.
 
+**An everyday version.** Toss a fair coin 500 times and you will not get exactly 250 heads; 235 or 262 are ordinary. Two counts from the same coin differ, and nobody says the coin changed between them.
+
 **So the answer is** not "it got worse" and not "nothing changed" either. It is "this evaluation cannot tell", which is a real answer and the honest one. The nine parts below show how to size the wobble for any score you have.`,
+  figure:{ title:"What two draws from one unchanged system look like",
+    gentle:`Each hump is the spread of scores that one unchanged system would give from 500 frames if the run were repeated: the release's hump is centred on its 0.84, the candidate's on its 0.81. The humps overlap almost entirely, and each observed score sits well inside the other's hump. That is what "the gap is about one and a quarter wobbles wide" looks like.`,
+    caption:`Sampling distributions of \`p̂\` for the two runs, normal with mean \`p̂\` and standard deviation \`SE\`. The observed values are marked; the overlap is the picture of \`z = 1.25\`. Change the counts and the humps move and narrow with them.`,
+    draw:(v,r)=>{ const w=4*Math.max(r.seA,r.seB); return {type:"curves",min:Math.min(r.pA,r.pB)-w,max:Math.max(r.pA,r.pB)+w,xlabel:`accuracy from ${v.nA} frames, if the run were repeated`,
+      curves:[{mu:r.pA,sd:r.seA,label:"release",cls:"f1"},{mu:r.pB,sd:r.seB,label:"candidate",cls:"f2"}],
+      marks:[{x:r.pA,label:`${fmt(r.pA,2)} observed`,cls:"f1"},{x:r.pB,label:`${fmt(r.pB,2)} observed`,cls:"f2"}]}; } },
   question:`Verdict accuracy on Reference Set 1 was **0.84** for the last release and is **0.81** for the candidate. Both runs used 500 frames. Did the candidate get worse, or is a three-point gap what two draws from the same system look like?`,
   principle:`A metric computed on a finite sample is a random variable. If the same system were scored on another 500 frames drawn the same way, the accuracy would differ. The distribution of the metric over such re-draws is its **sampling distribution**, and the standard deviation of that distribution is the **standard error** (SE). The standard error is the unit in which any observed difference must be measured before it means anything.`,
   maths:`For a binary outcome per row, \`X_i ∈ {0, 1}\` (verdict right or wrong), the accuracy is the mean \`p̂ = (1/n) Σ X_i\`. If rows are independent with the same success probability \`p\`, each \`X_i\` has variance \`p(1 − p)\`, so the mean has variance \`p(1 − p)/n\` and
@@ -237,7 +272,16 @@ The standard error of the difference is \`√(0.0164² + 0.0175²) = 0.0240\`. T
 
 **The example in words.** With 9 of 10, the plausible true rates run from somewhere in the fifties up to nearly certain. Ten frames cannot narrow it further. The simplest way of drawing the range breaks down when the score is near 100%; two better ways behave, and the lesson shows all three so you can see the difference.
 
+**An everyday version.** Ten reviews of a new café, nine of them good. That does not make it a nine-out-of-ten café; with only ten reviews it could easily be a six-out-of-ten café on a lucky week.
+
 **So the answer is** to write the range, with the ten beside it, rather than the single number. The nine parts derive the three intervals and let you compare them on the calculator.`,
+  figure:{ title:"Three intervals for 9 of 10",
+    gentle:`Each bar is the range of true rates one method says is consistent with nine right out of ten; the dot is the plain 90%. The top bar runs past the edge into the shaded region, which is above 100% and cannot be a rate at all: that method has failed, not measured. The two lower bars behave, and they agree that anything from the mid-fifties to the high nineties fits the data.`,
+    caption:`Wald, Wilson and Clopper–Pearson intervals at the chosen level, with \`p̂\` marked. The band above 1 is where Wald's interval runs when \`p̂\` is near the edge. Try 48 of 50 to see it again, and 405 of 500 to watch the three agree.`,
+    draw:(v,r)=>{ const max=Math.max(1.06,r.waldHi+0.02), min=Math.max(0,Math.min(0.4,r.cpLo-0.05,r.waldLo-0.05)); return {type:"intervals",min,max,xlabel:"true accuracy consistent with the data",
+      bands:[{from:1,to:max,cls:"bad",label:"above 100%: not a rate"}],
+      rows:[{label:"Wald (normal)",lo:r.waldLo,hi:r.waldHi,x:r.p,cls:"f2"},{label:"Wilson",lo:r.wilsonLo,hi:r.wilsonHi,x:r.p,cls:"f1"},{label:"Clopper–Pearson (exact)",lo:r.cpLo,hi:r.cpHi,x:r.p,cls:"f1"}],
+      marks:[{x:1,label:"100%"}]}; } },
   question:`A single contact sheet of 10 frames came back with 9 verdicts right. Someone wants to write "90% accurate" on the sheet's report. What range of true accuracies is consistent with 9 of 10, and which interval formula should produce it?`,
   principle:`A **confidence interval** is the output of a procedure that, over repeated samples, captures the true value a stated fraction of the time. The interval is a property of the procedure, not of this one sample: a 95% interval does not have a 95% chance of containing the truth; the procedure has a 95% success rate. Different procedures with the same nominal level can behave very differently at small \`n\` or near 0% and 100%, which is exactly where AI evaluation lives — rare classes, small slices, high accuracies.`,
   maths:`**Wald (normal approximation):** \`p̂ ± z √(p̂(1 − p̂)/n)\`. Simple, and wrong where it matters: at \`p̂ = 1\` its width is zero, and it can run past 1.
@@ -281,7 +325,15 @@ The Wald interval is nonsense above 1 and too narrow below. Wilson and the exact
 
 **The example in words.** Those three numbers are computed on the keeper group, which is about 80 frames, not on all 500. A number from 80 frames wobbles about two and a half times more than the same number from 500. That is why their uncertainty is larger than accuracy's, and why a keeper recall that looks solid can be much less certain than it reads.
 
+**An everyday version.** A smoke detector that never goes off is right almost every day, because almost every day there is no fire. Its accuracy is superb and it is useless. What you want to know is how many fires it catches.
+
 **So the answer is** to report the keeper metrics with their own intervals. The nine parts show how to compute each one and how wide it really is.`,
+  figure:{ title:"Where the keeper numbers come from",
+    gentle:`Every square is one frame. Accuracy counts all 500 of them, and most are the grey ones, which the reviewer got right by saying "not a keeper". Precision and recall are computed on the two coloured groups only: the keepers it found and the keepers it missed, 80 frames between them, plus the 26 it wrongly called keepers. The bars below show the result: the accuracy bar is short because it rests on 500 frames, the recall and F1 bars are wide because they rest on about 80.`,
+    caption:`Top: the confusion counts as frames. Bottom: accuracy with its Wilson interval against recall and F1 with their bootstrap intervals; the widths differ because the denominators do.`,
+    draw:(v,r)=>{ const g=FIG.cells([[v.tp,"f1"],[v.fn,"f2"],[v.fp,"f3"],[v.tn,"f0"]]); const n=v.tp+v.fp+v.fn+v.tn, wi=S.wilson(v.tp+v.tn,n,1.96);
+      return [{type:"grid",cells:g.cells,per:g.per,legend:[{cls:"f1",label:`keepers found (${v.tp})`},{cls:"f2",label:`keepers missed (${v.fn})`},{cls:"f3",label:`wrongly called keeper (${v.fp})`},{cls:"f0",label:`correctly not keeper (${v.tn})`}]},
+        {type:"intervals",min:0.5,max:1,xlabel:"value with 95% interval",rows:[{label:`accuracy, ${n} rows`,lo:wi[0],hi:wi[1],x:r.acc,cls:"fx"},{label:`keeper recall, ${v.tp+v.fn} rows`,lo:r.rLo,hi:r.rHi,x:r.R,cls:"f1"},{label:"keeper F1",lo:r.f1Lo,hi:r.f1Hi,x:r.F1,cls:"f1"}]}]; } },
   question:`Keepers are about 16% of frames. The reviewer's verdict accuracy on Reference Set 1 is 0.916, which sounds fine, but the photographer says it misses keepers. What do precision, recall and F1 on the Keeper class say, how uncertain are they, and why is their uncertainty not the same as accuracy's?`,
   principle:`Accuracy is a proportion over all rows, so Lesson B's intervals apply directly. Precision and recall are proportions over **subsets whose sizes are themselves random** — the rows the system flagged, the rows that are truly positive — and F1 is a nonlinear function of both. Their sampling distributions are not binomial, their denominators are small when the class is rare, and the analytic standard errors are approximations. The bootstrap gives honest intervals for all of them with one method.`,
   maths:`With true positives \`TP\`, false positives \`FP\` and false negatives \`FN\` on the positive class:
@@ -321,7 +373,15 @@ A row bootstrap with 2,000 resamples (seeded, so the calculator reproduces it) g
 
 **The example in words.** Three points of verdict accuracy on 500 frames is fifteen frames. If they are fifteen keepers sent to the folder, the photographer loses fifteen pictures a trip. If they are fifteen near-misses filed one shelf over, nobody notices. The same number is a big deal or nothing depending on which frames they are.
 
+**An everyday version.** A train three minutes late is a shrug on a cross-country journey and a missed connection on a four-minute change. The lateness is the same; what it costs is not.
+
 **So the answer is** to decide before the evaluation what size of change would matter, and in which frames, and write it down. The nine parts give the scales and the way to state the threshold.`,
+  figure:{ title:"From a proportion to a consequence",
+    gentle:`The same three points, followed through to what it costs. Along the top row it becomes sixty wrong verdicts a month and then half an hour of re-checking, which nobody would block a release over. Along the bottom row, on the barred class, the same three points becomes a little over half a barred frame a month reaching the publish queue, and one published is serious. The number did not change between the rows; the consequence did.`,
+    caption:`Absolute difference × monthly volume × cost per wrong row, on two classes. The top row uses the calculator's volume and minutes; the bottom row uses the example's 20 barred frames a month.`,
+    draw:(v,r)=>({type:"steps",rows:[
+      {label:"verdict accuracy",boxes:[{text:fmt(r.abs,3),sub:"difference in accuracy"},{text:`${fmt(r.rowsMonth,0)} wrong verdicts`,sub:`× ${tickN(v.vol)} frames a month`},{text:`${fmt(r.minMonth,0)} minutes`,sub:`× ${fmt(v.cost,1)} min per frame`,cls:"ok"}]},
+      {label:"barred class",boxes:[{text:fmt(r.abs,3),sub:"the same difference"},{text:`${fmt(r.abs*20,1)} barred frames`,sub:"× 20 barred a month"},{text:"one published",sub:"cannot be undone",cls:"bad"}]}]}) },
   question:`Suppose Lesson A's three-point gap were real. Is a three-point drop in verdict accuracy something to block a release over, or something nobody would notice? Who decides, and on what scale?`,
   principle:`Statistical evidence answers "is there a difference?"; an **effect size** answers "how big?"; and **practical significance** answers "does a difference that big change what we do?". The third question has no statistical answer. It has an operational one — reviewer hours, missed keepers per month, barred frames published — and it must be written down as a **minimum meaningful effect** before the data are looked at, or the data will be allowed to choose it.`,
   maths:`For two proportions the natural effect sizes are the **absolute difference** \`p_A − p_B\` (0.03: thirty more wrong verdicts per thousand frames), the **relative difference** \`(p_A − p_B)/p_B\` (3.7% more errors relative to the candidate), and the **odds ratio** \`[p_A/(1−p_A)] / [p_B/(1−p_B)]\` (1.23). **Cohen's h** \`= 2 asin√p_A − 2 asin√p_B\` puts differences on a scale where equal values are equally detectable at equal \`n\` regardless of where \`p\` sits; 0.2 is conventionally small, and 0.03 at these accuracies is \`h = 0.079\`, very small.
@@ -352,7 +412,16 @@ The photographer reviews about 2,000 frames a month and spends about half a minu
 
 **The example in words.** With 500 frames a side, a real three-point drop is caught only about as often as not: roughly a coin toss. To catch it reliably, say nine times in ten, takes several times as many frames. The lesson computes the number.
 
+**An everyday version.** A thirty-second search of the garden that finds no keys does not mean the keys are not in the garden. Before believing the result, ask how thorough the search was.
+
 **So the answer is** to size the evaluation for the change you need to see before running it, and to say the power beside any "no significant difference". The nine parts derive power and the sample size from the effect you care about.`,
+  figure:{ title:"How often a real three-point drop would be noticed",
+    gentle:`The left hump is where the measured gap would land if nothing had changed; the right hump is where it would land if the candidate really were three points worse. The dashed lines are the bar the gap has to clear to count as "significant". Only the shaded part of the right hump clears it, and that part is about a quarter of the hump: three times in four, a real drop of exactly this size would go unnoticed.`,
+    caption:`Null and alternative sampling distributions of \`p̂_A − p̂_B\`, with the two-sided critical lines at \`± z_{α/2} SE_0\`. The shaded area of the alternative is the power, 0.239 at the defaults. Raise the rows per arm and watch the humps narrow and the shaded share grow.`,
+    draw:(v,r)=>{ const d=v.pA-v.pB, pp=(v.pA+v.pB)/2, se0=Math.sqrt(2*pp*(1-pp)/v.n), se1=Math.sqrt(v.pA*(1-v.pA)/v.n+v.pB*(1-v.pB)/v.n), crit=S.zq(1-v.alpha/2)*se0; const w=4*Math.max(se0,se1);
+      return {type:"curves",min:Math.min(0,d)-w,max:Math.max(0,d)+w,xlabel:"release minus candidate, if the run were repeated",
+        curves:[{mu:0,sd:se0,label:"if nothing changed",cls:"f1"},{mu:d,sd:se1,label:`if the drop is really ${fmt(d,3)}`,cls:"f2",shade:[[-1,-crit],[crit,1]]}],
+        marks:[{x:-crit,label:"significant below",cls:""},{x:crit,label:"significant above",cls:""}]}; } },
   question:`Lesson A said the three-point gap was 1.25 standard errors: "not significant". Before concluding the candidate is fine, ask the other question. If the candidate really were three points worse, how likely was this evaluation to notice? And how many frames would it take to notice reliably?`,
   principle:`A **test** fixes a false-alarm rate α (the chance of calling a difference when there is none) and reports whether the data cross that bar. **Power** is the chance of crossing it when a difference of a stated size really exists. A non-significant result from a low-powered evaluation is not evidence of no difference; it is an evaluation that could not have found one. Power is decided by sample size, effect size and α, and it must be computed *before* the run, for the minimum meaningful effect of Lesson D.`,
   maths:`Two-proportion z-test, independent samples, pooled under the null: \`p̄ = (k_A + k_B)/(n_A + n_B)\`, \`SE_0 = √( p̄(1 − p̄)(1/n_A + 1/n_B) )\`, \`z = (p̂_A − p̂_B)/SE_0\`, two-sided \`p = 2(1 − Φ(|z|))\`.
@@ -387,7 +456,16 @@ Power to detect a true three-point drop with 500 frames per arm is **0.239**: th
 
 **The example in words.** Count the frames the release got right and the candidate wrong, and the frames the other way round. If those two counts are far apart the candidate really is different; if they are close it is not. The shared frames make this a much sharper test than comparing two totals, and Lesson A's "cannot tell" can become a definite answer.
 
+**An everyday version.** Two proofreaders read the same manuscript. Compare them page by page: the pages both caught and the pages both missed say nothing about which is better; the pages only one of them caught say everything.
+
 **So the answer is** yes: the design changes the test and usually the verdict. The nine parts derive the paired test and its interval.`,
+  figure:{ title:"Only the disagreements carry evidence",
+    gentle:`Every square is one of the 500 frames both versions scored. The grey ones are frames both got right or both got wrong; they say nothing about which version is better. The 55 coloured squares are the frames the two versions disagreed on: 35 that only the release got right, 20 that only the candidate did. The bars below show what pairing buys: the same 0.03 gap, but a much shorter bar, because the shared frames' wobble has been taken out.`,
+    caption:`Top: the 2×2 agreement table as frames, concordant rows in grey. Bottom: the 95% interval for the difference under independence (Lesson A) against the paired one; both centred on the same \`d\`.`,
+    draw:(v,r)=>{ const both=Math.max(0,v.n-v.b-v.c-v.w); const g=FIG.cells([[v.b,"f1"],[v.c,"f2"],[v.w,"fx"],[both,"f0"]]);
+      return [{type:"grid",cells:g.cells,per:g.per,legend:[{cls:"f1",label:`only the release right (${v.b})`},{cls:"f2",label:`only the candidate right (${v.c})`},{cls:"fx",label:`both wrong (${v.w})`},{cls:"f0",label:`both right (${both})`}]},
+        {type:"intervals",min:Math.min(-0.04,r.d-1.96*r.seInd-0.01),max:Math.max(0.1,r.d+1.96*r.seInd+0.01),xlabel:"release minus candidate, 95% interval",
+          rows:[{label:"treated as independent",lo:r.d-1.96*r.seInd,hi:r.d+1.96*r.seInd,x:r.d,cls:"fx"},{label:"paired, frame by frame",lo:r.lo,hi:r.hi,x:r.d,cls:"f1"}],marks:[{x:0,label:"no difference"}]}]; } },
   question:`Both releases were, in fact, scored on the *same* 500 frames. Lesson A treated them as two independent draws and found nothing. Does the shared design change the answer?`,
   principle:`When two systems are scored on the same rows, the row-to-row variation — hard sheets, easy sheets — is shared, and it cancels in the comparison. The evidence about the *difference* lives entirely in the rows where the two systems **disagree**. A paired analysis uses only those rows and is far more sensitive than the independent comparison, which lets the shared variation blur the picture. Always pair when you can, and you almost always can.`,
   maths:`Cross-tabulate the 500 rows by (A right?, B right?). Let \`b\` be the rows A got right and B wrong, \`c\` the rows B got right and A wrong; the rows where both were right or both wrong say nothing about the difference. Under the null of no difference, each discordant row is equally likely to fall either way, so \`b ~ Binomial(b + c, ½)\`.
@@ -406,11 +484,12 @@ McNemar: \`χ² = (35 − 20)²/55 = 4.09\`, \`p = 0.043\`; exact binomial on 35
   diagnostic:{ q:`Two releases agree on 490 of 500 rows; A wins 8 of the 10 discordant rows. McNemar's χ² is 3.6, p ≈ 0.06; the exact test gives p ≈ 0.11. Which p-value should be reported, and what is the more useful thing to report than either?`,
     a:`The exact one: with 10 discordant rows the χ² approximation is unreliable. More useful than either is the list of the 10 rows. With so few discordances, reading them decides more than testing them — and it may reveal that the 2 rows B won are Barred frames, which no aggregate would show.` },
   exercise:`Re-run your last release comparison as a paired analysis: build the 2×2 agreement table, compute \`b\`, \`c\`, McNemar's statistic and the paired interval. Report how much narrower the interval is than the independent one, and read the discordant rows.`,
-  calc:{ inputs:[["b","A right, B wrong (b)",35,0,1e7,1],["c","B right, A wrong (c)",20,0,1e7,1],["n","Rows scored by both",500,1,1e9,1]],
+  calc:{ inputs:[["b","A right, B wrong (b)",35,0,1e7,1],["c","B right, A wrong (c)",20,0,1e7,1],["w","Both wrong",60,0,1e7,1],["n","Rows scored by both",500,1,1e9,1]],
     compute:(v)=>{ const {b,c,n}=v, m=b+c; const chi=m?(b-c)*(b-c)/m:0; const d=(b-c)/n; const se=Math.sqrt(Math.max(0,m-(b-c)*(b-c)/n))/n;
-      return {chi,p:m?2*(1-S.Phi(Math.sqrt(chi))):1,pExact:S.binomTwoSided(Math.max(b,c),m),d,se,lo:d-1.96*se,hi:d+1.96*se,discordant:m}; },
-    outputs:[["discordant","discordant rows",0],["chi","McNemar χ²",2],["p","p (χ² approx.)",3],["pExact","p (exact binomial)",3],["d","paired difference",3],["se","SE of paired difference",4],["lo","95% low",3],["hi","95% high",3]],
-    expect:{chi:4.09,p:0.043,pExact:0.058,d:0.030,se:0.0148,lo:0.001,hi:0.059},
+      const pA=(n-c-v.w)/n, pB=(n-b-v.w)/n, seInd=Math.hypot(S.seProp(pA,n),S.seProp(pB,n)); // Lesson A's formula on the same totals, for comparison
+      return {chi,p:m?2*(1-S.Phi(Math.sqrt(chi))):1,pExact:S.binomTwoSided(Math.max(b,c),m),d,se,seInd,lo:d-1.96*se,hi:d+1.96*se,discordant:m}; },
+    outputs:[["discordant","discordant rows",0],["chi","McNemar χ²",2],["p","p (χ² approx.)",3],["pExact","p (exact binomial)",3],["d","paired difference",3],["se","SE of paired difference",4],["seInd","SE if treated as independent",4],["lo","95% low",3],["hi","95% high",3]],
+    expect:{chi:4.09,p:0.043,pExact:0.058,d:0.030,se:0.0148,seInd:0.0240,lo:0.001,hi:0.059},
     note:"Use the exact p when b + c is under about 25." } },
 
 { id:"G", title:"Bootstrap and permutation methods",
@@ -420,7 +499,17 @@ McNemar: \`χ² = (35 − 20)²/55 = 4.09\`, \`p = 0.043\`; exact binomial on 35
 
 **The example in words.** Both are just repetition. Neither needs a formula for the metric, only a way to compute it once. The machine does the repeating; what you supply is the judgement of what to resample, which here is sheets, not frames.
 
+**An everyday version.** Not sure how much a recipe varies? Cook it again and again and look at the spread of results. The bootstrap does the cooking for you, from the ingredients you already have.
+
 **So the answer is** resample at the level of the thing that is independent. The nine parts set the two methods up and the calculator runs them, seeded so the numbers repeat.`,
+  figure:{ title:"Twelve outings, resampled two thousand times",
+    gentle:`The top row shows the twelve outings as dots: how much better the release did than the candidate on each, with five sitting exactly on zero. The bar under them is the bootstrap's answer, the range that most of the two thousand re-draws of those twelve landed in, and it just clears zero. The hill below is all two thousand re-draws piled up; the interval is the middle 95% of the hill. Change a difference in the list and the hill moves.`,
+    caption:`Per-unit differences \`d_i\`, their mean, and the percentile bootstrap interval; below, the 2,000 resampled means as a histogram with the 2.5th and 97.5th percentiles marked. Seeded, so it is the calculator's interval exactly.`,
+    draw:(v,r)=>{ const d=S.parseList(v.diffs); if(d.length<2) return {type:"steps",rows:[{boxes:[{text:"enter at least two differences"}]}]};
+      const rg=S.rng(20240914), m=d.length, B=Math.round(v.B), ms=[]; for(let b=0;b<B;b++){ let s=0; for(let i=0;i<m;i++) s+=d[Math.floor(rg()*m)]; ms.push(s/m); }
+      const lo=Math.min(-0.1,...d)-0.05, hi=Math.max(0.1,...d)+0.05;
+      return [{type:"intervals",min:lo,max:hi,xlabel:"release minus candidate, per outing",rows:[{label:`the ${m} outings`,dots:d,x:r.mean,cls:"f1"},{label:"paired bootstrap 95%",lo:r.lo,hi:r.hi,x:r.mean,cls:"f1"}],marks:[{x:0,label:"no difference"}]},
+        {type:"hist",values:ms,bins:40,min:lo,max:hi,cls:"f1",xlabel:`mean difference in each of ${B} re-draws`,marks:[{x:r.lo,label:"2.5%",cls:""},{x:r.hi,label:"97.5%",cls:""},{x:r.mean,label:"observed mean",cls:"f2"}]}]; } },
   question:`The sheet-level pass rate — did the reviewer catch every Barred frame on the sheet — is the metric the photographer trusts most. It is a proportion of sheets, there are 40 of them, and the two releases differ on it. No formula in Lessons A to F was derived for it. What now?`,
   principle:`When the metric is awkward — a ratio, a maximum, an F-score, a pass rate over documents — or the sampling unit is not a row, stop deriving and **resample**. The **bootstrap** re-draws the data with replacement from itself, recomputes the metric each time, and uses the spread of those recomputations as the sampling distribution. A **permutation test** asks a different question: if the labels "A" and "B" were meaningless, how often would a reshuffle produce a difference this large? Both are exact in spirit, need no formula, and inherit their honesty from one decision: **what unit gets resampled**.`,
   maths:`**Paired bootstrap for a difference over units.** For units \`i = 1..m\` (sheets) with paired outcomes \`(a_i, b_i)\`, compute \`d_i = a_i − b_i\`. Draw \`m\` units with replacement, compute the mean difference, repeat \`B\` times (2,000 is plenty for a 95% interval), take the 2.5th and 97.5th percentiles. Resampling *pairs* keeps the within-unit correlation that makes the paired design powerful.
@@ -470,7 +559,14 @@ The two methods disagree at the margin, and that is the lesson of a twelve-unit 
 
 **The example in words.** Of 500 frames about ten are barred. Missing seven of them costs the accuracy about one point, and the note still says near 90%. Report the barred recall on its own line and the story is 3 in 10, which is the story that matters, because a barred frame published is the one mistake that cannot be undone.
 
+**An everyday version.** A school's average mark is set by its big classes. If the smallest class failed outright, the average barely moves. Look at the class marks, not the school's.
+
 **So the answer is** to report per-class numbers and to choose the average deliberately. The nine parts compare the ways of averaging and show what each one hides.`,
+  figure:{ title:"What each average is made of",
+    gentle:`Each bar is one verdict class; its width is how many frames the class has, its height is how many of them the reviewer got right. The wide grey bar is the folder class, and it sets the accuracy line almost by itself. The barred class is the thin bar at the right: it is the one that matters, it is the lowest, and it is nearly invisible to the average, which is the point. The macro line treats the four bars as equals and lands much lower.`,
+    caption:`A mosaic of per-class recall: width proportional to true rows, height the recall. Micro recall (accuracy) is the area-weighted mean; macro recall weights the four bars equally. Set the Barred cost weight to see the cost-weighted line move between them.`,
+    draw:(v,r)=>({type:"bars",max:1,ylabel:"recall",bars:[{label:"Folder",sub:`${v.n1} rows`,width:v.n1,value:r.rFolder,cls:"f0"},{label:"Keeper",sub:`${v.n2} rows`,width:v.n2,value:r.rKeeper,cls:"f1"},{label:"Near miss",sub:`${v.n3} rows`,width:v.n3,value:r.rNear,cls:"f3"},{label:"Barred",sub:`${v.n4} rows`,width:v.n4,value:r.rBarred,cls:"f2"}],
+      ylines:[{y:r.micro,label:`micro ${fmt(r.micro,3)}`},{y:r.macro,label:`macro ${fmt(r.macro,3)}`},{y:r.weighted,label:`cost-weighted ${fmt(r.weighted,3)}`,cls:"f2"}]}) },
   question:`Verdict accuracy is 0.892 and the release note calls it "near 90%". Barred frames are 2% of rows and the reviewer catches 3 in 10 of them. How does one number hide the other, and which aggregate should have been reported?`,
   principle:`Every aggregate is a weighted sum, and the weights are a decision. **Micro** averages weight by rows, so the majority class sets the number. **Macro** averages weight classes equally, so a 2% class counts as much as a 78% one. Neither is right in general; the right weights are the costs of the errors, and when the costs are unknown, report per class. Aggregating across groups with different mixes can even reverse the ranking of two systems — **Simpson's paradox** — and it does so in evaluation more often than in textbooks, because reference sets are built from whatever was available.`,
   maths:`With classes \`c\` having \`n_c\` true rows and \`k_c\` correctly recovered: micro-averaged recall \`= Σ k_c / Σ n_c\` (which for single-label classification equals accuracy), macro-averaged recall \`= (1/C) Σ k_c/n_c\`. Macro-F1 is the mean of per-class F1s; micro-F1 collapses to accuracy. A **cost-weighted** aggregate \`Σ w_c k_c/n_c\` with weights from the minimum-meaningful-effect statement is the only one that answers an operational question.
@@ -516,7 +612,15 @@ B is better on safari *and* on home ground, and worse pooled, because B was eval
 
 **The example in words.** Say the reviewer is very good on safari frames and only fair on home-ground frames. A set that is mostly safari flatters it; a production stream that is mostly home ground will disappoint. Weighting the two accuracies by 40 and 60 instead of 70 and 30 gives the number production will actually see, and a wider interval, because the home-ground slice is smaller in the set.
 
+**An everyday version.** A poll taken in one street on market day says what that street thought that day. To speak for the whole town, weight each district by its share of the town, not by how many people happened to walk past.
+
 **So the answer is** to know the mixture in the set and the mixture in production, and to report the reweighted figure. The nine parts show the arithmetic and what it does to the interval.`,
+  figure:{ title:"The same two accuracies, weighted two ways",
+    gentle:`Both pictures use the same two numbers: 0.88 on safari frames, 0.74 at home. In the top picture the safari bar is wide because the set is 70% safari, so the average line sits high, at 0.838. In the bottom picture the bars are re-cut to production's shares, 40 and 60, and the same two heights now average to 0.796. Nothing was measured again; only the mix changed, and the mix is the whole four-point gap.`,
+    caption:`Mosaics of the per-stratum accuracies: width is the stratum's share (the reference set's above, the target weights below), height its accuracy, and the line the weighted mean. The design effect in the calculator is the price of the mismatch in standard error.`,
+    draw:(v,r)=>{ const n=v.n1+v.n2, W2=1-v.W1; return [
+      {type:"bars",max:1,ylabel:"accuracy in the reference set's mix",bars:[{label:"safari",sub:`${fmt(100*v.n1/n,0)}% of the set`,width:v.n1/n,value:v.p1,cls:"f1"},{label:"home ground",sub:`${fmt(100*v.n2/n,0)}% of the set`,width:v.n2/n,value:v.p2,cls:"f2"}],ylines:[{y:r.naive,label:`naive ${fmt(r.naive,3)}`}]},
+      {type:"bars",max:1,ylabel:"the same accuracies in production's mix",bars:[{label:"safari",sub:`${fmt(100*v.W1,0)}% of production`,width:Math.max(0.01,v.W1),value:v.p1,cls:"f1"},{label:"home ground",sub:`${fmt(100*W2,0)}% of production`,width:Math.max(0.01,W2),value:v.p2,cls:"f2"}],ylines:[{y:r.weighted,label:`weighted ${fmt(r.weighted,3)}`}]}]; } },
   question:`Reference Set 1 is 70% safari frames because that is where the photographer had been. Production is closer to 40% safari, 60% home ground, and the reviewer is much better on safari. What does the set's headline accuracy estimate, and how is the production accuracy recovered from it?`,
   principle:`A sample estimates the population it was drawn from, not the one you meant. When the reference set's mix of strata differs from the target population's, the naive metric is **biased** for the target, and no confidence interval will show it — the interval measures precision, not aim. If the strata are known and their target weights are known, **post-stratification** re-weights the per-stratum estimates to the target mix. What it cannot do is fix strata that are missing, or a bias inside a stratum.`,
   maths:`With strata \`s\`, per-stratum accuracy \`p̂_s\` on \`n_s\` rows and target weights \`W_s\` (summing to 1):
@@ -552,7 +656,17 @@ The set said 0.84 and production will experience about 0.80. The interval was ne
 
 **The example in words.** If frames within an outing tend to agree with each other, a run that does badly on one hard outing loses many frames at once; that is one bad day, not many bad frames. Treating it as many independent misses overstates how sure you can be. The lesson estimates how much frames within an outing agree and shrinks the effective count accordingly.
 
+**An everyday version.** Ask 500 people in 40 households what they think of the council and you have something closer to 40 opinions than 500: households talk to each other.
+
 **So the answer is** to compute uncertainty on the unit that is actually independent, which here is closer to the outing than the frame. The nine parts derive the correction.`,
+  figure:{ title:"Five hundred frames, forty days",
+    gentle:`Each block is one outing and each square one of its frames, coloured by whether the reviewer got it right. The misses are not sprinkled evenly; they come in clumps, because a hard day is hard for every frame on it. Count the clumps rather than the squares and there is less evidence here than 500 suggests: the bars below put it at about 152 frames' worth. The pattern is synthetic, drawn to the lesson's correlation, and it is redrawn when the correlation changes.`,
+    caption:`A synthetic reference set with the calculator's \`n\`, cluster count, accuracy and \`ρ\`: per-outing accuracy varies with standard deviation \`√(ρ p(1 − p))\`, and frames follow their outing. Below, rows counted against the effective sample size \`n/DEFF\`. The seed is fixed, so the picture is stable.`,
+    draw:(v,r)=>{ const rg=S.rng(20240914), norm=()=>{ const u=Math.max(1e-12,rg()), w=rg(); return Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*w); };
+      const K=Math.min(60,Math.max(1,Math.round(v.clusters))), m=Math.min(25,Math.max(1,Math.round(v.n/v.clusters))), sd=Math.sqrt(Math.max(0,v.rho)*v.p*(1-v.p)); const blocks=[];
+      for(let c=0;c<K;c++){ const pc=Math.max(0,Math.min(1,v.p+sd*norm())); const b=[]; for(let i=0;i<m;i++) b.push(rg()<pc?"f0":"f2"); blocks.push(b); }
+      return [{type:"grid",blocks,blockCols:5,perRow:10,legend:[{cls:"f0",label:"verdict right"},{cls:"f2",label:"verdict wrong"}],blockLabel:`${K} outings of about ${m} frames${K<v.clusters||m<v.n/v.clusters?" (a sample of the set)":""}`},
+        {type:"bars",max:Math.max(1,v.n),ylabel:"frames",bars:[{label:"frames counted",width:1,value:v.n,cls:"f0",text:tickN(v.n)},{label:"frames' worth of evidence",sub:`n / DEFF, with ρ = ${fmt(v.rho,2)}`,width:1,value:r.neff,cls:"f1",text:tickN(Math.round(r.neff))}]}]; } },
   question:`Reference Set 1 has 500 frames, and every standard error so far has used \`n = 500\`. The frames come from 40 outings, and frames from one outing share the light, the subject and the photographer's judgement that day. How many independent observations are there really?`,
   principle:`Rows that share a cause are **clustered**, and clustered rows carry less information than independent ones because part of what each row tells you, its neighbours already told you. The **intra-cluster correlation** ρ measures how much rows within a cluster resemble each other; the **design effect** converts it into how much larger the standard error is than the independent formula claims; and the **effective sample size** is the number of independent rows that would carry the same information. A thousand rows from six projects can be worth sixty.`,
   maths:`For clusters of average size \`m\` and intra-cluster correlation \`ρ\`,
@@ -586,7 +700,15 @@ The cluster bootstrap (Lesson G) sidesteps the formula: resample outings, keep t
 
 **The example in words.** The sixty new frames may be harder than the old ones; the changed label flips one frame for both runs. Either could explain part of the two-point gap, and nothing in the two numbers says which. Rerun both versions on the same frozen set and the question answers itself.
 
+**An everyday version.** Two exam results cannot be compared if the paper changed between them. First find out what changed; then compare the questions both papers shared.
+
 **So the answer is** version the reference set, freeze it for the comparison, and log the labels. The nine parts give the checklist and the reporting lines.`,
+  figure:{ title:"Sixty new frames, one diluted number",
+    gentle:`The first block of squares is the 500 frames both versions were scored on: the candidate got 85% of them right, and that is the fair comparison with the release's 0.84. The strip after them is the sixty air-show frames added to the set, a kind of shooting the reviewer had never seen, and it got barely half of those. Pool the two and the number reads 0.818. The bars underneath show the dilution: a good score on the shared rows, a poor one on the new rows, and a pooled figure that describes neither.`,
+    caption:`Rows as frames, shared rows first and added rows after, right and wrong marked. Below, accuracy on the shared rows, on the added rows, and pooled, with bar widths proportional to the row counts; the pooled line is the row-weighted mean.`,
+    draw:(v,r)=>{ const k1=Math.round(v.n1*v.p1), k2=Math.round(v.n2*v.p2); const g=FIG.cells([[k1,"f0"],[v.n1-k1,"fx"],[k2,"f1"],[v.n2-k2,"f2"]]);
+      return [{type:"grid",cells:g.cells,per:g.per,legend:[{cls:"f0",label:`shared row, right (${k1})`},{cls:"fx",label:`shared row, wrong (${v.n1-k1})`},{cls:"f1",label:`added row, right (${k2})`},{cls:"f2",label:`added row, wrong (${v.n2-k2})`}]},
+        {type:"bars",max:1,ylabel:"accuracy",bars:[{label:"shared rows",sub:`${tickN(v.n1)} rows`,width:v.n1,value:v.p1,cls:"f0"},{label:"added rows",sub:`${tickN(v.n2)} rows`,width:Math.max(1,v.n2),value:v.p2,cls:"f2"}],ylines:[{y:r.pooled,label:`pooled ${fmt(r.pooled,3)}`}]}]; } },
   question:`The candidate scored 0.818 on "the reference set" and the release scored 0.84 on "the reference set". Sixty frames from a new trip were added between the two runs, and one Barred label was re-adjudicated. Is the two-point drop the candidate's, the new frames', or the label's?`,
   principle:`A metric is a function of four things: the system, the data, the ground truth and the scorer. Change any one and the number changes, and if two changed at once the comparison is **confounded** — it cannot be attributed. Evaluation is only measurement when the other three are held fixed and versioned, which is what a reference set's **governance** is for: a frozen, named, hashed set; ground truth under change control with an adjudication log; scoring code with a version; and a manifest that says what population the set claims to represent and what it does not cover. Ground truth is itself a measurement, with its own error, and the manifest says how much.`,
   maths:`Composition change decomposes exactly. If a set of \`n_1\` rows on which the candidate scores \`p_1\` is extended by \`n_2\` rows on which it scores \`p_2\`, the pooled score is \`(n_1 p_1 + n_2 p_2)/(n_1 + n_2)\` — the old score diluted toward the new rows' score. Report the shared-rows comparison first and the added rows separately.
@@ -620,7 +742,15 @@ Second example, the story-draft reader: two editors annotate 200 draft notes as 
 
 **The example in words.** The paired difference is 0.03 with an interval from 0.001 to 0.059, which is a real but small change; the barred recall may have fallen, which is the thing that cannot be undone; and there is a kind of shooting the candidate has never seen. The page says those three things, in that order, and then the rule: what the group said, before the run, it would take to ship.
 
+**An everyday version.** A doctor does not read a blood test to taste. The threshold for treating was decided before the result came back, and the result is read against it, whichever way it falls.
+
 **So the answer is** one page with the six items. The nine parts give the template, and the reference card holds it.`,
+  figure:{ title:"Where the bar falls decides the word",
+    gentle:`The axis is how much better or worse the candidate is; the three coloured zones are the three verdicts, and their edges are the thresholds the group wrote down before the run. The bar is the interval for the candidate. If the whole bar sits in the green, ship; if the whole bar sits in the red, hold; if it straddles a line, the honest word is "collect evidence". The dot is the point estimate, and the picture shows why it is not enough on its own.`,
+    caption:`The one-sided 90% interval \`d ± 1.645 SE\` against the zones set by \`δ_harm\` and \`δ_gain\`. Enter \`d = −0.03\` for the worked example's actual sign and watch the bar cross into the red.`,
+    draw:(v,r)=>{ const min=Math.min(-0.08,r.lcb-0.02), max=Math.max(0.08,r.ucb+0.02); return {type:"intervals",min,max,xlabel:"candidate minus release",
+      bands:[{from:min,to:-v.dHarm,cls:"bad",label:"hold: meaningfully worse"},{from:-v.dHarm,to:v.dGain,cls:"warn",label:"not shown either way"},{from:v.dGain,to:max,cls:"ok",label:"ship: meaningful gain"}],
+      rows:[{label:"candidate, 90% interval",lo:r.lcb,hi:r.ucb,x:v.d,cls:"f1"}],marks:[{x:0,label:"no change"}]}; } },
   question:`Everything from A to K is on the table for the candidate: a paired difference of 0.03 with interval 0.001 to 0.059, a Barred recall that may have fallen, an air show it has never seen. The release meeting is in an hour and wants one page. What goes on it, and what is the decision rule?`,
   principle:`An evaluation report exists to support a decision, and the decision has a small number of outcomes: **ship**, **hold**, **collect specific evidence**. The report's job is to put the evidence in the form that rule needs — an interval compared against a minimum meaningful effect, per class, on the frozen set, with the assumptions and the uncovered scenarios stated — and to say plainly what the evidence does *not* show. A point estimate compared to zero is not a decision rule. A lower confidence bound compared to a written threshold is.`,
   maths:`Let \`d\` be the paired improvement (candidate minus release) with standard error \`SE\`, and δ the minimum meaningful effect. Because the decision is one-sided — we need to know the candidate is not worse — use the one-sided lower bound:
@@ -661,7 +791,15 @@ Had the sign been the other way — an improvement of 0.030 with the same standa
 
 **The example in words.** Take every verdict the reviewer marked between 0.85 and 0.95 and check them against the photographer. If about nine in ten are right, the threshold can be trusted; if fewer, the auto-accept rule needs a higher bar or a corrected score. For the combined confidence: a product says every component must be right, a minimum says the weakest link decides, a mean says they trade off. Pick the one that matches what "the whole verdict is right" means.
 
+**An everyday version.** A forecaster who says "90% chance of rain" is honest if, over all the days they said it, it rained on about nine in ten. If it rained on six in ten, the number was a mood, not a probability.
+
 **So the answer is** measure calibration before trusting a threshold, and combine scores by the meaning you need. The nine parts show the reliability table and the three combinations.`,
+  figure:{ title:"Does 0.9 mean nine in ten?",
+    gentle:`Across the bottom is the confidence the reviewer stated; up the side is how often it was actually right. A perfectly honest score would sit on the dashed line. Each dot is one group of frames, with a whisker for the range its count of frames allows. The 0.9 dot is close to the line and its whisker is short, so nine in ten is about right there. The 0.7 dot sits below the line: at that confidence the reviewer is a little surer than it should be.`,
+    caption:`A reliability diagram: observed accuracy \`o_j\` against stated confidence \`c̄_j\`, one point per bin with its Wilson interval and a size proportional to \`n_j\`. The ECE in the calculator is the row-weighted distance from the diagonal.`,
+    draw:(v,r)=>{ const cs=[0.1,0.3,0.5,0.7,0.9], ns=[v.n1,v.n2,v.n3,v.n4,v.n5], ks=[v.k1,v.k2,v.k3,v.k4,v.k5]; const pts=[]; const big=Math.max(1,...ns);
+      cs.forEach((c,j)=>{ if(!ns[j]) return; const w=S.wilson(ks[j],ns[j],1.96); pts.push({x:c,y:ks[j]/ns[j],lo:w[0],hi:w[1],r:4+8*Math.sqrt(ns[j]/big),label:`${ns[j]} rows`}); });
+      return {type:"xy",xmin:0,xmax:1,ymin:0,ymax:1,diagonal:true,xlabel:"stated confidence",ylabel:"how often right",series:[{points:pts,cls:"f1"}]}; } },
   question:`Beside every verdict the reviewer emits a confidence, and the photographer wants to auto-accept verdicts above 0.9 without looking. Does 0.9 mean nine in ten are right? And when the reviewer's four components each emit a score, is the product, the mean or the minimum the confidence of the whole?`,
   principle:`A score is a **probability** only if, among rows given that score, the stated fraction turn out right; that property is **calibration**, and it is an empirical claim to be tested on the reference set, per slice, not a property of the number being between 0 and 1. Scores from different components have different semantics — one is a softmax margin, one a retrieval similarity, one a self-reported estimate — and there is no formula for combining them that does not inherit assumptions about what each means and whether their errors are independent. **System-level trust is not the average of component confidence.** It is measured end to end, like any other metric, and expressed in the vocabulary of Lessons A to L.`,
   maths:`Bin rows by stated confidence. In bin \`j\` with \`n_j\` rows, mean stated confidence \`c̄_j\` and observed accuracy \`o_j\`, the **expected calibration error** is
@@ -724,7 +862,16 @@ Prefer keeping the vector of scores and learning a calibrated combiner on held-o
 
 **The example in words.** Compare this month's frames to the reference set: the light, the subjects, the kinds of shooting. If the mix has moved, the reported rate should move with it and says nothing about the reviewer. Where truth arrives late, keep scoring a small labelled sample every week; that line, not the raw rate, says whether the reviewer still agrees with the photographer.
 
+**An everyday version.** A shop's takings fell this month. Before blaming the staff, check whether the street was closed for roadworks: same shop, different passers-by.
+
 **So the answer is** to monitor the inputs and a small labelled stream separately, and to read the raw rate as a symptom, not a verdict. The nine parts set the monitors up.`,
+  figure:{ title:"Same reviewer, different month",
+    gentle:`The top pair of pictures is the example's decomposition. Within each kind of shooting the keeper rate is what it was at baseline: 5% on macro frames, 13% on the rest. What changed is the width of the bars, because this month was mostly macro, and that alone drags the overall line from about 0.12 down to about 0.07. The reviewer did nothing different; the photographer did. The last picture is the other half of the lesson: check once a week at the usual 5% level and, by the end of a year, the chance of at least one false alarm from an unchanged system has climbed to 0.93.`,
+    caption:`Above, the example's strata as mosaics (width is the stratum's share of the period, height its keeper rate, the line the overall rate): baseline mix, then this month's; these two are the example's fixed figures, not the calculator's. Below, \`1 − (1 − α)^checks\` against the number of checks, from the calculator's α and checks per year.`,
+    draw:(v,r)=>{ const pts=[]; const K=Math.max(1,Math.min(400,Math.round(v.checks))); for(let k=1;k<=K;k++) pts.push({x:k,y:1-Math.pow(1-v.alpha,k)});
+      return [{type:"bars",max:0.2,ylabel:"keeper rate at baseline",bars:[{label:"macro",sub:"15% of frames",width:0.15,value:0.05,cls:"f3"},{label:"other shooting",sub:"85% of frames",width:0.85,value:0.13,cls:"f0"}],ylines:[{y:0.12,label:"overall 0.12"}]},
+        {type:"bars",max:0.2,ylabel:"keeper rate this month",bars:[{label:"macro",sub:"70% of frames",width:0.7,value:0.05,cls:"f3"},{label:"other shooting",sub:"30% of frames",width:0.3,value:0.13,cls:"f0"}],ylines:[{y:0.07,label:"overall 0.07"}]},
+        {type:"xy",xmin:0,xmax:K,ymin:0,ymax:1,xlabel:"checks made so far in the year",ylabel:"chance of at least one false alarm",series:[{points:pts,cls:"f2",line:true,label:`after ${K} checks: ${fmt(r.famAlarm,2)}`}]}]; } },
   question:`The reviewer shipped. Three months later the weekly Keeper rate it reports has fallen from 12% to 7%, and someone asks whether the reviewer has degraded. The reviewer has not changed. The photographer has a new camera, has been shooting macro all month, and has been in a mood. Which of these is drift, and what does monitoring have to establish before anyone touches the model?`,
   principle:`Monitoring is the reference-set evaluation continued into a population that is allowed to change. Everything in Lessons A to M still applies, with one addition: a difference between this week and the baseline can come from the **system**, from the **inputs** (covariate shift: a new camera, a macro month), from the **relationship** between inputs and truth (concept drift: the photographer's taste moved), or from the **labels** arriving late and biased (only the frames that got looked at have ground truth). Monitoring's first job is to tell those apart, and its second is not to raise false alarms every week, because weekly tests at α = 0.05 will.`,
   maths:`For a monitored proportion with baseline \`p_0\` and this week's \`k\` of \`n\`: \`z = (k/n − p_0)/√(p_0(1 − p_0)/n)\`. But 52 weekly tests at α = 0.05 raise at least one false alarm with probability \`1 − 0.95⁵² = 0.93\` in a year of an unchanged system. Options: a stricter per-check α (Bonferroni: 0.05/52 ≈ 0.001), a **sequential** method such as CUSUM that accumulates evidence across weeks, or — the engineering answer — alarms defined on the minimum meaningful effect rather than on significance, since with enough production rows everything is significant.
@@ -1016,6 +1163,7 @@ const S = (() => {
 })();
 
 const fmt = (x,d) => { if(typeof x!=="number"||isNaN(x)) return "—"; if(!isFinite(x)) return "∞"; return d===0 ? String(Math.round(x)) : x.toFixed(d); };
+const tickN = (x) => (typeof x!=="number"||!isFinite(x)) ? "—" : String(Math.round(x)).replace(/\B(?=(\d{3})+(?!\d))/g,","); // whole numbers with thousands separators, for figure labels
 
 const esc = (s) => String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
 const inline = (s) => esc(s).replace(/`([^`]+)`/g,"<code>$1</code>").replace(/\*\*([^*]+)\*\*/g,"<b>$1</b>").replace(/\*([^*]+)\*/g,"<i>$1</i>");
@@ -1038,9 +1186,126 @@ const md = (text) => {
   return html;
 };
 
+/* Figures. A lesson declares its figure as a small spec built from the
+   calculator's inputs and outputs; FIG turns the spec into inline SVG as a
+   string, so the check can render every figure without a DOM and the page
+   can redraw one whenever an input changes. Eight kinds, all 640 units
+   wide: grid (rows as squares, flat or in blocks), intervals (bars on one
+   axis, with bands and marks), curves (sampling distributions), bars (with
+   optional mosaic widths), hist, xy (points and lines), steps (boxes and
+   arrows) and nest (boxes inside boxes). Colour is by class: f1 and f2 are
+   the two runs (blue, orange), f3 a third category, f0 the neutral
+   majority, fx a darker neutral, and ok / warn / bad the site's status
+   colours; every class is named on the figure, so nothing is carried by
+   colour alone. A spec whose numbers are not finite does not draw, and the
+   page says so in place of the picture. */
+const FIG = (() => {
+  const W = 640;
+  const nf = (x) => (isFinite(x) ? x : NaN).toFixed(1);
+  const tw = (s,size) => String(s).length*(size||6.2); // estimated text width, for laying labels out
+  const txt = (x,y,s,cls,anchor) => `<text x="${nf(x)}" y="${nf(y)}"${cls?` class="${cls}"`:""}${anchor?` text-anchor="${anchor}"`:""}>${esc(s)}</text>`;
+  const tick = (x) => { if (!isFinite(x)) return "—"; const a=Math.abs(x); if (a>=1000) return String(Math.round(x)).replace(/\B(?=(\d{3})+(?!\d))/g,","); if (a>=10) return String(Math.round(x*10)/10); return String(Math.round(x*1000)/1000); };
+  const niceTicks = (min,max,n) => { const span=max-min; if(!(span>0)) return [min]; const raw=span/(n||6), p=Math.pow(10,Math.floor(Math.log10(raw))); const step=[1,2,5,10].map(m=>m*p).find(s=>s>=raw)||p*10;
+    const out=[]; for(let t=Math.ceil(min/step-1e-9)*step; t<=max+1e-9; t+=step) out.push(Math.round(t/step)*step); return out; };
+  const scale = (min,max,a,b) => (x) => a + (x-min)/(max-min)*(b-a);
+  // an x axis with ticks; mark labels sit under the tick labels and the axis title under those
+  const axis = (sx,min,max,y,ticks,label,markLabels) => { const ts=ticks||niceTicks(min,max); let s=`<line x1="${nf(sx(min))}" y1="${nf(y)}" x2="${nf(sx(max))}" y2="${nf(y)}" class="ax"/>`;
+    ts.forEach(t=>{ if(t<min-1e-9||t>max+1e-9) return; s+=`<line x1="${nf(sx(t))}" y1="${nf(y)}" x2="${nf(sx(t))}" y2="${nf(y+5)}" class="ax"/>`+txt(sx(t),y+18,tick(t),"sm mute","middle"); });
+    let yy=y+18; if(markLabels&&markLabels.length){ yy+=16; markLabels.forEach(m=>{ const x=Math.max(20,Math.min(W-20,sx(m.x))); const anchor = x<20+tw(m.label)/2 ? "start" : x>W-20-tw(m.label)/2 ? "end" : "middle"; s+=txt(x,yy,m.label,"sm mute",anchor); }); }
+    if(label){ yy+=17; s+=txt((sx(min)+sx(max))/2,yy,label,"mute","middle"); } return {s,bottom:yy+6}; };
+  // a legend that wraps; returns the markup and the height it used
+  const legend = (items,x,y,right) => { let s="", cx=x, cy=y, rows=1; const widths=items.map(it=>15+tw(it.label)+16);
+    if(right){ const total=widths.reduce((a,b)=>a+b,0)-16; cx=Math.max(20,right-total); }
+    items.forEach((it,i)=>{ if(cx+widths[i]-16>W-20&&cx>x){ cx=x; cy+=17; rows++; } s+=`<rect x="${nf(cx)}" y="${nf(cy-9)}" width="11" height="11" rx="2" class="${it.cls}"/>`+txt(cx+15,cy,it.label,"sm"); cx+=widths[i]; });
+    return {s,h:rows*17}; };
+  const svg = (h,body,alt) => `<svg viewBox="0 0 ${W} ${Math.ceil(h)}" role="img" aria-label="${esc(alt||"figure")}">${body}</svg>`;
+  const clampTo = (min,max) => (x) => Math.max(min,Math.min(max,x));
+
+  const kinds = {
+    intervals(p,alt){ const padL=170, padR=24; const bands=p.bands||[], marks=p.marks||[]; const top=bands.length?46:16;
+      const sx=scale(p.min,p.max,padL,W-padR), cl=clampTo(p.min,p.max); let s="", y=top; const rowY=[]; p.rows.forEach(r=>{ const rh=r.dots?46:34; rowY.push(y+rh/2); y+=rh; }); const axY=y+6;
+      bands.forEach((b,i)=>{ const a=sx(cl(b.from)), c=sx(cl(b.to)); s+=`<rect x="${nf(a)}" y="${top-4}" width="${nf(Math.max(0,c-a))}" height="${nf(axY-top+2)}" class="band ${b.cls}"/>`;
+        if(b.label){ const mid=(a+c)/2, w=tw(b.label); const anchor = mid-w/2<padL-40 ? "start" : mid+w/2>W-padR ? "end" : "middle"; const lx = anchor==="start" ? Math.max(a,padL-40) : anchor==="end" ? Math.min(c,W-padR) : mid; s+=txt(lx,top-(i%2?26:12),b.label,"sm mute",anchor); } });
+      marks.forEach(m=>{ const x=sx(cl(m.x)); s+=`<line x1="${nf(x)}" y1="${top-4}" x2="${nf(x)}" y2="${nf(axY)}" class="mark ${m.cls||""}"/>`; });
+      p.rows.forEach((r,i)=>{ const cy=rowY[i], cls=r.cls||"f1"; s+=txt(padL-12,cy+4,r.label,"","end");
+        if(r.dots){ const seen=[]; r.dots.forEach(d=>{ const x=sx(cl(d)); let k=0; seen.forEach(q=>{ if(Math.abs(q.x-x)<6) k=Math.max(k,q.k+1); }); seen.push({x,k}); const off=[0,-9,9,-18,18][Math.min(k,4)]; s+=`<circle cx="${nf(x)}" cy="${nf(cy+off)}" r="5" class="dot ${cls}"/>`; }); }
+        if(typeof r.lo==="number"&&typeof r.hi==="number"){ const a=sx(cl(r.lo)), b=sx(cl(r.hi)); s+=`<rect x="${nf(a)}" y="${nf(cy-5)}" width="${nf(Math.max(2,b-a))}" height="10" rx="4" class="${cls}"/>`; }
+        if(typeof r.x==="number") s+=`<circle cx="${nf(sx(cl(r.x)))}" cy="${nf(cy)}" r="5.5" class="pt ${cls}"/>`; });
+      const ax=axis(sx,p.min,p.max,axY,p.ticks,p.xlabel,marks.filter(m=>m.label).map(m=>({x:cl(m.x),label:m.label}))); s+=ax.s; return svg(ax.bottom,s,alt); },
+
+    curves(p,alt){ const padL=24, padR=24, top=56, base=200; const sx=scale(p.min,p.max,padL,W-padR);
+      const pdf=(c,x)=>Math.exp(-0.5*((x-c.mu)/c.sd)**2)/c.sd; const peak=Math.max(...p.curves.map(c=>1/c.sd)); const sy=(v)=>base-(v/peak)*(base-top);
+      const N=160, xs=[]; for(let i=0;i<=N;i++) xs.push(p.min+(p.max-p.min)*i/N); let s="";
+      p.curves.forEach(c=>{ const pts=xs.map(x=>`${nf(sx(x))},${nf(sy(pdf(c,x)))}`); s+=`<path d="M${nf(sx(p.min))},${nf(base)} L${pts.join(" L")} L${nf(sx(p.max))},${nf(base)} Z" class="area ${c.cls}"/><path d="M${pts.join(" L")}" class="line ${c.cls}"/>`;
+        (c.shade||[]).forEach(([a,b])=>{ const lo=Math.max(a,p.min), hi=Math.min(b,p.max); if(hi<=lo) return; const sp=[]; for(let i=0;i<=40;i++){ const x=lo+(hi-lo)*i/40; sp.push(`${nf(sx(x))},${nf(sy(pdf(c,x)))}`); } s+=`<path d="M${nf(sx(lo))},${nf(base)} L${sp.join(" L")} L${nf(sx(hi))},${nf(base)} Z" class="shade ${c.cls}"/>`; }); });
+      // direct labels above each peak, staggered when two would collide
+      const placed=[]; [...p.curves].sort((a,b)=>a.mu-b.mu).forEach(c=>{ const x=Math.max(padL+tw(c.label)/2,Math.min(W-padR-tw(c.label)/2,sx(c.mu))); let row=0; placed.forEach(q=>{ if(Math.abs(q.x-x)<(tw(c.label)+tw(q.label))/2+8) row=Math.max(row,q.row+1); }); placed.push({x,row,label:c.label}); s+=txt(x,top-8-row*15,c.label,"sm","middle"); });
+      const marks=p.marks||[]; marks.forEach(m=>{ const x=sx(Math.max(p.min,Math.min(p.max,m.x))); s+=`<line x1="${nf(x)}" y1="${top-2}" x2="${nf(x)}" y2="${nf(base)}" class="mark ${m.cls||""}"/>`; });
+      const ax=axis(sx,p.min,p.max,base,p.ticks,p.xlabel,marks.filter(m=>m.label).map(m=>({x:Math.max(p.min,Math.min(p.max,m.x)),label:m.label}))); s+=ax.s;
+      s+=legend(p.curves.map(c=>({cls:c.cls,label:c.label})),padL,14,W-padR).s; return svg(ax.bottom,s,alt); },
+
+    bars(p,alt){ const padL=56, padR=p.ylines?150:24, top=30, base=200; const max=p.max||1; const sy=scale(0,max,base,top);
+      const total=p.bars.reduce((a,b)=>a+(b.width||1),0), inner=W-padL-padR, gap=4; const widths=p.bars.map(b=>inner*(b.width||1)/total-gap); const narrow=widths.some(w=>w<60);
+      let x=padL, s=""; niceTicks(0,max,5).forEach(t=>{ s+=`<line x1="${padL}" y1="${nf(sy(t))}" x2="${nf(W-padR)}" y2="${nf(sy(t))}" class="grid"/>`+txt(padL-8,sy(t)+4,tick(t),"sm mute","end"); });
+      p.bars.forEach((b,i)=>{ const w=widths[i], v=Math.max(0,Math.min(max,b.value||0)); s+=`<rect x="${nf(x+gap/2)}" y="${nf(sy(v))}" width="${nf(Math.max(1,w))}" height="${nf(base-sy(v))}" rx="3" class="${b.cls||"f1"}"/>`;
+        const cx=x+gap/2+w/2, val=b.text||tick(b.value); if(w>=tw(val)+6) s+=txt(cx,sy(v)-6,val,"sm val","middle");
+        if(!narrow){ s+=txt(cx,base+16,b.label,"sm","middle"); if(b.sub) s+=txt(cx,base+31,b.sub,"sm mute","middle"); } x+=w+gap; });
+      (p.ylines||[]).forEach(l=>{ const y=sy(Math.max(0,Math.min(max,l.y))); s+=`<line x1="${padL}" y1="${nf(y)}" x2="${nf(W-padR)}" y2="${nf(y)}" class="mark ${l.cls||""}"/>`+txt(W-padR+6,y+4,l.label,"sm val",""); });
+      s+=`<line x1="${padL}" y1="${base}" x2="${nf(W-padR)}" y2="${base}" class="ax"/>`; if(p.ylabel) s+=txt(8,top-12,p.ylabel,"sm mute","");
+      let h=base+(p.bars.some(b=>b.sub)?44:30); if(narrow){ const lg=legend(p.bars.map(b=>({cls:b.cls||"f1",label:`${b.label}: ${b.text||tick(b.value)}${b.sub?" ("+b.sub+")":""}`})),padL,base+24); s+=lg.s; h=base+24+lg.h; }
+      return svg(h,s,alt); },
+
+    hist(p,alt){ const padL=24, padR=24, top=34, base=170; const vals=p.values.filter(x=>isFinite(x)); if(!vals.length) return svg(60,txt(W/2,30,"nothing to draw","mute","middle"),alt);
+      const min=p.min!==undefined?p.min:Math.min(...vals), max=p.max!==undefined?p.max:Math.max(...vals), B=p.bins||30, span=(max-min)||1; const counts=new Array(B).fill(0);
+      vals.forEach(v=>{ let i=Math.floor((v-min)/span*B); if(i>=B) i=B-1; if(i<0) i=0; counts[i]++; }); const peak=Math.max(...counts); const sx=scale(min,max,padL,W-padR); let s="";
+      counts.forEach((c,i)=>{ const a=sx(min+span*i/B), b=sx(min+span*(i+1)/B), y=base-(c/peak)*(base-top); s+=`<rect x="${nf(a+0.5)}" y="${nf(y)}" width="${nf(Math.max(0.5,b-a-1))}" height="${nf(base-y)}" class="${p.cls||"f1"}"/>`; });
+      const placed=[]; (p.marks||[]).forEach(m=>{ const x=sx(Math.max(min,Math.min(max,m.x))); s+=`<line x1="${nf(x)}" y1="${top-6}" x2="${nf(x)}" y2="${nf(base)}" class="mark ${m.cls||""}"/>`;
+        if(m.label){ let row=0; placed.forEach(q=>{ if(Math.abs(q.x-x)<(tw(m.label)+tw(q.label))/2+8) row=Math.max(row,q.row+1); }); placed.push({x,row,label:m.label}); s+=txt(Math.max(padL+tw(m.label)/2,Math.min(W-padR-tw(m.label)/2,x)),top-10-row*14,m.label,"sm mute","middle"); } });
+      const ax=axis(sx,min,max,base,p.ticks,p.xlabel); s+=ax.s; return svg(ax.bottom,s,alt); },
+
+    xy(p,alt){ const padL=64, padR=24, top=30, base=210; const sx=scale(p.xmin,p.xmax,padL,W-padR), sy=scale(p.ymin,p.ymax,base,top); let s="";
+      niceTicks(p.ymin,p.ymax,5).forEach(t=>{ s+=`<line x1="${padL}" y1="${nf(sy(t))}" x2="${nf(W-padR)}" y2="${nf(sy(t))}" class="grid"/>`+txt(padL-8,sy(t)+4,tick(t),"sm mute","end"); });
+      if(p.diagonal){ const a=Math.max(p.xmin,p.ymin), b=Math.min(p.xmax,p.ymax), r=b-a; s+=`<line x1="${nf(sx(a))}" y1="${nf(sy(a))}" x2="${nf(sx(b))}" y2="${nf(sy(b))}" class="mark"/>`+txt(sx(a+0.6*r),sy(a+0.42*r),p.diagonal===true?"perfect calibration":p.diagonal,"sm mute","start"); }
+      (p.bands||[]).forEach(b=>{ s+=`<rect x="${padL}" y="${nf(sy(Math.min(p.ymax,b.to)))}" width="${nf(W-padL-padR)}" height="${nf(Math.max(0,sy(Math.max(p.ymin,b.from))-sy(Math.min(p.ymax,b.to))))}" class="band ${b.cls}"/>`; if(b.label) s+=txt(W-padR-6,sy(b.to)+14,b.label,"sm mute","end"); });
+      p.series.forEach(se=>{ const cls=se.cls||"f1"; if(se.line&&se.points.length>1) s+=`<path d="M${se.points.map(q=>`${nf(sx(q.x))},${nf(sy(q.y))}`).join(" L")}" class="line ${cls}"/>`;
+        if(!se.line||se.dots) se.points.forEach(q=>{ const x=sx(q.x), y=sy(q.y), r=q.r||5.5; if(typeof q.lo==="number"&&typeof q.hi==="number") s+=`<line x1="${nf(x)}" y1="${nf(sy(q.lo))}" x2="${nf(x)}" y2="${nf(sy(q.hi))}" class="err ${cls}"/>`;
+          s+=`<circle cx="${nf(x)}" cy="${nf(y)}" r="${nf(r)}" class="pt ${cls}"/>`; if(q.label){ const flip = x+r+5+tw(q.label) > W-padR; s+=txt(flip?x-r-5:x+r+5,y+4,q.label,"sm mute",flip?"end":"start"); } });
+        if(se.label&&se.line){ const q=se.points[se.points.length-1]; s+=txt(Math.min(sx(q.x),W-padR-4),sy(q.y)-10,se.label,"sm","end"); } });
+      const marks=p.marks||[]; marks.forEach(m=>{ const x=sx(Math.max(p.xmin,Math.min(p.xmax,m.x))); s+=`<line x1="${nf(x)}" y1="${top}" x2="${nf(x)}" y2="${nf(base)}" class="mark ${m.cls||""}"/>`; });
+      const ax=axis(sx,p.xmin,p.xmax,base,p.xticks,p.xlabel,marks.filter(m=>m.label).map(m=>({x:Math.max(p.xmin,Math.min(p.xmax,m.x)),label:m.label}))); s+=ax.s; if(p.ylabel) s+=txt(8,top-12,p.ylabel,"sm mute","");
+      if(p.series.length>1) s+=legend(p.series.map(se=>({cls:se.cls||"f1",label:se.label||""})),padL,top-12,W-padR).s; return svg(ax.bottom,s,alt); },
+
+    grid(p,alt){ let s="", h; const lg=p.legend?legend(p.legend,20,0):null; const legendH=lg?lg.h+6:0;
+      if(p.blocks){ const c=8, pitch=10, bw=p.blockCols||4, per=p.perRow||10, bwid=bw*pitch, bgap=(W-40-per*bwid)/(per-1); let maxRows=1; p.blocks.forEach(b=>{ maxRows=Math.max(maxRows,Math.ceil(b.length/bw)); }); const bh=maxRows*pitch; const rows=Math.ceil(p.blocks.length/per); h=16+rows*(bh+14)+(p.blockLabel?18:0)+legendH+8;
+        p.blocks.forEach((b,i)=>{ const bx=20+(i%per)*(bwid+bgap), by=16+Math.floor(i/per)*(bh+14); b.forEach((cls,j)=>{ s+=`<rect x="${nf(bx+(j%bw)*pitch)}" y="${nf(by+Math.floor(j/bw)*pitch)}" width="${c}" height="${c}" rx="1.5" class="${cls}"/>`; }); });
+        if(p.blockLabel) s+=txt(20,16+rows*(bh+14)+6,p.blockLabel,"sm mute","");
+      } else { const cols=p.cols||40, c=12, pitch=14, x0=(W-cols*pitch)/2; const rows=Math.ceil(p.cells.length/cols); h=10+rows*pitch+legendH+12;
+        p.cells.forEach((cls,i)=>{ s+=`<rect x="${nf(x0+(i%cols)*pitch)}" y="${nf(10+Math.floor(i/cols)*pitch)}" width="${c}" height="${c}" rx="2" class="${cls}"/>`; }); }
+      if(lg) s+=legend(p.legend,20,h-legendH+6).s; if(p.per&&p.per>1) s+=txt(W-20,h-4,`each square is ${p.per} rows`,"sm mute","end"); return svg(h,s,alt); },
+
+    steps(p,alt){ const rowH=62, boxH=44, padL=p.rows.some(r=>r.label)?112:20, padR=20, arrow=28; const h=12+p.rows.length*rowH; let s="";
+      p.rows.forEach((r,i)=>{ const y=12+i*rowH, n=r.boxes.length, bw=(W-padL-padR-(n-1)*arrow)/n; if(r.label) s+=txt(padL-12,y+boxH/2+4,r.label,"sm mute","end");
+        r.boxes.forEach((b,j)=>{ const x=padL+j*(bw+arrow); s+=`<rect x="${nf(x)}" y="${y}" width="${nf(bw)}" height="${boxH}" rx="6" class="box ${b.cls||"f0"}"/>`+txt(x+bw/2,y+(b.sub?19:27),b.text,"","middle"); if(b.sub) s+=txt(x+bw/2,y+35,b.sub,"sm mute","middle");
+          if(j<n-1){ const ax=x+bw+4, bx=x+bw+arrow-4, ay=y+boxH/2; s+=`<line x1="${nf(ax)}" y1="${ay}" x2="${nf(bx-6)}" y2="${ay}" class="ax"/><path d="M${nf(bx-8)},${ay-5} L${nf(bx)},${ay} L${nf(bx-8)},${ay+5} Z" class="fx"/>`; } }); });
+      return svg(h,s,alt); },
+
+    nest(p,alt){ const xs=26, ys=46, n=p.levels.length, h=n*ys*2+(p.cells?4:0); let s=""; p.levels.forEach((l,i)=>{ const x=10+i*xs, y=8+i*ys, w=W-20-2*i*xs, hh=h-16-2*i*ys; s+=`<rect x="${nf(x)}" y="${nf(y)}" width="${nf(w)}" height="${nf(hh)}" rx="8" class="box ${l.cls||"f0"}"/>`+txt(x+12,y+20,l.label,"","")+(l.sub?txt(x+12,y+37,l.sub,"sm mute",""):""); });
+      if(p.cells){ const last=n-1, x=10+last*xs+12, y=8+last*ys+48; for(let i=0;i<p.cells;i++) s+=`<rect x="${nf(x+i*16)}" y="${nf(y)}" width="12" height="12" rx="2" class="f1"/>`; }
+      return svg(h,s,alt); }
+  };
+
+  // Squares for a grid from counts: [[count, class], ...]. Above `cap`
+  // squares each square stands for `per` rows, so a reader who types a
+  // million rows into a calculator still gets a picture.
+  const cells = (parts,cap) => { const total=parts.reduce((a,p)=>a+p[0],0), per=Math.max(1,Math.ceil(total/(cap||600))); const out=[]; parts.forEach(([k,cls])=>{ for(let i=0;i<Math.round(k/per);i++) out.push(cls); }); return {cells:out,per}; };
+  const render = (spec,alt) => { const out=(Array.isArray(spec)?spec:[spec]).map(sp => { const k=kinds[sp.type]; if(!k) throw new Error("unknown figure kind "+sp.type); return k(sp,alt); }).join("");
+    if (/NaN/.test(out)) throw new Error("the figure's numbers are not finite"); return out; };
+  return { render, cells, kinds:Object.keys(kinds) };
+})();
+
 const PARTS = [["question","Engineering question"],["principle","Core statistical principle"],["maths","Essential mathematics"],["assumptions","Assumptions"],["example","Worked example (synthetic)"],["pitfall","Common interpretation error"],["application","Application to the case"],["diagnostic","One diagnostic question"],["exercise","One applied exercise"]];
 
-const BOOK = { SITE, CASE, CALIBRATION, RULES, LESSONS, EXAMS, CARDS, GLOSSARY, READING, SESSION_FIELDS, PARTS, S, fmt, md };
+const BOOK = { SITE, CASE, CALIBRATION, RULES, LESSONS, EXAMS, CARDS, GLOSSARY, READING, SESSION_FIELDS, PARTS, S, fmt, md, FIG };
 
 if (typeof document !== "undefined") (function page(){
   const main = document.getElementById("main");
@@ -1056,17 +1321,25 @@ if (typeof document !== "undefined") (function page(){
     return `<div class="scorecard"><b>Scorecard:</b> ${got} of ${of} across ${taken.length} exam${taken.length===1?"":"s"} taken; ${passed} passed (three of four or better); ${LESSONS.length-taken.length} not yet taken.</div>`; };
 
   const calcDefaults = (c) => Object.fromEntries(c.inputs.map(i=>[i[0],i[2]]));
+  // A figure: SVG from a spec, with its title and a caption. A lesson's
+  // figure is drawn from the calculator's inputs (live: redrawn on every
+  // input; the gentle page's copy stays at the worked example's defaults).
+  const figBox = (title, spec, caption, attrs) => { let s; try { s = FIG.render(spec, title); } catch(e){ s = `<p class="mute">The figure cannot be drawn for these inputs.</p>`; }
+    return `<figure class="fig"${attrs||""}><div class="fig-svg">${s}</div><figcaption><b>${esc(title)}${/[.?!]$/.test(title)?"":"."}</b> ${inline(caption)}</figcaption></figure>`; };
+  const lessonFig = (l, v, gentle) => { if(!l.figure||!l.calc) return ""; let spec; try { spec = l.figure.draw(v, l.calc.compute(v)); } catch(e){ spec = null; }
+    return figBox(l.figure.title, spec, gentle ? l.figure.gentle : l.figure.caption, gentle ? "" : ` data-fig="${l.id}"`); };
   const renderCalc = (lesson) => {
     const c = lesson.calc; if(!c) return "";
     const inputs = c.inputs.map(i => `<label>${esc(i[1])}${i[3]===null
       ? `<input type="text" data-key="${i[0]}" value="${esc(i[2])}">`
       : `<input type="number" data-key="${i[0]}" value="${i[2]}" min="${i[3]}" max="${i[4]}" step="${i[5]}">`}</label>`).join("");
-    return `<div class="card calc" data-lesson="${lesson.id}"><b>Calculator</b> <span class="mute">— seeded with the worked example</span><div class="inputs">${inputs}</div><div class="outputs"></div>${c.verdictKey?'<div class="verdict"></div>':""}${c.note?`<div class="note">${inline(c.note)}</div>`:""}</div>`;
+    return `<div class="card calc" data-lesson="${lesson.id}"><b>Calculator</b> <span class="mute">— seeded with the worked example; the figure above follows it</span><div class="inputs">${inputs}</div><div class="outputs"></div>${c.verdictKey?'<div class="verdict"></div>':""}${c.note?`<div class="note">${inline(c.note)}</div>`:""}</div>`;
   };
   const runCalc = (el) => {
     const lesson = LESSONS.find(l=>l.id===el.dataset.lesson), c=lesson.calc, v={};
     el.querySelectorAll("input").forEach(i => { v[i.dataset.key] = i.type==="number" ? Number(i.value) : i.value; });
     let r; try { r = c.compute(v); } catch(e){ r = {}; }
+    const fg = main.querySelector(`figure[data-fig="${lesson.id}"] .fig-svg`); if (fg && lesson.figure) { try { fg.innerHTML = FIG.render(lesson.figure.draw(v, r), lesson.figure.title); } catch(e){ fg.innerHTML = `<p class="mute">The figure cannot be drawn for these inputs.</p>`; } }
     el.querySelector(".outputs").innerHTML = c.outputs.map(o => `<div class="out"><b>${fmt(r[o[0]],o[2])}</b><span>${esc(o[1])}</span></div>`).join("");
     if (c.verdictKey) { const vd=el.querySelector(".verdict"); vd.textContent = r[c.verdictKey]||""; vd.className = "verdict "+(r.cls||""); }
   };
@@ -1079,12 +1352,12 @@ if (typeof document !== "undefined") (function page(){
       const qs = c.questions.map((x,i)=>`<li data-q="${i}"><div class="q">${inline(x.q)}</div>${x.o.map((o,j)=>`<label><input type="radio" name="q${i}" value="${j}" required>${inline(o)}</label>`).join("")}</li>`).join("");
       const sq = `<li data-q="self"><div class="q">${inline(c.self.q)}</div>${c.self.o.map((o,j)=>`<label><input type="radio" name="self" value="${j}" required>${inline(o)}</label>`).join("")}</li>`;
       const prev = saved ? `<p class="mute">Last time: ${saved.score} of ${c.questions.length}${saved.wordsFirst?", and words first":""}; the track is set to <b>${track()}</b>. Answer again to reconsider, or just pick a track below.</p>` : "";
-      return `<h2>Start here</h2>${md(c.intro)}${prev}<form id="start-form" class="start"><ol>${qs}${sq}</ol><p><button type="submit">See the suggestion</button></p></form><div id="start-rec" class="rec" hidden></div>
+      return `<h2>Start here</h2>${md(c.intro)}${c.figure?figBox(c.figure.title,c.figure.spec,c.figure.caption):""}${prev}<form id="start-form" class="start"><ol>${qs}${sq}</ol><p><button type="submit">See the suggestion</button></p></form><div id="start-rec" class="rec" hidden></div>
         <div class="rec"><b>Or choose now.</b><br><button type="button" class="track-btn" data-track="gentle">Take the gentle track</button><button type="button" class="track-btn" data-track="standard">Take the standard track</button><span class="mute">Either way, every lesson has a switch at the top.</span></div>`; },
     home(){ const done=doneSet();
       return `<h2>${esc(SITE.tagline)}</h2>${md(SITE.intro)}<p class="mute">${inline(SITE.howToRead)}</p><div class="track">Track: <b>${track()}</b> · <a href="#/start">start page: three minutes of calibration questions, and the two tracks</a></div><h3>The lessons</h3>${scorecard()}<ol class="roadmap">${LESSONS.map(l=>{ const r=examRecord(l.id), n=(EXAMS[l.id]||[]).length;
         return `<li><span class="letter">${l.id}</span><span><a href="#/lesson/${l.id}">${esc(l.title)}</a><small>${esc(l.question.replace(/\*\*/g,"").split(/[.?]/)[0])}.</small></span><span class="done">${done.has(l.id)?"read ":""}<span class="exam-score${r.attempts&&r.best>=passMark(l.id)?" pass":""}">${r.attempts?`exam ${r.best}/${n}`:""}</span></span></li>`; }).join("")}</ol>`; },
-    case(){ return `<h2>The case: ${esc(CASE.name)}</h2>${md(CASE.summary)}${md(CASE.body)}`; },
+    case(){ return `<h2>The case: ${esc(CASE.name)}</h2>${md(CASE.summary)}${CASE.figure?figBox(CASE.figure.title,CASE.figure.spec,CASE.figure.caption):""}${md(CASE.body)}`; },
     rules(){ return `<h2>Core reasoning rules</h2><p>Nine distinctions the lessons return to. Each is a habit, not a formula: the question to ask before a number is allowed to mean something.</p>${RULES.map((r,i)=>`<div class="rule"><b>${i+1}. Distinguish ${esc(r[0].toLowerCase())}.</b> ${inline(r[1])}</div>`).join("")}`; },
     cards(){ return `<h2>Reference cards</h2><p>Templates the lessons ask you to fill. Copy the lines into your own documents; every line left blank is a finding.</p>${CARDS.map(c=>`<div class="card" id="card-${c.id}"><h4>${esc(c.title)} <span class="mute">(Lesson ${c.lesson})</span></h4><ul>${c.lines.map(l=>`<li>${inline(l)}</li>`).join("")}</ul></div>`).join("")}`; },
     glossary(){ return `<h2>Glossary</h2><dl>${GLOSSARY.map(g=>`<dt><b>${esc(g[0])}</b></dt><dd>${inline(g[1])}</dd>`).join("")}</dl>`; },
@@ -1094,12 +1367,12 @@ if (typeof document !== "undefined") (function page(){
     lesson(id){ const l=LESSONS.find(x=>x.id===id); if(!l) return views.home();
       const parts = PARTS.map((p,i)=>{ const key=p[0]; let body;
         if(key==="diagnostic") body = md(l.diagnostic.q)+`<p><button type="button" class="reveal-btn" aria-expanded="false" aria-controls="ans-${l.id}">Show an answer</button></p><div class="reveal" id="ans-${l.id}" hidden>${md(l.diagnostic.a)}</div>`;
-        else if(key==="example") body = md(l.example)+renderCalc(l);
+        else if(key==="example") body = md(l.example)+lessonFig(l, calcDefaults(l.calc), false)+renderCalc(l);
         else body = md(l[key]);
         return `<section id="part-${i+1}"><h3>${i+1}. ${esc(p[1])}</h3>${body}</section>`; }).join("");
       const ex = EXAMS[l.id] || []; const rec = examRecord(l.id);
       const exam = `<section id="part-10" class="exam"><h3>10. Exam</h3><p class="mute">${ex.length} questions, one answer each. Mark it as often as you like; the lessons page keeps your best score.${rec.attempts?` Best so far: ${rec.best} of ${ex.length} in ${rec.attempts} attempt${rec.attempts===1?"":"s"}.`:""}</p><form id="exam-form"><ol>${ex.map((x,i)=>`<li data-q="${i}"><div class="q">${inline(x.q)}</div>${x.o.map((opt,j)=>`<label><input type="radio" name="q${i}" value="${j}">${inline(opt)}</label>`).join("")}<div class="why" hidden></div></li>`).join("")}</ol><button type="submit" class="mark">Mark the exam</button> <span class="score" id="exam-score" aria-live="polite"></span></form></section>`;
-      const gentle = track()==="gentle" && l.gentle ? `<section id="part-0" class="gentle"><h3>In plain words, first</h3>${md(l.gentle)}<p class="mute">Then the nine parts, which say the same thing exactly.</p></section>` : "";
+      const gentle = track()==="gentle" && l.gentle ? `<section id="part-0" class="gentle"><h3>In plain words, first</h3>${md(l.gentle)}${lessonFig(l, calcDefaults(l.calc), true)}<p class="mute">Then the nine parts, which say the same thing exactly; the picture is there too, and it moves when the calculator does.</p></section>` : "";
       return `<p class="mute">Lesson ${l.id} · ${LESSONS.indexOf(l)+1} of ${LESSONS.length}</p><h2>${l.id}. ${esc(l.title)}</h2>${trackLine(l)}${gentle}<ul class="parts">${PARTS.map((p,i)=>`<li><a href="#/lesson/${l.id}#part-${i+1}">${i+1}. ${esc(p[1])}</a></li>`).join("")}<li><a href="#/lesson/${l.id}#part-10">10. Exam</a></li></ul>${parts}${exam}<p><button type="button" id="mark-done">Mark this lesson read</button> <span class="mute" id="done-msg"></span></p>${nav(l)}`; }
   };
 
