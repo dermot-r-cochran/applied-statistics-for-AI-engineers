@@ -22,8 +22,9 @@ It is written for an experienced engineer who has met probability and
 statistics before and has practical responsibility for evaluation
 harnesses, metric pipelines and release decisions. Foundations are
 reactivated rather than taught from zero; every formula is derived far
-enough to be re-derived; every assumption is stated; every example is
-synthetic and says so.
+enough to be re-derived; every assumption is stated; every worked
+example is synthetic and says so, apart from one real companion dataset (see
+**The case**, below).
 
 ## Two tracks
 
@@ -98,11 +99,14 @@ AI reader of short-story drafts, appears where text similarity and
 disagreeing editors need it. The case is described in full on the site's
 **The case** page.
 
+**Reference Set 2**, added 21 September 2026, is real: 12,713 frames from the author's own outings, with real exposure data and a real sharpness score, scored against which frames he actually kept (41 of them, 0.32%). There is still no reviewer — nothing scored these frames, real or fictional — so it is ground truth without a subject, offered for a reader's own arithmetic rather than used in any lesson's worked example. `data/reference-set-2.csv` has every row.
+
 ## Repository
 
 - `index.html` — the whole site: a WORLD DATA section holding the
   lessons, case, rules, cards and glossary as plain literals, and an
   ENGINE section that renders them and runs the calculators.
+- `data/reference-set-2.csv` — Reference Set 2 (see **The case**): real, not loaded by the page, a companion file for a reader's own computation.
 - `tools/check.js` — the CI gate. It loads the script without a DOM and
   checks that every lesson has its nine parts, that every calculator
   reproduces the numbers its worked example quotes, that every figure
