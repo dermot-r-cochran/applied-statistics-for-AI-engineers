@@ -74,9 +74,8 @@ section and is the single source for it.
   needs no expertise. Creative-writing evaluation (an AI reader of story
   drafts) is the secondary example, used only where text similarity or
   disagreeing editors need it. Keep it secondary.
-- **Every number is synthetic and every example says so.** Never present
-  a measurement as real, never describe a real evaluation framework,
-  dataset or organisation, and never invent an organisational decision.
+- **Every worked example is synthetic and says so.** Never present a lesson's own measurement as real, never describe a real evaluation framework, dataset or organisation, and never invent an organisational decision.
+- **Reference Set 2 is the one exception, and it is scoped narrowly** (Dermot, 21 September 2026, widening issue #20 from weak frames only to *any relevant frame of mine*): real photographs, real EXIF, a real sharpness score, and real ground truth (kept or not). **There is still no reviewer** — nothing scores these frames, so nothing about an AI system is claimed real. It lives in `data/reference-set-2.csv`, described on the case page and in the README, and is never wired into a lesson's `calc`/`expect`: those stay Reference-Set-1 synthetic, so the check's guarantee that a lesson's numbers reproduce is untouched.
 
 ## The lesson format
 

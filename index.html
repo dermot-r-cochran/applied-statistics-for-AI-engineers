@@ -107,7 +107,7 @@ footer{border-top:1px solid var(--line);color:var(--mute);font-size:.82rem;paddi
   <nav aria-label="Sections"><a href="#/start">Start here</a><a href="#/">Lessons</a><a href="#/case">The case</a><a href="#/rules">Rules</a><a href="#/cards">Cards</a><a href="#/glossary">Glossary</a><a href="#/reading">Reading</a><a href="#/session">Session note</a></nav>
 </header>
 <main id="main" tabindex="-1"></main>
-<footer>One file, no dependencies, no network. Every number on this site is synthetic and labelled as such. Text CC BY 4.0, engine MIT. <a href="https://github.com/dermot-r-cochran/applied-statistics-for-AI-engineers">Source</a>.</footer>
+<footer>One file, no dependencies, no network. Every worked example is synthetic and labelled as such; one companion dataset, Reference Set 2, is real and says so. Text CC BY 4.0, engine MIT. <a href="https://github.com/dermot-r-cochran/applied-statistics-for-AI-engineers">Source</a>.</footer>
 <script>
 /* =====================================================================
    WORLD DATA
@@ -129,7 +129,7 @@ const SITE = {
   tagline: "Evaluation metrics and confidence intervals for people who ship AI systems.",
   intro: `This is a course in applied statistics, not in any AI framework. It reactivates the statistics you already met and connects each idea to one recurring engineering question: **is what I am seeing a real change in the system, or something else** — sampling variation, sampling bias, measurement error, a change in the test set, a change in the class mix, drift, or an aggregation that hides the story?
 
-It assumes you have met probability and statistics before and have shipped or evaluated models. Foundations are reactivated, not taught from zero; every formula is derived far enough that you could re-derive it; every assumption is stated; and every example is synthetic and says so.
+It assumes you have met probability and statistics before and have shipped or evaluated models. Foundations are reactivated, not taught from zero; every formula is derived far enough that you could re-derive it; every assumption is stated; and every worked example is synthetic and says so. **The case** also names a real companion dataset, Reference Set 2, kept apart from the lessons' own numbers so the two are never confused.
 
 The examples follow one fictional system throughout, described under **The case**: an AI reviewer of photographic contact sheets whose verdicts are scored against the photographer's own decisions. It was chosen because a contact sheet has exactly the structure that makes evaluation statistics hard — rows inside documents inside projects, rare positive classes, judges who disagree — and because the domain is ordinary enough that nothing in it distracts from the statistics. A second, smaller example, an AI reader of short-story drafts, appears where text similarity and disagreeing judges need it. Neither system exists.
 
@@ -161,7 +161,24 @@ const CASE = {
 
 **Why this example.** Frames from one outing share light, subject and the photographer's mood, so rows are clustered, not independent. Keepers are rare, so accuracy flatters. Barred frames are rarer still and matter most, so class weighting is not academic. Two annotators disagree, so ground truth has error bars of its own. A new camera body changes the frames without changing the reviewer, so drift and composition change are natural. And nothing about it needs domain knowledge beyond what a hobbyist has.
 
-**The second example.** Where text is the output — the \`note\` and \`reason\` fields, and the whole of a fictional AI that reads short-story drafts and returns editorial notes — the lessons say what a similarity score does and does not measure, and how much two competent editors disagree. That example is smaller and appears only where it is needed.`,
+**The second example.** Where text is the output — the \`note\` and \`reason\` fields, and the whole of a fictional AI that reads short-story drafts and returns editorial notes — the lessons say what a similarity score does and does not measure, and how much two competent editors disagree. That example is smaller and appears only where it is needed.
+
+**Reference Set 2, added 2026-09-21.** Everywhere above, "synthetic" means the whole
+measurement: a fictional reviewer scored against fictional ground truth. Reference Set 2
+breaks that in one place only. It is real: 12,713 frames from 33 real outings, shot
+2023–2026, each with the camera's real exposure settings and a real sharpness score
+(the variance of the Laplacian on a quarter-scale grey decode — a focus proxy, not a
+quality judgment). Ground truth is real too: 41 frames the photographer actually kept
+— published to his site or promoted to a competition-masters folder, a positive rate of
+0.32%. **There is still no reviewer.** Nothing in this dataset was scored by an AI system,
+real or fictional; Reference Set 2 is ground truth without a subject, offered so a reader
+can compute real numbers instead of trusting the lessons' worked examples on faith. It sits
+outside every lesson's \`expect\`-checked example, which stay Reference-Set-1 synthetic as
+before, so the two never collide. \`data/reference-set-2.csv\` in the repository has every
+row: outing, frame, ISO, shutter speed, focal length, aperture, the sharpness and
+brightness scores, and two ground-truth flags, \`published\` and \`master\`. Try Lesson H's
+imbalance arithmetic on it, or Lesson C's precision/recall at a sharpness threshold of your
+choosing, against real numbers rather than the lesson's own.`,
   figure:{ title:"How the rows nest",
     caption:`Reference Set 1 as the lessons see it: frames inside contact sheets inside projects, one row of reviewer output per frame. Each level is a place to aggregate, and a place to be wrong about independence.`,
     spec:{type:"nest",cells:8,levels:[{label:"Reference Set 1",sub:"500 frames, frozen with their ground truth on a stated date",cls:"f0"},{label:"6 projects",sub:"a trip or a season, many outings each",cls:"f0"},{label:"40 outings, one contact sheet each",sub:"8–25 frames each; one outing shares light, subject and mood",cls:"f1"},{label:"frames, one row of reviewer output each",sub:"frame, verdict, category, note, reason, evidence, relations",cls:"f2"}]} }
