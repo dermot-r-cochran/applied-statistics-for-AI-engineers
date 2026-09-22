@@ -230,7 +230,8 @@ const RULES = [
   ["Model regression from test-set composition change", "If the reference set changed between runs, the metric changed for two reasons at once. Compare on the shared rows first."],
   ["Metric variance from metric-definition change", "A new similarity threshold or a re-adjudicated label moves the number without touching the system. Version the scorer as you version the model."],
   ["Association from causation", "Sheets with long notes score lower. That does not mean notes cause errors; hard sheets get long notes."],
-  ["Exploratory analysis from confirmatory evaluation", "The slice you found by looking at forty slices is not evidence at the same strength as the one you named in advance."]
+  ["Exploratory analysis from confirmatory evaluation", "The slice you found by looking at forty slices is not evidence at the same strength as the one you named in advance."],
+  ["A hunch from a finding", "Intuition is a direction for investigation, not the result of one. Name the rival explanations alongside yours, choose a check whose outcome differs between them, and confirm it on rows that did not suggest it. A cause that merely fits what you saw is not established: so do the others, and so does the assumption you made in order to see it."]
 ];
 
 const LESSONS = [
@@ -901,7 +902,9 @@ Prefer keeping the vector of scores and learning a calibrated combiner on held-o
 
 Stratified by scenario, macro frames were 70% of the week against 15% at baseline, and the Keeper rate within macro (0.05) and within the rest (0.13) each match their baseline strata. The drop is covariate shift: the photographer shot macro. The reviewer's calibration table on the labelled sample from the month is unchanged. Nothing about the model needs touching; what needs touching is the alarm, which should compare within strata or against a mix-adjusted baseline.`,
   pitfall:`Retraining on an alarm. Alarming on significance with production-scale \`n\`, where a 0.2-point shift is "significant" and irrelevant. Trusting labels that only exist for frames someone chose to look at — usually the ones that looked wrong. And the quiet one: a baseline measured on the reference set, whose mix was never production's (Lesson I), so the "drift" was there on day one.`,
-  application:`The monitoring plan for the reviewer is written before release (Cards page, in the report template): which proportions are watched, per stratum, against which baseline; the minimum meaningful shift that raises an alarm; the random labelled sample rate; and the rule for when an alarm becomes a frozen-set evaluation of a retrained candidate — which then goes back to Lesson F, on the same reference set, like any other release.`,
+  application:`The monitoring plan for the reviewer is written before release (Cards page, in the report template): which proportions are watched, per stratum, against which baseline; the minimum meaningful shift that raises an alarm; the random labelled sample rate; and the rule for when an alarm becomes a frozen-set evaluation of a retrained candidate — which then goes back to Lesson F, on the same reference set, like any other release.
+
+What an alarm produces in the meantime is a **diagnosis record** (Cards page), and it is the same discipline whether the difference arrived between two releases or between two weeks. The new camera is a hunch, not a finding, until a check has been run whose outcome would have come out differently had the macro month been the cause: the Keeper rate on the old body, week by week, is such a check, and "the rate fell in the week the camera arrived" is not, because it fits the mood and the macro month equally well. The record carries the assumptions the ruling rests on and whether it survives their alternatives, and it is allowed to end in **unexplained** — which is a finding about the monitoring, and cheaper than retraining on a cause nobody established (rule 10).`,
   diagnostic:{ q:`After the alarm, the team proposes retraining the reviewer on last month's frames "so it adapts to the new camera". What should be established first, and what evaluation does the retrained candidate face?`,
     a:`First, that within-stratum performance actually moved on a random labelled sample — otherwise there is nothing to adapt to, and retraining on a month of macro frames will shift the reviewer toward macro and degrade it elsewhere. If it did move, the retrained candidate faces the frozen reference set in a paired comparison (Lesson F) plus a new stratum for the new camera added as a new manifest version (Lesson K), never a comparison against last month's production numbers.` },
   exercise:`Choose one proportion you monitor. Compute its baseline standard error and the per-check α that keeps the yearly false-alarm rate under 10%. Stratify last month's value by the most likely nuisance cause and report whether the shift is in the mix or within strata. If you have no random labelled sample, write down what that means for every conclusion above.`,
@@ -1048,6 +1051,17 @@ const CARDS = [
     "Exploratory findings, labelled as such, separate from the rule",
     "Monitoring plan: watched proportions per stratum, alarm thresholds in δ units, labelled-sample rate",
     "Session note: principle, application, assumption to check, one task, one line for the interpretation guide" ] },
+  { id:"diagnosis", title:"Diagnosis record", lesson:"N", lines:[
+    "The effect: the observed difference, its interval, and the unit it was computed on",
+    "Whether it survives that interval at all — if it does not, the entry ends here, as \"within noise\", and no cause is named",
+    "The hunch, written down before the check that tests it, and what would disconfirm it",
+    "The rivals, named at the same time as the hunch: sampling variation, test-set composition, scorer or metric definition, stratum mix, clustering, ground-truth revision, input shift, concept drift, which rows got labelled",
+    "The discriminating check: one whose outcome differs depending on which explanation holds, not one the favoured explanation merely fits",
+    "The evidence it was confirmed on, and a statement that this is not the evidence that suggested it",
+    "How many slices, thresholds, metrics and weeks were looked at before this one",
+    "The assumptions the ruling rests on, and whether it survives their plausible alternatives — if it does not, the ruling belongs to the assumption",
+    "Strength: **established** / **consistent with, and so are these others** / **unexplained**",
+    "What that strength permits. Only the first justifies acting on the cause, and \"unexplained\" is a permitted end state" ] },
   { id:"review", title:"Evaluation review checklist", lesson:"L", lines:[
     "The decision and its evidence threshold are written and predate the run",
     "The population claim and known exclusions are documented",
@@ -1058,6 +1072,7 @@ const CARDS = [
     "Every score used in a decision has a semantics card and calibration evidence",
     "Every comparison has a comparability ruling",
     "Release evidence is classified: ship / hold / collect, with what to collect",
+    "Every cause named in the report has a diagnosis record, and one that only fits the data says so",
     "Monitoring commitments and alarm rules are defined",
     "All examples and artifacts are synthetic and carry no proprietary content" ] }
 ];
@@ -1084,7 +1099,8 @@ const GLOSSARY = [
   ["Selective prediction","Acting automatically only above a confidence threshold; judged by the accuracy–coverage curve. Lesson M."],
   ["Covariate shift","The input mix changed; within-stratum behaviour did not. Lesson N."],
   ["Concept drift","The relationship between inputs and ground truth changed. Lesson N."],
-  ["Unit of inference","The level a conclusion is about: row, document, project, or period. Intervals must be computed at that level. Lessons G, J."]
+  ["Unit of inference","The level a conclusion is about: row, document, project, or period. Intervals must be computed at that level. Lessons G, J."],
+  ["Discriminating check","A check whose outcome differs depending on which explanation is true, as against one the favoured explanation is merely consistent with. What turns a hunch about a cause into a finding. Lesson N."]
 ];
 
 const READING = [
@@ -1375,7 +1391,7 @@ if (typeof document !== "undefined") (function page(){
       return `<h2>${esc(SITE.tagline)}</h2>${md(SITE.intro)}<p class="mute">${inline(SITE.howToRead)}</p><div class="track">Track: <b>${track()}</b> · <a href="#/start">start page: three minutes of calibration questions, and the two tracks</a></div><h3>The lessons</h3>${scorecard()}<ol class="roadmap">${LESSONS.map(l=>{ const r=examRecord(l.id), n=(EXAMS[l.id]||[]).length;
         return `<li><span class="letter">${l.id}</span><span><a href="#/lesson/${l.id}">${esc(l.title)}</a><small>${esc(l.question.replace(/\*\*/g,"").split(/[.?]/)[0])}.</small></span><span class="done">${done.has(l.id)?"read ":""}<span class="exam-score${r.attempts&&r.best>=passMark(l.id)?" pass":""}">${r.attempts?`exam ${r.best}/${n}`:""}</span></span></li>`; }).join("")}</ol>`; },
     case(){ return `<h2>The case: ${esc(CASE.name)}</h2>${md(CASE.summary)}${CASE.figure?figBox(CASE.figure.title,CASE.figure.spec,CASE.figure.caption):""}${md(CASE.body)}`; },
-    rules(){ return `<h2>Core reasoning rules</h2><p>Nine distinctions the lessons return to. Each is a habit, not a formula: the question to ask before a number is allowed to mean something.</p>${RULES.map((r,i)=>`<div class="rule"><b>${i+1}. Distinguish ${esc(r[0].toLowerCase())}.</b> ${inline(r[1])}</div>`).join("")}`; },
+    rules(){ return `<h2>Core reasoning rules</h2><p>Ten distinctions the lessons return to. Each is a habit, not a formula: the question to ask before a number is allowed to mean something.</p>${RULES.map((r,i)=>`<div class="rule"><b>${i+1}. Distinguish ${esc(r[0].toLowerCase())}.</b> ${inline(r[1])}</div>`).join("")}`; },
     cards(){ return `<h2>Reference cards</h2><p>Templates the lessons ask you to fill. Copy the lines into your own documents; every line left blank is a finding.</p>${CARDS.map(c=>`<div class="card" id="card-${c.id}"><h4>${esc(c.title)} <span class="mute">(Lesson ${c.lesson})</span></h4><ul>${c.lines.map(l=>`<li>${inline(l)}</li>`).join("")}</ul></div>`).join("")}`; },
     glossary(){ return `<h2>Glossary</h2><dl>${GLOSSARY.map(g=>`<dt><b>${esc(g[0])}</b></dt><dd>${inline(g[1])}</dd>`).join("")}</dl>`; },
     reading(){ return `<h2>Further reading</h2><p>The lessons derive everything they use, so none of this is required. These are the sources behind the methods, for when a derivation is not enough, in roughly the order the lessons meet them. Nothing here is about the fictional case.</p><ol>${READING.map(r=>`<li><p>${esc(r.cite)}<br><span class="mute">${inline(r.why)} Lessons ${r.lessons.map(id=>`<a href="#/lesson/${id}">${id}</a>`).join(", ")}.</span></p></li>`).join("")}</ol>`; },
