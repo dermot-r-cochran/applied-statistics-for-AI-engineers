@@ -31,7 +31,29 @@ if (BOOK) {
 
   // ---- lessons ---------------------------------------------------------
   const EXPECTED_LESSON_IDS = ["INTRO", ...Array.from({ length: 14 }, (_, i) => String.fromCharCode(65 + i))];
-  const LESSON_REF_RE = /Lessons? (INTRO|[A-N])/g;
+  const LESSON_ID_PATTERN = EXPECTED_LESSON_IDS.slice().sort((a, b) => b.length - a.length).join("|");
+  const LESSON_SEP_PATTERN = "(?:,|and|or|to|[-–])";
+  const LESSON_REF_BODY = `((?:\\\`?(?:${LESSON_ID_PATTERN})\\\`?(?:'s)?)(?:\\s*${LESSON_SEP_PATTERN}\\s*\\\`?(?:${LESSON_ID_PATTERN})\\\`?(?:'s)?)*)`;
+  const LESSON_MENTION_RE = new RegExp(`Lessons?\\s+${LESSON_REF_BODY}`, "g");
+  const LESSON_ID_TOKEN_RE = new RegExp("\\`?(" + LESSON_ID_PATTERN + ")\\`?(?:'s)?", "g");
+  const LESSON_RANGE_RE = new RegExp(`\\\`?(${LESSON_ID_PATTERN})\\\`?(?:'s)?\\s*(?:to|[-–])\\s*\\\`?(${LESSON_ID_PATTERN})\\\`?(?:'s)?`, "g");
+  const LESSON_BACKTICK_RE = new RegExp("`(" + LESSON_ID_PATTERN + ")`", "g");
+  const lessonRefs = (text) => {
+    const refs = new Set();
+    const addRange = (a, b) => {
+      const ia = EXPECTED_LESSON_IDS.indexOf(a), ib = EXPECTED_LESSON_IDS.indexOf(b);
+      if (ia < 0 || ib < 0) return;
+      const [lo, hi] = ia <= ib ? [ia, ib] : [ib, ia];
+      for (let i = lo; i <= hi; i++) refs.add(EXPECTED_LESSON_IDS[i]);
+    };
+    const s = String(text);
+    for (const mention of s.matchAll(LESSON_MENTION_RE)) {
+      for (const id of mention[1].matchAll(LESSON_ID_TOKEN_RE)) refs.add(id[1]);
+      for (const range of mention[1].matchAll(LESSON_RANGE_RE)) addRange(range[1], range[2]);
+    }
+    for (const id of s.matchAll(LESSON_BACKTICK_RE)) refs.add(id[1]);
+    return refs;
+  };
   if (LESSONS.length < EXPECTED_LESSON_IDS.length) fail(`expected at least ${EXPECTED_LESSON_IDS.length} lessons (INTRO, A–N), found ${LESSONS.length}`);
   LESSONS.forEach((l, i) => {
     const want = EXPECTED_LESSON_IDS[i];
@@ -66,7 +88,7 @@ if (BOOK) {
           if (!/<svg /.test(out)) fail(`lesson ${l.id}: the figure drew nothing`); } catch (e) { fail(`lesson ${l.id}: the figure does not draw: ${e.message}`); } }
     }
     // every lesson refers to at least one other lesson, so the book is a web not a list
-    const refs = new Set(); for (const key of ["principle", "maths", "assumptions", "pitfall", "application"]) for (const m of String(l[key]).matchAll(LESSON_REF_RE)) refs.add(m[1]);
+    const refs = new Set(); for (const key of ["principle", "maths", "assumptions", "pitfall", "application"]) for (const ref of lessonRefs(l[key])) refs.add(ref);
     if (refs.size === 0 && i > 0) fail(`lesson ${l.id} never refers to another lesson`);
     refs.forEach(r => { if (!LESSONS.find(x => x.id === r)) fail(`lesson ${l.id} refers to lesson ${r}, which does not exist`); });
 
@@ -120,7 +142,7 @@ if (BOOK) {
   for (const [name, obj] of [["case", BOOK.CASE], ["start", CAL]]) { if (!obj || !obj.figure) continue;
     try { if (!/<svg /.test(FIG.render(obj.figure.spec, obj.figure.title))) fail(`the ${name} page's figure drew nothing`); } catch (e) { fail(`the ${name} page's figure does not draw: ${e.message}`); } }
   CARDS.forEach(c => { if (!LESSONS.find(l => l.id === c.lesson)) fail(`card ${c.id} points at lesson ${c.lesson}`); if (!c.lines || c.lines.length < 5) fail(`card ${c.id} is thin`); });
-  GLOSSARY.forEach(g => { if (!/Lessons? (INTRO|[A-N])/.test(g[1])) fail(`glossary entry "${g[0]}" names no lesson`); });
+  GLOSSARY.forEach(g => { if (!lessonRefs(g[1]).size) fail(`glossary entry "${g[0]}" names no lesson`); });
   if (SESSION_FIELDS.length !== 5) fail("the session note has five lines");
   const { READING } = BOOK;
   if (!Array.isArray(READING) || READING.length < 5) fail("the reading list is missing or thin");
