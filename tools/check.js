@@ -104,7 +104,7 @@ if (BOOK) {
   Object.keys(EXAMS || {}).forEach(id => { if (!LESSONS.find(l => l.id === id)) fail(`exam for lesson ${id}, which does not exist`); });
 
   // ---- rules, cards, glossary, session -------------------------------
-  if (RULES.length !== 9) fail(`expected nine reasoning rules, found ${RULES.length}`);
+  if (RULES.length !== 10) fail(`expected ten reasoning rules, found ${RULES.length}`);
   const CAL = BOOK.CALIBRATION;
   if (!CAL || !Array.isArray(CAL.questions) || CAL.questions.length < 3) fail("the start page needs at least three calibration questions");
   else {
