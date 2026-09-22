@@ -28,8 +28,9 @@ let BOOK;
 try { BOOK = vm.runInContext(src + "\nBOOK", ctx); } catch (e) { fail("script failed to load: " + e.message); }
 
 if (BOOK) {
-  const { LESSONS, CARDS, GLOSSARY, PARTS, RULES, SESSION_FIELDS, fmt, md, FIG } = BOOK;
+  const { LESSONS, CARDS, GLOSSARY, PARTS, RULES, SESSION_FIELDS, fmt, md, plain, firstSentence, FIG } = BOOK;
   if (!FIG || typeof FIG.render !== "function") fail("the engine has lost FIG, the figure renderer");
+  if (typeof plain !== "function" || typeof firstSentence !== "function") fail("the engine has lost plain/firstSentence, which the lessons page summarises with");
 
   // ---- lessons ---------------------------------------------------------
   // A cross-reference is the word Lesson(s) and then ids: "Lesson F", "Lessons A
@@ -86,6 +87,16 @@ if (BOOK) {
       for (const t of [f.gentle, f.caption]) if (typeof t === "string" && ((t.match(/`/g) || []).length % 2 || (t.match(/\*\*/g) || []).length % 2)) fail(`lesson ${l.id}: unbalanced markup in a figure caption`);
       if (l.calc) { try { const d = Object.fromEntries(l.calc.inputs.map(x => [x[0], x[2]])); const out = FIG.render(f.draw(d, l.calc.compute(d)), f.title);
           if (!/<svg /.test(out)) fail(`lesson ${l.id}: the figure drew nothing`); } catch (e) { fail(`lesson ${l.id}: the figure does not draw: ${e.message}`); } }
+    }
+    // The lessons page shows the first sentence of the question. It must end a
+    // sentence, carry no leftover markup, and cut where the sentence really ends:
+    // the character after it in the question is whitespace or nothing, which is
+    // what a cut inside 0.84 or mid-word fails.
+    if (firstSentence && plain) {
+      const summary = firstSentence(l.question), body = plain(l.question).trim(), rest = body.slice(summary.length);
+      if (/[*`]/.test(summary)) fail(`lesson ${l.id}: the lessons-page summary leaks markup: ${summary}`);
+      else if (!/[.?!]$/.test(summary)) fail(`lesson ${l.id}: the lessons-page summary does not end a sentence: ${summary}`);
+      else if (rest && !/^\s/.test(rest)) fail(`lesson ${l.id}: the lessons-page summary cuts mid-token: …${summary.slice(-30)}`);
     }
     // every lesson refers to at least one other lesson, so the book is a web not a list
     const refs = new Set(); for (const key of ["principle", "maths", "assumptions", "pitfall", "application"]) for (const ref of lessonRefs(l[key])) refs.add(ref);

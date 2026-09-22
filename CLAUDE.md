@@ -80,7 +80,8 @@ section and is the single source for it.
 ## The lesson format
 
 Nine parts, in this order, every lesson: `question` (the engineering
-problem first), `principle`, `maths` (derived, not asserted),
+problem first, and its **first sentence is the lessons page's one-line
+summary** of the lesson, so write it to stand alone), `principle`, `maths` (derived, not asserted),
 `assumptions` (a list), `example` (synthetic, with the calculator seeded
 to it), `pitfall`, `application` (to the case), `diagnostic` (`q` and a
 hidden `a`), `exercise`. Prose uses the small markup the engine renders:
