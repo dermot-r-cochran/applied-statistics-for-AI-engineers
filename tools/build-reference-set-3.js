@@ -25,9 +25,13 @@ if (!fs.existsSync(photoDir)) {
 
 // ---- front matter, hand-rolled: the repository has no dependencies ----
 function frontMatter(text) {
-  // Three photo pages begin with a UTF-8 byte order mark. The site's own parser
-  // tolerates it, so it is invisible there; a reader that does not strip it sees
-  // no front matter at all and silently loses the photo. Strip it.
+  // A UTF-8 byte order mark before the opening `---`. Three photo pages carried
+  // one when this tool was written: the site's own parser strips it, so it was
+  // invisible there, while this one saw no front matter at all and silently lost
+  // three photographs — 176 where there are 179. The photography repository has
+  // since stripped all three and now fails on a fourth, so this line should
+  // never fire again; it stays because a reader of someone else's files does
+  // not get to assume they are clean.
   if (text.charCodeAt(0) === 0xfeff) text = text.slice(1);
   if (!text.startsWith("---")) return {};
   const end = text.indexOf("\n---", 3);
