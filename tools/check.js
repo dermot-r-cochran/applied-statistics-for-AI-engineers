@@ -204,6 +204,64 @@ if (BOOK) {
     facts.forEach(([what, got, want]) => { if (got !== want) fail(`the exercises say Reference Set 2 has ${want} ${what}; the csv has ${got}`); });
   }
 }
+// ---- Reference Set 3 -------------------------------------------------
+// The same rule as Reference Set 2: a number in the prose is checked against
+// what produces it. This set carries a predictor as well as a verdict, so the
+// figures quoted are a confusion matrix and a paired table, not just counts.
+{
+  const csv3 = path.join(root, "data", "reference-set-3.csv");
+  if (!fs.existsSync(csv3)) fail("data/reference-set-3.csv is missing, and the case page and four exercises quote it");
+  else {
+    const split = (line) => { // the album column contains commas, so fields may be quoted
+      const out = []; let cur = "", q = false;
+      for (const ch of line) {
+        if (ch === '"') { q = !q; continue; }
+        if (ch === "," && !q) { out.push(cur); cur = ""; continue; }
+        cur += ch;
+      }
+      out.push(cur); return out;
+    };
+    const lines = fs.readFileSync(csv3, "utf8").trim().split(/\r?\n/);
+    const head = split(lines[0]);
+    const rows = lines.slice(1).map(l => Object.fromEntries(split(l).map((v, i) => [head[i], v])));
+    const yes = (r, k) => r[k] === "1";
+    const truth = (r) => yes(r, "assigned"), A = (r) => yes(r, "rule_a"), B = (r) => yes(r, "rule_b");
+    const count = (f) => rows.filter(f).length;
+    const labels = [...new Set(rows.map(r => r.label))];
+    const recallOf = (label) => { const s = rows.filter(r => r.label === label);
+      const tp = s.filter(r => truth(r) && A(r)).length, fn = s.filter(r => truth(r) && !A(r)).length;
+      return tp + fn ? tp / (tp + fn) : null; };
+    const recalls = labels.map(recallOf).filter(x => x !== null);
+    const tpA = count(r => truth(r) && A(r)), fnA = count(r => truth(r) && !A(r));
+    const bin = (lo, hi) => { const s = rows.filter(r => +r.score >= lo && +r.score < hi);
+      return s.length ? s.filter(truth).length / s.length : null; };
+    const facts = [
+      ["photo-label pairs", rows.length, 6086],
+      ["photographs", new Set(rows.map(r => r.slug)).size, 179],
+      ["labels", labels.length, 34],
+      ["assigned pairs", count(truth), 398],
+      ["rule A true positives", tpA, 100],
+      ["rule A false positives", count(r => !truth(r) && A(r)), 30],
+      ["rule A false negatives", fnA, 298],
+      ["discordant pairs", count(r => (A(r) === truth(r)) !== (B(r) === truth(r))), 82],
+      ["pairs only rule A gets right", count(r => A(r) === truth(r) && B(r) !== truth(r)), 52],
+      ["pairs only rule B gets right", count(r => B(r) === truth(r) && A(r) !== truth(r)), 30],
+      ["labels rule A always finds", recalls.filter(x => x === 1).length, 6],
+      ["labels rule A never finds", recalls.filter(x => x === 0).length, 16],
+    ];
+    facts.forEach(([what, got, want]) => { if (got !== want) fail(`the course says Reference Set 3 has ${want} ${what}; the csv has ${got}`); });
+    const rates = [
+      ["micro recall", tpA / (tpA + fnA), 0.251],
+      ["macro recall", recalls.reduce((a, b) => a + b, 0) / recalls.length, 0.316],
+      ["the rate in the zero-score bin", bin(0, 0.01), 0.046],
+      ["the rate in the part-score bin", bin(0.01, 0.99), 0.359],
+      ["the rate in the full-score bin", bin(0.99, 1.01), 0.761],
+    ];
+    rates.forEach(([what, got, want]) => {
+      if (got === null || Math.abs(got - want) > 0.0005) fail(`the course says Reference Set 3's ${what} is ${want}; the csv gives ${got === null ? "an empty bin" : got.toFixed(4)}`);
+    });
+  }
+}
 
 // ---- the page is one file with no network --------------------------
 if (/<script[^>]+src=/i.test(html) || /fetch\(|XMLHttpRequest|<link[^>]+href="(https?:|\/\/)/i.test(html)) fail("index.html reaches for the network");

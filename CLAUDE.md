@@ -75,7 +75,8 @@ section and is the single source for it.
   drafts) is the secondary example, used only where text similarity or
   disagreeing editors need it. Keep it secondary.
 - **Every worked example is synthetic and says so.** Never present a lesson's own measurement as real, never describe a real evaluation framework, dataset or organisation, and never invent an organisational decision.
-- **Reference Set 2 is the one exception, and it is scoped narrowly** (Dermot, 21 September 2026, widening issue #20 from weak frames only to *any relevant frame of mine*): real photographs, real EXIF, a real sharpness score, and real ground truth (kept or not). **There is still no reviewer** — nothing scores these frames, so nothing about an AI system is claimed real. It lives in `data/reference-set-2.csv`, described on the case page and in the README, and is never wired into a lesson's `calc`/`expect`: those stay Reference-Set-1 synthetic, so the check's guarantee that a lesson's numbers reproduce is untouched.
+- **Reference Set 2 is the first of two exceptions, and it is scoped narrowly** (Dermot, 21 September 2026, widening issue #20 from weak frames only to *any relevant frame of mine*): real photographs, real EXIF, a real sharpness score, and real ground truth (kept or not). **There is still no reviewer** — nothing scores these frames, so nothing about an AI system is claimed real. It lives in `data/reference-set-2.csv`, described on the case page and in the README, and is never wired into a lesson's `calc`/`expect`: those stay Reference-Set-1 synthetic, so the check's guarantee that a lesson's numbers reproduce is untouched.
+- **Reference Set 3 adds the half Reference Set 2 lacks** (Dermot, 22 September 2026, on the same permission): a predictor. The photographer's own subject tags on 179 photographs, crossed with the 34-label vocabulary, give 6,086 (photo, label) pairs, and two deliberately crude rules read each photograph's alt text and guess. So it carries real labels **and** a real system output, which is what lets Lessons F and M use real numbers at last. **The alt text itself never ships**: the photographs are CC BY-NC-ND and this repository CC BY 4.0, and no lesson needs the prose, only what a rule made of it — `data/reference-set-3.csv` holds slug, album, category, country, year, label, the verdict, both rules and a graded score. `tools/build-reference-set-3.js` rebuilds it from a sibling checkout of the photography repository; it is a **local tool**, never run by CI, which reads only the committed csv. It found three photo pages carrying a UTF-8 byte order mark, invisible to that site's own parser and fatal to a naive one.
 
 ## The lesson format
 
@@ -93,14 +94,17 @@ Each one asks the reader to work on their own harness first, which is the
 point, but every reader between jobs, before a harness, or on a train
 would otherwise do none of the fourteen. So each exercise carries a
 second paragraph opening `**No evaluation of your own?**` that puts the
-same work on **Reference Set 2**, the real companion dataset, or on the
-lesson's own published numbers where that set cannot serve — it has no
-second model version and no confidence score, so Lessons F and L work
-from the lesson instead. Each also ends with how long it takes, in
+same work on one of the two real companion datasets, or on the lesson's
+own published numbers where neither can serve. Lessons C, F, H and M rest
+on **Reference Set 3**, which has a predictor; the other nine on
+**Reference Set 2**; Lesson L on the lesson's own numbers, since no
+dataset here carries a release decision. Each also ends with how long it takes, in
 italics, because a one-paragraph task and an afternoon's task otherwise
-look identical on the page. `tools/check.js` requires both, and counts
-the Reference Set 2 figures the fallbacks quote against the csv, since a
-number in the prose is checked against what produces it.
+look identical on the page. `tools/check.js` requires both, and counts every
+Reference Set 2 and Reference Set 3 figure the fallbacks quote against its
+csv, since a number in the prose is checked against what produces it. For
+Reference Set 3 that covers the whole confusion matrix and the paired
+table, so flipping one label's verdict fails five checks at once.
 
 **Every calculator reproduces its worked example.** A lesson's `calc`
 declares `inputs` (key, label, default, min, max, step — or `null`s for a
