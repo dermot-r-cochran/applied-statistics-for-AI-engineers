@@ -1206,6 +1206,14 @@ const tickN = (x) => (typeof x!=="number"||!isFinite(x)) ? "—" : String(Math.r
 
 const esc = (s) => String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
 const inline = (s) => esc(s).replace(/`([^`]+)`/g,"<code>$1</code>").replace(/\*\*([^*]+)\*\*/g,"<b>$1</b>").replace(/\*([^*]+)\*/g,"<i>$1</i>");
+// The lessons page shows the first sentence of each lesson's question, so both
+// of these work on the small markup rather than around it. `plain` strips it to
+// text instead of rendering it, and `firstSentence` ends at a full stop,
+// question mark or exclamation followed by a space or the end — never at the
+// point inside 0.84, which used to cut six of those summaries mid-number.
+const plain = (s) => String(s).replace(/`([^`]+)`/g,"$1").replace(/\*\*([^*]+)\*\*/g,"$1").replace(/\*([^*]+)\*/g,"$1");
+const firstSentence = (s) => { const t = plain(s).trim(); const m = t.match(/^[\s\S]*?[.?!](?=\s|$)/); return m ? m[0] : t; };
+
 const md = (text) => {
   const blocks = String(text).trim().split(/\n\s*\n/); let html = "";
   for (const b of blocks) {
@@ -1350,7 +1358,7 @@ const FIG = (() => {
 
 const PARTS = [["question","Engineering question"],["principle","Core statistical principle"],["maths","Essential mathematics"],["assumptions","Assumptions"],["example","Worked example (synthetic)"],["pitfall","Common interpretation error"],["application","Application to the case"],["diagnostic","One diagnostic question"],["exercise","One applied exercise"]];
 
-const BOOK = { SITE, CASE, CALIBRATION, RULES, LESSONS, EXAMS, CARDS, GLOSSARY, READING, SESSION_FIELDS, PARTS, S, fmt, md, FIG };
+const BOOK = { SITE, CASE, CALIBRATION, RULES, LESSONS, EXAMS, CARDS, GLOSSARY, READING, SESSION_FIELDS, PARTS, S, fmt, md, plain, firstSentence, FIG };
 
 if (typeof document !== "undefined") (function page(){
   const main = document.getElementById("main");
@@ -1401,7 +1409,7 @@ if (typeof document !== "undefined") (function page(){
         <div class="rec"><b>Or choose now.</b><br><button type="button" class="track-btn" data-track="gentle">Take the gentle track</button><button type="button" class="track-btn" data-track="standard">Take the standard track</button><span class="mute">Either way, every lesson has a switch at the top.</span></div>`; },
     home(){ const done=doneSet();
       return `<h2>${esc(SITE.tagline)}</h2>${md(SITE.intro)}${SITE.figure?figBox(SITE.figure.title,SITE.figure.spec,SITE.figure.caption):""}<p class="mute">${inline(SITE.howToRead)}</p><div class="track">Track: <b>${track()}</b> · <a href="#/start">start page: three minutes of calibration questions, and the two tracks</a></div><h3>The lessons</h3>${scorecard()}<ol class="roadmap">${LESSONS.map(l=>{ const r=examRecord(l.id), n=(EXAMS[l.id]||[]).length;
-        return `<li><span class="letter">${l.id}</span><span><a href="#/lesson/${l.id}">${esc(l.title)}</a><small>${esc(l.question.replace(/\*\*/g,"").split(/[.?]/)[0])}.</small></span><span class="done">${done.has(l.id)?"read ":""}<span class="exam-score${r.attempts&&r.best>=passMark(l.id)?" pass":""}">${r.attempts?`exam ${r.best}/${n}`:""}</span></span></li>`; }).join("")}</ol>`; },
+        return `<li><span class="letter">${l.id}</span><span><a href="#/lesson/${l.id}">${esc(l.title)}</a><small>${esc(firstSentence(l.question))}</small></span><span class="done">${done.has(l.id)?"read ":""}<span class="exam-score${r.attempts&&r.best>=passMark(l.id)?" pass":""}">${r.attempts?`exam ${r.best}/${n}`:""}</span></span></li>`; }).join("")}</ol>`; },
     case(){ return `<h2>The case: ${esc(CASE.name)}</h2>${md(CASE.summary)}${CASE.figure?figBox(CASE.figure.title,CASE.figure.spec,CASE.figure.caption):""}${md(CASE.body)}`; },
     rules(){ return `<h2>Core reasoning rules</h2><p>Ten distinctions the lessons return to. Each is a habit, not a formula: the question to ask before a number is allowed to mean something.</p>${RULES.map((r,i)=>`<div class="rule"><b>${i+1}. Distinguish ${esc(r[0].toLowerCase())}.</b> ${inline(r[1])}</div>`).join("")}`; },
     cards(){ return `<h2>Reference cards</h2><p>Templates the lessons ask you to fill. Copy the lines into your own documents; every line left blank is a finding.</p>${CARDS.map(c=>`<div class="card" id="card-${c.id}"><h4>${esc(c.title)} <span class="mute">(Lesson ${c.lesson})</span></h4><ul>${c.lines.map(l=>`<li>${inline(l)}</li>`).join("")}</ul></div>`).join("")}`; },
