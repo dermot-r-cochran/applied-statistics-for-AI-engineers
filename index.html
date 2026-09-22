@@ -134,7 +134,12 @@ It assumes you have met probability and statistics before and have shipped or ev
 The examples follow one fictional system throughout, described under **The case**: an AI reviewer of photographic contact sheets whose verdicts are scored against the photographer's own decisions. It was chosen because a contact sheet has exactly the structure that makes evaluation statistics hard — rows inside documents inside projects, rare positive classes, judges who disagree — and because the domain is ordinary enough that nothing in it distracts from the statistics. A second, smaller example, an AI reader of short-story drafts, appears where text similarity and disagreeing judges need it. Neither system exists.
 
 Fourteen lessons, each in the same nine parts: the engineering question, the principle, the mathematics, the assumptions, a worked synthetic example with a live calculator, the common misreading, the application to the case, one diagnostic question and one exercise, then a four-question exam marked on the page. Read them in order the first time; each leans on the last. Your best exam score per lesson and a scorecard for the course sit below; the **Session note** page builds the five-line closing note the lessons ask for.`,
-  howToRead: `Each lesson's calculator is seeded with the worked example, so the numbers in the text are the numbers on screen; change an input and the text's claim can be re-tested. Progress is kept in this browser only.`
+  howToRead: `Each lesson's calculator is seeded with the worked example, so the numbers in the text are the numbers on screen; change an input and the text's claim can be re-tested. Progress is kept in this browser only.`,
+  figure:{ title:"Where a correctness test stops",
+    caption:`Ordinary software can often end at a correctness judgement against a written specification. An evaluation cannot: the score is a measurement taken on finite data, so the work carries on into how much data produced it, what ordinary variation could account for, and what decision the evidence will carry. The nine parts of every lesson below are that second row, done properly.`,
+    spec:{type:"steps",rows:[
+      {label:"ordinary software",boxes:[{text:"correct / incorrect",sub:"against a written specification",cls:"f0"}]},
+      {label:"AI engineering",boxes:[{text:"measure",sub:"on finite data",cls:"f1"},{text:"evaluate",sub:"how much data",cls:"f0"},{text:"infer",sub:"noise, or real",cls:"f2"},{text:"decide",sub:"and say why",cls:"ok"}]}]} }
 };
 
 const CASE = {
@@ -1317,9 +1322,15 @@ const FIG = (() => {
         p.cells.forEach((cls,i)=>{ s+=`<rect x="${nf(x0+(i%cols)*pitch)}" y="${nf(10+Math.floor(i/cols)*pitch)}" width="${c}" height="${c}" rx="2" class="${cls}"/>`; }); }
       if(lg) s+=legend(p.legend,20,h-legendH+6).s; if(p.per&&p.per>1) s+=txt(W-20,h-4,`each square is ${p.per} rows`,"sm mute","end"); return svg(h,s,alt); },
 
-    steps(p,alt){ const rowH=62, boxH=44, padL=p.rows.some(r=>r.label)?112:20, padR=20, arrow=28; const h=12+p.rows.length*rowH; let s="";
+    steps(p,alt){ const rowH=62, boxH=44, padR=20, arrow=28;
+      // The label gutter follows the longest label rather than a fixed width, so a
+      // long one is not clipped; box text is elided to its box, so a figure driven
+      // by a calculator cannot spill across the picture whatever the reader types.
+      const labels=p.rows.filter(r=>r.label).map(r=>tw(r.label)); const padL=labels.length?Math.min(210,Math.max(80,Math.max(...labels)+24)):20;
+      const h=12+p.rows.length*rowH; let s="";
       p.rows.forEach((r,i)=>{ const y=12+i*rowH, n=r.boxes.length, bw=(W-padL-padR-(n-1)*arrow)/n; if(r.label) s+=txt(padL-12,y+boxH/2+4,r.label,"sm mute","end");
-        r.boxes.forEach((b,j)=>{ const x=padL+j*(bw+arrow); s+=`<rect x="${nf(x)}" y="${y}" width="${nf(bw)}" height="${boxH}" rx="6" class="box ${b.cls||"f0"}"/>`+txt(x+bw/2,y+(b.sub?19:27),b.text,"","middle"); if(b.sub) s+=txt(x+bw/2,y+35,b.sub,"sm mute","middle");
+        const fit=(t,per)=>{ const max=bw-10, str=String(t); if(str.length*per<=max) return str; const keep=Math.max(1,Math.floor(max/per)-1); return str.slice(0,keep).replace(/[ ,;:.]+$/,"")+"…"; };
+        r.boxes.forEach((b,j)=>{ const x=padL+j*(bw+arrow); s+=`<rect x="${nf(x)}" y="${y}" width="${nf(bw)}" height="${boxH}" rx="6" class="box ${b.cls||"f0"}"/>`+txt(x+bw/2,y+(b.sub?19:27),fit(b.text,6.9),"","middle"); if(b.sub) s+=txt(x+bw/2,y+35,fit(b.sub,6.1),"sm mute","middle");
           if(j<n-1){ const ax=x+bw+4, bx=x+bw+arrow-4, ay=y+boxH/2; s+=`<line x1="${nf(ax)}" y1="${ay}" x2="${nf(bx-6)}" y2="${ay}" class="ax"/><path d="M${nf(bx-8)},${ay-5} L${nf(bx)},${ay} L${nf(bx-8)},${ay+5} Z" class="fx"/>`; } }); });
       return svg(h,s,alt); },
 
@@ -1389,7 +1400,7 @@ if (typeof document !== "undefined") (function page(){
       return `<h2>Start here</h2>${md(c.intro)}${c.figure?figBox(c.figure.title,c.figure.spec,c.figure.caption):""}${prev}<form id="start-form" class="start"><ol>${qs}${sq}</ol><p><button type="submit">See the suggestion</button></p></form><div id="start-rec" class="rec" hidden></div>
         <div class="rec"><b>Or choose now.</b><br><button type="button" class="track-btn" data-track="gentle">Take the gentle track</button><button type="button" class="track-btn" data-track="standard">Take the standard track</button><span class="mute">Either way, every lesson has a switch at the top.</span></div>`; },
     home(){ const done=doneSet();
-      return `<h2>${esc(SITE.tagline)}</h2>${md(SITE.intro)}<p class="mute">${inline(SITE.howToRead)}</p><div class="track">Track: <b>${track()}</b> · <a href="#/start">start page: three minutes of calibration questions, and the two tracks</a></div><h3>The lessons</h3>${scorecard()}<ol class="roadmap">${LESSONS.map(l=>{ const r=examRecord(l.id), n=(EXAMS[l.id]||[]).length;
+      return `<h2>${esc(SITE.tagline)}</h2>${md(SITE.intro)}${SITE.figure?figBox(SITE.figure.title,SITE.figure.spec,SITE.figure.caption):""}<p class="mute">${inline(SITE.howToRead)}</p><div class="track">Track: <b>${track()}</b> · <a href="#/start">start page: three minutes of calibration questions, and the two tracks</a></div><h3>The lessons</h3>${scorecard()}<ol class="roadmap">${LESSONS.map(l=>{ const r=examRecord(l.id), n=(EXAMS[l.id]||[]).length;
         return `<li><span class="letter">${l.id}</span><span><a href="#/lesson/${l.id}">${esc(l.title)}</a><small>${esc(l.question.replace(/\*\*/g,"").split(/[.?]/)[0])}.</small></span><span class="done">${done.has(l.id)?"read ":""}<span class="exam-score${r.attempts&&r.best>=passMark(l.id)?" pass":""}">${r.attempts?`exam ${r.best}/${n}`:""}</span></span></li>`; }).join("")}</ol>`; },
     case(){ return `<h2>The case: ${esc(CASE.name)}</h2>${md(CASE.summary)}${CASE.figure?figBox(CASE.figure.title,CASE.figure.spec,CASE.figure.caption):""}${md(CASE.body)}`; },
     rules(){ return `<h2>Core reasoning rules</h2><p>Ten distinctions the lessons return to. Each is a habit, not a formula: the question to ask before a number is allowed to mean something.</p>${RULES.map((r,i)=>`<div class="rule"><b>${i+1}. Distinguish ${esc(r[0].toLowerCase())}.</b> ${inline(r[1])}</div>`).join("")}`; },

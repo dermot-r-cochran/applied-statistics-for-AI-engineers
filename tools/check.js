@@ -5,7 +5,9 @@
 // example quotes, every lesson's figure draws from its calculator's
 // defaults with a caption in words, every card and glossary entry points
 // at a lesson, and the repository never uses the name of the framework
-// the case replaced.
+// the case replaced. Cross-references are counted only where the prose
+// writes Lesson or Lessons before the ids, never from a bare backticked
+// capital, which in this course is a variable.
 // No dependencies; runs on the Node that ships with the CI runner.
 "use strict";
 const fs = require("fs");
@@ -30,6 +32,28 @@ if (BOOK) {
   if (!FIG || typeof FIG.render !== "function") fail("the engine has lost FIG, the figure renderer");
 
   // ---- lessons ---------------------------------------------------------
+  // A cross-reference is the word Lesson(s) and then ids: "Lesson F", "Lessons A
+  // and F", "Lessons H to N", backticks optional. A bare `B` is deliberately not
+  // one: single capitals are variables in this course's notation (Lesson G's `B`
+  // is the bootstrap resample count), so counting them would let a formula satisfy
+  // the refers-to-another-lesson gate below, and would raise a phantom dangling
+  // reference if a lesson were ever renamed. The id pattern is every capital, not
+  // A–N, so that an id which does not exist fails loudly instead of being ignored.
+  const ID = "[A-Z]\\b", TAIL = "(?:'s)?", ONE = "`?" + ID + "`?" + TAIL;
+  const MENTION = new RegExp("Lessons?\\s+(" + ONE + "(?:\\s*(?:,|and|or|to|through|[-–])\\s*" + ONE + ")*)", "g");
+  const EACH = new RegExp("`?(" + ID + ")`?", "g");
+  const RANGE = new RegExp("`?(" + ID + ")`?" + TAIL + "\\s*(?:to|through|[-–])\\s*`?(" + ID + ")`?", "g");
+  const lessonRefs = (text) => {
+    const refs = new Set();
+    for (const mention of String(text).matchAll(MENTION)) {
+      for (const id of mention[1].matchAll(EACH)) refs.add(id[1]);
+      for (const range of mention[1].matchAll(RANGE)) { // "Lessons H to N" names every lesson between them
+        const a = range[1].charCodeAt(0), b = range[2].charCodeAt(0);
+        for (let c = Math.min(a, b); c <= Math.max(a, b); c++) refs.add(String.fromCharCode(c));
+      }
+    }
+    return refs;
+  };
   if (LESSONS.length < 12) fail(`expected at least 12 lessons (A–L), found ${LESSONS.length}`);
   LESSONS.forEach((l, i) => {
     const want = String.fromCharCode(65 + i);
@@ -64,7 +88,7 @@ if (BOOK) {
           if (!/<svg /.test(out)) fail(`lesson ${l.id}: the figure drew nothing`); } catch (e) { fail(`lesson ${l.id}: the figure does not draw: ${e.message}`); } }
     }
     // every lesson refers to at least one other lesson, so the book is a web not a list
-    const refs = new Set(); for (const key of ["principle", "maths", "assumptions", "pitfall", "application"]) for (const m of String(l[key]).matchAll(/Lessons? ([A-N])/g)) refs.add(m[1]);
+    const refs = new Set(); for (const key of ["principle", "maths", "assumptions", "pitfall", "application"]) for (const ref of lessonRefs(l[key])) refs.add(ref);
     if (refs.size === 0 && i > 0) fail(`lesson ${l.id} never refers to another lesson`);
     refs.forEach(r => { if (!LESSONS.find(x => x.id === r)) fail(`lesson ${l.id} refers to lesson ${r}, which does not exist`); });
 
@@ -115,10 +139,10 @@ if (BOOK) {
     if (!CAL.verdict || !CAL.verdict.gentle || !CAL.verdict.standard) fail("the calibration needs both verdicts");
   }
   // the static figures on the case and start pages draw too
-  for (const [name, obj] of [["case", BOOK.CASE], ["start", CAL]]) { if (!obj || !obj.figure) continue;
+  for (const [name, obj] of [["home", BOOK.SITE], ["case", BOOK.CASE], ["start", CAL]]) { if (!obj || !obj.figure) continue;
     try { if (!/<svg /.test(FIG.render(obj.figure.spec, obj.figure.title))) fail(`the ${name} page's figure drew nothing`); } catch (e) { fail(`the ${name} page's figure does not draw: ${e.message}`); } }
   CARDS.forEach(c => { if (!LESSONS.find(l => l.id === c.lesson)) fail(`card ${c.id} points at lesson ${c.lesson}`); if (!c.lines || c.lines.length < 5) fail(`card ${c.id} is thin`); });
-  GLOSSARY.forEach(g => { if (!/Lessons? [A-N]/.test(g[1])) fail(`glossary entry "${g[0]}" names no lesson`); });
+  GLOSSARY.forEach(g => { if (!lessonRefs(g[1]).size) fail(`glossary entry "${g[0]}" names no lesson`); });
   if (SESSION_FIELDS.length !== 5) fail("the session note has five lines");
   const { READING } = BOOK;
   if (!Array.isArray(READING) || READING.length < 5) fail("the reading list is missing or thin");
