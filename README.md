@@ -1,5 +1,18 @@
 # Applied Statistics for AI Engineers
 
+## Why Statistics Matters for AI Engineering
+
+AI engineers make decisions based on evidence:
+
+Is a new model actually better?
+Is a prompt change meaningful?
+Is an evaluation result reliable?
+Do we have enough data to justify a release?
+
+Without statistical reasoning, it is easy to mistake random variation for genuine improvement.
+
+This tutorial teaches the practical statistical concepts needed for AI evaluation, experimentation, benchmarking, and evidence-based engineering decisions. The focus is not advanced mathematics, but helping engineers reason correctly about uncertainty, measurement, and model quality.
+
 A course in applied statistics for people who evaluate and ship AI
 systems, in one file. Open `index.html` in any browser — no server, no
 build, no dependencies, no network — or read it as served from `main` at
