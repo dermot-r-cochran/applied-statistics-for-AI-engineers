@@ -124,6 +124,11 @@ disagreeing editors need it. The case is described in full on the site's
   lessons, case, rules, cards and glossary as plain literals, and an
   ENGINE section that renders them and runs the calculators.
 - `data/reference-set-2.csv` — Reference Set 2 (see **The case**): real, not loaded by the page, a companion file for a reader's own computation.
+- `data/reference-set-2.csv`, `data/reference-set-3.csv` — the two real
+  companion datasets the exercises fall back to, both described on the
+  site's **The case** page. Neither is loaded by the page, which keeps the
+  no-network rule. The second is rebuilt by `tools/build-reference-set-3.js`
+  from a sibling photography checkout — a local tool CI never runs.
 - `tools/check.js` — the CI gate. It loads the script without a DOM and
   checks that every lesson has its nine parts, that every calculator
   reproduces the numbers its worked example quotes, that every figure
