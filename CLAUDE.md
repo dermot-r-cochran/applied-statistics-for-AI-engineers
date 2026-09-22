@@ -5,8 +5,9 @@ code in this repository.
 
 ## What this is
 
-A one-file course in applied statistics for AI evaluation: fourteen
-lessons (A–N) on sampling variation, intervals, classification-metric
+A one-file course in applied statistics for AI evaluation: fifteen
+lessons — an introduction (`INTRO`, why an AI engineer needs this at
+all) and A–N on sampling variation, intervals, classification-metric
 uncertainty, effect sizes, power, paired comparison, resampling,
 aggregation, stratification, clustering, test-set governance, decision
 reporting, calibration and drift. Open `index.html` in any browser: no
@@ -173,6 +174,18 @@ page, a calculator with `expect` values that the prose quotes, and a
 `figure` drawn from that calculator. Add glossary entries that name
 the lesson and, if it introduces a template, a card that points at it.
 Update the table in `README.md`. Then `node tools/check.js`.
+
+`INTRO` is the one lesson not named by a letter, and the only one that
+sits ahead of the sequence: it is the course's own introduction, added
+2026-09-22, and it carries the same nine parts, gentle page, calculator,
+figure and exam as every other. The check derives the expected ids
+(`INTRO`, then A, B, C…) from the book rather than a list, so appending
+a lesson still needs no edit there. Cross-references are counted only
+where the prose writes **Lesson** or **Lessons** before the ids — a
+bare backticked capital is a variable in this course's notation, not a
+lesson, and reading it as one would both satisfy the
+refers-to-another-lesson gate by accident and raise a phantom dangling
+reference after a rename.
 
 `EXAMS[id]` is the lesson's exam (added 2026-09-14 at Dermot's direction:
 *add an exam and score card at the end of each lesson*): four or more

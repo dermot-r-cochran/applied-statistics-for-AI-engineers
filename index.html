@@ -43,7 +43,7 @@ th{background:var(--soft)}
 .calc .verdict{margin-top:.6rem;padding:.5rem .7rem;border-radius:5px;background:var(--soft)}
 .calc .verdict.ok{border-left:4px solid var(--ok)}.calc .verdict.warn{border-left:4px solid var(--warn)}.calc .verdict.bad{border-left:4px solid var(--bad)}
 .roadmap{list-style:none;padding:0}
-.roadmap li{display:grid;grid-template-columns:2.2rem 1fr auto;gap:.6rem;align-items:baseline;padding:.45rem 0;border-bottom:1px solid var(--line)}
+.roadmap li{display:grid;grid-template-columns:minmax(2.2rem,auto) 1fr auto;gap:.6rem;align-items:baseline;padding:.45rem 0;border-bottom:1px solid var(--line)}
 .roadmap .letter{font-family:system-ui,sans-serif;font-weight:600;color:var(--accent)}
 .roadmap .done{color:var(--ok);font-family:system-ui,sans-serif;font-size:.8rem}
 .roadmap small{display:block;color:var(--mute);font-size:.86rem}
@@ -98,7 +98,7 @@ textarea{width:100%;min-height:4.5rem;font:inherit;font-size:.95rem;padding:.4re
 .session label{display:block;margin:.8rem 0 .2rem;font-family:system-ui,sans-serif;font-size:.85rem;color:var(--mute)}
 footer{border-top:1px solid var(--line);color:var(--mute);font-size:.82rem;padding:1rem 1.2rem;font-family:system-ui,sans-serif}
 .sr{position:absolute;left:-9999px}
-@media (max-width:520px){html{font-size:16px}.roadmap li{grid-template-columns:2rem 1fr}.roadmap .done{grid-column:2}}
+@media (max-width:520px){html{font-size:16px}.roadmap li{grid-template-columns:minmax(2rem,auto) 1fr}.roadmap .done{grid-column:2}}
 </style>
 </head>
 <body>
@@ -247,22 +247,22 @@ const LESSONS = [
 **So the answer is** that statistics is not decoration around AI engineering. It is the machinery for deciding what counts as evidence, what uncertainty remains, and what to do next.`,
   figure:{ title:"From correctness to evidence-based decisions",
     gentle:`The top row is the comfortable software picture: there is a specification, and a result is judged correct or incorrect against it. The bottom row is the AI-engineering picture. You start with measurements such as Prompt A at 84% and Prompt B at 86%, check how much data produced them, ask what the wobble could explain, and only then decide whether to ship, investigate or gather more evidence.`,
-    caption:`Traditional software often ends at a correctness judgement. AI engineering continues: measure the result, evaluate the evidence, infer what uncertainty still allows, then decide. Here the calculator's worked example feeds the AI row: \`84.0%\`, \`86.0%\`, \`500\` rows each, a \`2.0\` point gap and a preliminary \`0.89\` standard-error comparison.`,
+    caption:`Traditional software often ends at a correctness judgement. AI engineering continues: measure the result, evaluate the evidence, infer what uncertainty still allows, then decide. At the calculator's defaults the AI row reads: \`84.0%\`, \`86.0%\`, \`500\` rows each, a \`2.0\` point gap and a preliminary \`0.89\` standard-error comparison.`,
     draw:(v,r)=>({type:"steps",rows:[
       {label:"traditional software",boxes:[{text:"correct / incorrect",sub:"against a written specification",cls:"f0"}]},
-      {label:"AI engineering",boxes:[{text:"measure",sub:`A ${fmt(v.pA,1)}%, B ${fmt(v.pB,1)}%`,cls:"f1"},{text:"evaluate",sub:`${fmt(r.rowsEach,0)} rows each`,cls:"f0"},{text:"infer",sub:`gap ${fmt(r.gainPts,1)} pts = ${fmt(r.z,2)} SE`,cls:"f2"},{text:"decide",sub:r.verdict,cls:"warn"}]}]}) },
+      {label:"AI engineering",boxes:[{text:"measure",sub:`${fmt(v.pA,1)}% vs ${fmt(v.pB,1)}%`,cls:"f1"},{text:"evaluate",sub:`${fmt(r.rowsEach,0)} rows each`,cls:"f0"},{text:"infer",sub:`gap = ${fmt(r.z,2)} SE`,cls:"f2"},{text:"decide",sub:r.call,cls:"warn"}]}]}) },
   question:`Prompt A scored **84%** and Prompt B **86%** on 500 evaluated rows each. Is Prompt B better, or is this the kind of gap that appears when an unchanged process is measured twice? More broadly: why does modern AI engineering need statistics at all?`,
   principle:`Traditional software engineering often asks whether a behaviour matches a specification. AI engineering more often asks whether one *measured* behaviour is better than another: a prompt revision, a model swap, a retriever tweak, a new evaluator, a release candidate. Those questions are about evidence under uncertainty. Statistics is the language for them: it tells us how much trust to place in a measured gap, what assumptions the comparison rests on, and what sort of decision the evidence can support. Lesson A sizes ordinary sampling variation, Lesson B turns single scores into intervals, Lesson D asks whether a real change matters, and Lesson K checks whether the benchmark itself stayed comparable.`,
-  maths:`The basic objects are simple even when the systems are not. An evaluation produces an **estimate**: a score observed on finite data. A comparison produces an **observed difference**: here \`0.86 - 0.84 = 0.02\`, or 2 percentage points. But a finite evaluation is not the whole population, so the estimate and the difference wobble from one plausible sample to another.
+  maths:`The basic objects are simple even when the systems are not. An evaluation produces an **estimate**: a score observed on finite data. A comparison produces an **observed difference**: here \`0.86 − 0.84 = 0.02\`, or 2 percentage points. But a finite evaluation is not the whole population, so the estimate and the difference wobble from one plausible sample to another.
 
-One quick way to size that wobble for a proportion is the standard error scale from Lesson A: roughly \`SE(p̂) ≈ √(p̂(1-p̂)/n)\`, and for two independent estimates \`SE(diff) ≈ √(SE_A² + SE_B²)\`. With 500 rows per prompt, the 2-point gap here is about \`0.89\` standard errors wide. That is not the course's proof that the prompts are the same; it is only an orientation that says "this gap is small relative to the evaluation's own wobble". The later lessons derive the formulas, repair the assumptions when rows are paired or clustered, and turn this sketch into a proper analysis.`,
+One quick way to size that wobble for a proportion is the standard error scale from Lesson A: roughly \`SE(p̂) ≈ √( p̂(1 − p̂) / n )\`, and for two independent estimates \`SE(diff) ≈ √(SE_A² + SE_B²)\`. With 500 rows per prompt, the 2-point gap here is about \`0.89\` standard errors wide. That is not the course's proof that the prompts are the same; it is only an orientation that says "this gap is small relative to the evaluation's own wobble". The later lessons derive the formulas, repair the assumptions when rows are paired or clustered, and turn this sketch into a proper analysis.`,
   assumptions:`- The prompt comparison is treated here as a rough independent-draws orientation. If the same rows were scored by both prompts, the sharper paired comparison of Lesson F is the right method.
 - The evaluation rows represent the cases the decision cares about. If the benchmark is unrepresentative, statistics can quantify precision around the wrong target (Lesson I).
 - The metric definition and ground truth are comparable across runs. If labels, scorers or row inclusion changed, the gap mixes system change with benchmark change (Lesson K).
 - Variation does not come only from the model. Outcomes can move with the examples chosen, the evaluators, the operating conditions, the prompt framing and the class mix, which is why evidence must be read with its design, not as a naked number.`,
-  example:`Synthetic. Prompt A scores **84.0%** and Prompt B **86.0%** on **500** evaluated rows each. That is an observed improvement of **2.0** percentage points, or **10** more rows correct out of 500 for Prompt B.
+  example:`Synthetic, and the case's first appearance: **Prompt A** and **Prompt B** are two revisions of the Project Frog reviewer's verdict prompt, each scored on its own draw of frames from Reference Set 1. A gets **84.0%** of verdicts right and B **86.0%**, on **500** evaluated rows each. That is an observed improvement of **2.0** percentage points, or **10** more frames right out of 500 for Prompt B.
 
-Using the independent-draws standard-error scale only as an orientation, the gap's standard error is **2.26** percentage points. The observed gain is therefore **0.89** standard errors wide. That is exactly the kind of result that starts an engineering conversation rather than ending one: perhaps Prompt B is better, perhaps the gap is ordinary variation, perhaps the benchmark is thin on the cases that matter. Lesson A derives the wobble, Lesson B turns each score into an interval, Lesson F uses the fact that prompt tests usually score the same rows, and Lesson L shows how a release decision combines evidence with cost.`,
+Using the independent-draws standard-error scale only as an orientation, the gap's standard error is **2.26** percentage points. The observed gain is therefore **0.89** standard errors wide. That is exactly the kind of result that starts an engineering conversation rather than ending one: perhaps Prompt B is better, perhaps the gap is ordinary variation, perhaps the reference set is thin on the cases that matter. Lesson A derives the wobble, Lesson B turns each score into an interval, Lesson F uses the fact that two prompt revisions usually score the same rows, and Lesson L shows how a release decision combines evidence with cost.`,
   pitfall:`Treating AI evaluation as though every number were a fact instead of a measurement. That leads straight to avoidable mistakes: shipping a worse system because a lucky benchmark looked good, rejecting a genuinely better one because the test was too small, gaming a benchmark instead of improving the real task, and writing reports whose confidence exceeds their evidence. The equal and opposite pitfall is statistics as ritual: quoting a p-value or interval without first asking the engineering question, the data-generating process and the operational consequence (Lessons D, E and L).`,
   application:`Project Frog is judged by measurements, not by a single theorem of correctness. Did a prompt improve keeper recall? Did a new retrieval step help the note field? Did a weekly drop come from the model, the scenario mix or the labels arriving selectively? Those are LLM-evaluation, agent-evaluation, retrieval-evaluation, human-review, benchmark and experimentation questions in one disguise. The course's workflow is therefore: measure honestly, quantify uncertainty, check representativeness and dependence, then decide. Lesson F and Lessons H to N make each part concrete on the case.`,
   diagnostic:{ q:`A team sees an agent's headline score rise from 81% to 85%, while inference cost doubles. One engineer says "four points is obviously better; ship it". What key questions are missing?`,
@@ -274,7 +274,8 @@ The goal is not to become a statistician.
 The goal is to become a better AI engineer.`,
   calc:{ inputs:[["pA","Prompt A score (%)",84,0,100,0.1],["pB","Prompt B score (%)",86,0,100,0.1],["n","Evaluation rows per prompt",500,1,1e9,1]],
     compute:(v)=>{ const a=v.pA/100, b=v.pB/100, seA=S.seProp(a,v.n), seB=S.seProp(b,v.n), sed=Math.hypot(seA,seB), gain=b-a;
-      return {gainPts:gain*100,rowsEach:v.n,extra:gain*v.n,seGapPts:sed*100,z:gain/sed,verdict:Math.abs(gain/sed)<1?"orientation only: gather more evidence":"gap worth investigating with the later lessons"}; },
+      const small=Math.abs(gain/sed)<1; // `call` is the figure's short form of the same reading
+      return {gainPts:gain*100,rowsEach:v.n,extra:gain*v.n,seGapPts:sed*100,z:gain/sed,call:small?"more evidence":"investigate",verdict:small?"orientation only: gather more evidence":"gap worth investigating with the later lessons"}; },
     outputs:[["gainPts","observed improvement (points)",1],["rowsEach","evaluation rows per prompt",0],["extra","extra correct rows for Prompt B",0],["seGapPts","gap on the standard-error scale (points)",2],["z","gap in standard errors",2]],
     expect:{gainPts:2.0,rowsEach:500,extra:10,seGapPts:2.26,z:0.89},
     verdictKey:"verdict",
@@ -1368,9 +1369,15 @@ const FIG = (() => {
         p.cells.forEach((cls,i)=>{ s+=`<rect x="${nf(x0+(i%cols)*pitch)}" y="${nf(10+Math.floor(i/cols)*pitch)}" width="${c}" height="${c}" rx="2" class="${cls}"/>`; }); }
       if(lg) s+=legend(p.legend,20,h-legendH+6).s; if(p.per&&p.per>1) s+=txt(W-20,h-4,`each square is ${p.per} rows`,"sm mute","end"); return svg(h,s,alt); },
 
-    steps(p,alt){ const rowH=62, boxH=44, padL=p.rows.some(r=>r.label)?112:20, padR=20, arrow=28; const h=12+p.rows.length*rowH; let s="";
+    steps(p,alt){ const rowH=62, boxH=44, padR=20, arrow=28;
+      // The label gutter follows the longest label rather than a fixed width, so a
+      // long one is not clipped; box text is elided to its box, so a figure driven by
+      // a calculator cannot spill across the picture whatever the reader types in.
+      const labels=p.rows.filter(r=>r.label).map(r=>tw(r.label)); const padL=labels.length?Math.min(210,Math.max(80,Math.max(...labels)+24)):20;
+      const h=12+p.rows.length*rowH; let s="";
       p.rows.forEach((r,i)=>{ const y=12+i*rowH, n=r.boxes.length, bw=(W-padL-padR-(n-1)*arrow)/n; if(r.label) s+=txt(padL-12,y+boxH/2+4,r.label,"sm mute","end");
-        r.boxes.forEach((b,j)=>{ const x=padL+j*(bw+arrow); s+=`<rect x="${nf(x)}" y="${y}" width="${nf(bw)}" height="${boxH}" rx="6" class="box ${b.cls||"f0"}"/>`+txt(x+bw/2,y+(b.sub?19:27),b.text,"","middle"); if(b.sub) s+=txt(x+bw/2,y+35,b.sub,"sm mute","middle");
+        const fit=(t,per)=>{ const max=bw-10, str=String(t); if(str.length*per<=max) return str; const keep=Math.max(1,Math.floor(max/per)-1); return str.slice(0,keep).replace(/[ ,;:.]+$/,"")+"…"; };
+        r.boxes.forEach((b,j)=>{ const x=padL+j*(bw+arrow); s+=`<rect x="${nf(x)}" y="${y}" width="${nf(bw)}" height="${boxH}" rx="6" class="box ${b.cls||"f0"}"/>`+txt(x+bw/2,y+(b.sub?19:27),fit(b.text,6.9),"","middle"); if(b.sub) s+=txt(x+bw/2,y+35,fit(b.sub,6.1),"sm mute","middle");
           if(j<n-1){ const ax=x+bw+4, bx=x+bw+arrow-4, ay=y+boxH/2; s+=`<line x1="${nf(ax)}" y1="${ay}" x2="${nf(bx-6)}" y2="${ay}" class="ax"/><path d="M${nf(bx-8)},${ay-5} L${nf(bx)},${ay} L${nf(bx-8)},${ay+5} Z" class="fx"/>`; } }); });
       return svg(h,s,alt); },
 

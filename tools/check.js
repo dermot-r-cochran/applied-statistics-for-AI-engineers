@@ -30,33 +30,34 @@ if (BOOK) {
   if (!FIG || typeof FIG.render !== "function") fail("the engine has lost FIG, the figure renderer");
 
   // ---- lessons ---------------------------------------------------------
-  const EXPECTED_LESSON_IDS = ["INTRO", ...Array.from({ length: 14 }, (_, i) => String.fromCharCode(65 + i))];
-  const LESSON_ID_PATTERN = EXPECTED_LESSON_IDS.slice().sort((a, b) => b.length - a.length).join("|");
-  const LESSON_SEP_PATTERN = "(?:,|and|or|to|[-–])";
-  const LESSON_REF_BODY = `((?:\\\`?(?:${LESSON_ID_PATTERN})\\\`?(?:'s)?)(?:\\s*${LESSON_SEP_PATTERN}\\s*\\\`?(?:${LESSON_ID_PATTERN})\\\`?(?:'s)?)*)`;
-  const LESSON_MENTION_RE = new RegExp(`Lessons?\\s+${LESSON_REF_BODY}`, "g");
-  const LESSON_ID_TOKEN_RE = new RegExp("\\`?(" + LESSON_ID_PATTERN + ")\\`?(?:'s)?", "g");
-  const LESSON_RANGE_RE = new RegExp(`\\\`?(${LESSON_ID_PATTERN})\\\`?(?:'s)?\\s*(?:to|[-–])\\s*\\\`?(${LESSON_ID_PATTERN})\\\`?(?:'s)?`, "g");
-  const LESSON_BACKTICK_RE = new RegExp("`(" + LESSON_ID_PATTERN + ")`", "g");
+  // Lesson ids in order: INTRO, then A, B, C… — derived from the book, so a new
+  // lesson still needs no edit here.
+  const lessonId = (i) => i === 0 ? "INTRO" : String.fromCharCode(64 + i);
+  const ALL_IDS = LESSONS.map((_, i) => lessonId(i));
+  // A cross-reference is the word Lesson(s) and then ids: "Lesson F", "Lessons A
+  // and F", "Lessons H to N", backticks optional. A bare `B` is deliberately not
+  // one: single capitals are variables in this course's notation (Lesson G's `B`
+  // is the bootstrap resample count), so counting them would let a formula satisfy
+  // the refers-to-another-lesson gate below, and would raise a phantom dangling
+  // reference if a lesson were ever renamed.
+  const ID = "(?:INTRO|[A-Z])\\b", TAIL = "(?:'s)?", ONE = "`?" + ID + "`?" + TAIL;
+  const MENTION = new RegExp("Lessons?\\s+(" + ONE + "(?:\\s*(?:,|and|or|to|through|[-–])\\s*" + ONE + ")*)", "g");
+  const EACH = new RegExp("`?(" + ID + ")`?", "g");
+  const RANGE = new RegExp("`?(" + ID + ")`?" + TAIL + "\\s*(?:to|through|[-–])\\s*`?(" + ID + ")`?", "g");
   const lessonRefs = (text) => {
     const refs = new Set();
-    const addRange = (a, b) => {
-      const ia = EXPECTED_LESSON_IDS.indexOf(a), ib = EXPECTED_LESSON_IDS.indexOf(b);
-      if (ia < 0 || ib < 0) return;
-      const [lo, hi] = ia <= ib ? [ia, ib] : [ib, ia];
-      for (let i = lo; i <= hi; i++) refs.add(EXPECTED_LESSON_IDS[i]);
-    };
-    const s = String(text);
-    for (const mention of s.matchAll(LESSON_MENTION_RE)) {
-      for (const id of mention[1].matchAll(LESSON_ID_TOKEN_RE)) refs.add(id[1]);
-      for (const range of mention[1].matchAll(LESSON_RANGE_RE)) addRange(range[1], range[2]);
+    for (const mention of String(text).matchAll(MENTION)) {
+      for (const id of mention[1].matchAll(EACH)) refs.add(id[1]);
+      for (const range of mention[1].matchAll(RANGE)) { // "Lessons H to N" names every lesson between them
+        const a = ALL_IDS.indexOf(range[1]), b = ALL_IDS.indexOf(range[2]);
+        if (a >= 0 && b >= 0) for (let i = Math.min(a, b); i <= Math.max(a, b); i++) refs.add(ALL_IDS[i]);
+      }
     }
-    for (const id of s.matchAll(LESSON_BACKTICK_RE)) refs.add(id[1]);
     return refs;
   };
-  if (LESSONS.length < EXPECTED_LESSON_IDS.length) fail(`expected at least ${EXPECTED_LESSON_IDS.length} lessons (INTRO, A–N), found ${LESSONS.length}`);
+  if (LESSONS.length < 15) fail(`expected at least 15 lessons (INTRO, A–N), found ${LESSONS.length}`);
   LESSONS.forEach((l, i) => {
-    const want = EXPECTED_LESSON_IDS[i];
+    const want = lessonId(i);
     if (l.id !== want) fail(`lesson ${i} has id ${l.id}, expected ${want}`);
     if (!l.title) fail(`lesson ${l.id} has no title`);
     // the gentle track's plain-words page: present, substantial, and in words (no backtick mathematics)
