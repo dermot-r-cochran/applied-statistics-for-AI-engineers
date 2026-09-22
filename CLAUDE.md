@@ -134,8 +134,12 @@ runs (blue, orange), `f3` a third category, `f0` the neutral majority,
 colours for decision zones. Every class is named on the figure itself,
 so nothing is carried by colour alone. A new lesson reuses these kinds;
 a new kind is an engine change and goes in `FIG` with the others. The
-case page and the start page carry one static figure each (`spec`,
-no `draw`), and the check draws those too.
+home, case and start pages carry one static figure each (`spec`, no
+`draw`), and the check draws those too. The home page's is the only one
+that is not about a statistical object: it contrasts a correctness
+judgement with the four steps an evaluation takes instead, which is the
+course's shape rather than any lesson's method, and it belongs there
+rather than in a lesson for that reason.
 
 Two rules for authoring one. The gentle caption tells the reader what
 the picture shows in the same words the gentle page uses, with the

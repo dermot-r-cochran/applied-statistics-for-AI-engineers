@@ -86,7 +86,10 @@ disagreements that carry a paired comparison, the mosaic that shows what
 an average is made of, the zones a release decision falls into, the
 reliability diagram: each is inline SVG with a caption, in words on the
 gentle track and in the lesson's notation on the standard one, and the
-check draws every one of them in CI.
+check draws every one of them in CI. The home page carries one of its
+own, which is the only figure here not about a statistical object: it
+contrasts a correctness judgement with the four steps an evaluation
+takes instead.
 
 Alongside them: the **case** the examples follow, ten **core reasoning
 rules**, seven **reference cards** (the reference-set manifest, the
