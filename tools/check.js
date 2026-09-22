@@ -163,6 +163,48 @@ if (BOOK) {
   });
 }
 
+// ---- exercises ------------------------------------------------------
+// Every exercise asks the reader to work on their own evaluation, so every
+// one also offers a way through for a reader who has not got one, and says
+// what it costs in time. Both are promises to the reader, so both are gated.
+if (BOOK) {
+  const { LESSONS } = BOOK;
+  LESSONS.forEach(l => {
+    if (!/\*\*No evaluation of your own\?\*\*/.test(l.exercise))
+      fail(`lesson ${l.id}: the exercise offers no way through for a reader without an evaluation of their own`);
+    if (!/\*[^*]+\*\s*$/.test(l.exercise))
+      fail(`lesson ${l.id}: the exercise does not end with how long it takes`);
+  });
+
+  // The fallbacks quote Reference Set 2, and the course's rule is that a
+  // number in the prose is checked against what produces it. The calculators
+  // cover their own examples; these come from the csv, so they are counted
+  // here. Derived figures (the intra-cluster correlation, the design effect)
+  // depend on an estimator choice and are deliberately not pinned.
+  const csv = path.join(root, "data", "reference-set-2.csv");
+  if (!fs.existsSync(csv)) fail("data/reference-set-2.csv is missing, and the exercises quote it");
+  else {
+    const lines = fs.readFileSync(csv, "utf8").trim().split(/\r?\n/);
+    const head = lines[0].split(","), idx = (c) => head.indexOf(c);
+    const rows = lines.slice(1).map(l => l.split(","));
+    const yes = (v) => /^(true|1|yes)$/i.test((v || "").trim());
+    const kept = (r) => yes(r[idx("published")]) || yes(r[idx("master")]);
+    const outings = new Map();
+    rows.forEach(r => { const o = r[idx("outing")]; const e = outings.get(o) || { n: 0, k: 0 }; e.n++; if (kept(r)) e.k++; outings.set(o, e); });
+    const smallest = [...outings.values()].sort((a, b) => a.n - b.n)[0];
+    const facts = [
+      ["frames", rows.length, 12713],
+      ["keepers", rows.filter(kept).length, 41],
+      ["outings", outings.size, 33],
+      ["frames in the smallest outing", smallest.n, 30],
+      ["keepers in the smallest outing", smallest.k, 0],
+      ["outings with no keeper", [...outings.values()].filter(o => o.k === 0).length, 23],
+      ["rows with no ISO", rows.filter(r => !(r[idx("iso")] || "").trim()).length, 2474],
+    ];
+    facts.forEach(([what, got, want]) => { if (got !== want) fail(`the exercises say Reference Set 2 has ${want} ${what}; the csv has ${got}`); });
+  }
+}
+
 // ---- the page is one file with no network --------------------------
 if (/<script[^>]+src=/i.test(html) || /fetch\(|XMLHttpRequest|<link[^>]+href="(https?:|\/\/)/i.test(html)) fail("index.html reaches for the network");
 if (!/WORLD DATA/.test(html) || !/ENGINE/.test(html)) fail("index.html has lost its two section markers");

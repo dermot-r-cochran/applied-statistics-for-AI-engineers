@@ -88,6 +88,20 @@ hidden `a`), `exercise`. Prose uses the small markup the engine renders:
 blank line between paragraphs, `` `code` `` for mathematics, `**bold**`,
 `- ` lists, `| ` tables with the first row as header.
 
+**Every exercise has a way through without an evaluation of your own.**
+Each one asks the reader to work on their own harness first, which is the
+point, but every reader between jobs, before a harness, or on a train
+would otherwise do none of the fourteen. So each exercise carries a
+second paragraph opening `**No evaluation of your own?**` that puts the
+same work on **Reference Set 2**, the real companion dataset, or on the
+lesson's own published numbers where that set cannot serve — it has no
+second model version and no confidence score, so Lessons F and L work
+from the lesson instead. Each also ends with how long it takes, in
+italics, because a one-paragraph task and an afternoon's task otherwise
+look identical on the page. `tools/check.js` requires both, and counts
+the Reference Set 2 figures the fallbacks quote against the csv, since a
+number in the prose is checked against what produces it.
+
 **Every calculator reproduces its worked example.** A lesson's `calc`
 declares `inputs` (key, label, default, min, max, step — or `null`s for a
 text field), `compute`, `outputs` (key, label, decimals) and `expect`: the
