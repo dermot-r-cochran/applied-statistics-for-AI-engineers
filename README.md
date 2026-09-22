@@ -52,7 +52,7 @@ the top of any lesson, and either can be chosen without answering.
 
 ## The lessons
 
-Fourteen, in the same nine parts each: the engineering question, the
+Fifteen, in the same nine parts each: the engineering question, the
 statistical principle, the essential mathematics, the assumptions, a
 worked synthetic example with a live calculator seeded to it and a figure that
 follows it, the common misreading, the application to the case, one
@@ -63,6 +63,7 @@ keeps your best score per lesson and a scorecard for the course.
 
 | | Lesson | The question |
 | --- | --- | --- |
+| INTRO | Why Statistics Matters for AI Engineering | Why does modern AI engineering need statistics before it can trust prompt, model, agent and release comparisons? |
 | A | Sampling distributions and standard error | Is a three-point gap a regression or two draws from one system? |
 | B | Estimation and confidence intervals | What range is consistent with 9 of 10, and which formula says so? |
 | C | Proportion and classification-metric uncertainty | Why is F1 on a rare class so much less certain than accuracy? |
@@ -140,11 +141,12 @@ rewritten programmatically. `CLAUDE.md` has the detail.
 The repository began on 14 September 2026 from a coaching specification
 drafted with an AI assistant, to keep a set of concepts from a work
 discussion before they were lost. The specification's learner profile,
-teaching approach, reasoning rules, method-selection guidance and
-progression A–L are what this course implements; lessons M and N were
-added for calibration and drift, which the specification's goals name
-but its progression did not reach. Nothing in the repository describes
-any real evaluation framework, dataset or organisation.
+teaching approach, reasoning rules and method-selection guidance still
+shape the course. Its original progression A–L now sits behind an
+introductory lesson, `INTRO`, and lessons M and N were later added for
+calibration and drift, which the specification's goals name but its
+progression did not reach. Nothing in the repository describes any real
+evaluation framework, dataset or organisation.
 
 ## Licence
 

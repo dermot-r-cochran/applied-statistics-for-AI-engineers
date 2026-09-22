@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Applied Statistics for AI Engineers</title>
-<meta name="description" content="Applied statistical concepts for evaluating AI systems: sampling variation, confidence intervals, paired comparison, bootstrap, aggregation, clustering, test-set governance, calibration and drift. Fourteen lessons with a live calculator each, in one file.">
+<meta name="description" content="Applied statistical concepts for evaluating AI systems: sampling variation, confidence intervals, paired comparison, bootstrap, aggregation, clustering, test-set governance, calibration and drift. Fifteen lessons with a live calculator each, in one file.">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Crect width='16' height='16' rx='3' fill='%23245'/%3E%3Ctext x='8' y='12' font-size='10' text-anchor='middle' fill='%23fff' font-family='serif'%3E%CF%83%3C/text%3E%3C/svg%3E">
 <style>
 :root{--bg:#f7f6f2;--fg:#1d1f22;--mute:#5d6470;--line:#d8d5cc;--card:#fff;--accent:#1f4e79;--soft:#e9eef5;--ok:#2a7a3b;--warn:#a05a00;--bad:#9b2c2c;--code:#eef0f3;--f0:#cfcbc0;--fx:#8a8f98;--f1:#2a78d6;--f2:#eb6834;--f3:#1baf7a}
@@ -112,7 +112,7 @@ footer{border-top:1px solid var(--line);color:var(--mute);font-size:.82rem;paddi
 /* =====================================================================
    WORLD DATA
    Everything a reader meets lives here, as plain literals: the running
-   example, the reasoning rules, the fourteen lessons, the reference
+   example, the reasoning rules, the fifteen lessons, the reference
    cards and the glossary. The engine below renders them and never needs
    editing to add a lesson. Prose uses a small markup: blank line between
    paragraphs, `code`, **bold**, "- " for list items, "| " rows for a
@@ -133,7 +133,7 @@ It assumes you have met probability and statistics before and have shipped or ev
 
 The examples follow one fictional system throughout, described under **The case**: an AI reviewer of photographic contact sheets whose verdicts are scored against the photographer's own decisions. It was chosen because a contact sheet has exactly the structure that makes evaluation statistics hard — rows inside documents inside projects, rare positive classes, judges who disagree — and because the domain is ordinary enough that nothing in it distracts from the statistics. A second, smaller example, an AI reader of short-story drafts, appears where text similarity and disagreeing judges need it. Neither system exists.
 
-Fourteen lessons, each in the same nine parts: the engineering question, the principle, the mathematics, the assumptions, a worked synthetic example with a live calculator, the common misreading, the application to the case, one diagnostic question and one exercise, then a four-question exam marked on the page. Read them in order the first time; each leans on the last. Your best exam score per lesson and a scorecard for the course sit below; the **Session note** page builds the five-line closing note the lessons ask for.`,
+Fifteen lessons, each in the same nine parts: the engineering question, the principle, the mathematics, the assumptions, a worked synthetic example with a live calculator, the common misreading, the application to the case, one diagnostic question and one exercise, then a four-question exam marked on the page. Read them in order the first time; each leans on the last. Your best exam score per lesson and a scorecard for the course sit below; the **Session note** page builds the five-line closing note the lessons ask for.`,
   howToRead: `Each lesson's calculator is seeded with the worked example, so the numbers in the text are the numbers on screen; change an input and the text's claim can be re-tested. Progress is kept in this browser only.`
 };
 
@@ -235,6 +235,51 @@ const RULES = [
 ];
 
 const LESSONS = [
+{ id:"INTRO", title:"Why Statistics Matters for AI Engineering",
+  gentle:`A normal software question is often "is it correct against the specification?" An AI engineering question is more often "how good is it, on what cases, and can I trust the difference I am seeing?"
+
+**The one idea.** AI work is full of decisions made from measurements rather than proofs. You measure a prompt, a model, an agent or a retriever on a finite set of examples; the number moves with the examples, the judges, the operating conditions and the mix of cases. Statistics is how you tell a real change from ordinary wobble.
+
+**The example in words.** Prompt A scores 84% and Prompt B 86% on 500 rows each. That is 10 more rows right for Prompt B, which sounds useful, but the comparison itself wobbles by about 2.26 points at this sample size. A two-point gain is therefore smaller than one wobble, so it is a sign to look harder, not a reason to declare victory.
+
+**An everyday version.** Two baristas each make 500 coffees. One gets ten more good ratings than the other. You would not redesign the café from that alone; you would ask whether the difference is bigger than the ordinary day-to-day swing.
+
+**So the answer is** that statistics is not decoration around AI engineering. It is the machinery for deciding what counts as evidence, what uncertainty remains, and what to do next.`,
+  figure:{ title:"From correctness to evidence-based decisions",
+    gentle:`The top row is the comfortable software picture: there is a specification, and a result is judged correct or incorrect against it. The bottom row is the AI-engineering picture. You start with measurements such as Prompt A at 84% and Prompt B at 86%, check how much data produced them, ask what the wobble could explain, and only then decide whether to ship, investigate or gather more evidence.`,
+    caption:`Traditional software often ends at a correctness judgement. AI engineering continues: measure the result, evaluate the evidence, infer what uncertainty still allows, then decide. Here the calculator's worked example feeds the AI row: \`84.0%\`, \`86.0%\`, \`500\` rows each, a \`2.0\` point gap and a preliminary \`0.89\` standard-error comparison.`,
+    draw:(v,r)=>({type:"steps",rows:[
+      {label:"traditional software",boxes:[{text:"correct / incorrect",sub:"against a written specification",cls:"f0"}]},
+      {label:"AI engineering",boxes:[{text:"measure",sub:`A ${fmt(v.pA,1)}%, B ${fmt(v.pB,1)}%`,cls:"f1"},{text:"evaluate",sub:`${fmt(r.rowsEach,0)} rows each`,cls:"f0"},{text:"infer",sub:`gap ${fmt(r.gainPts,1)} pts = ${fmt(r.z,2)} SE`,cls:"f2"},{text:"decide",sub:r.verdict,cls:"warn"}]}]}) },
+  question:`Prompt A scored **84%** and Prompt B **86%** on 500 evaluated rows each. Is Prompt B better, or is this the kind of gap that appears when an unchanged process is measured twice? More broadly: why does modern AI engineering need statistics at all?`,
+  principle:`Traditional software engineering often asks whether a behaviour matches a specification. AI engineering more often asks whether one *measured* behaviour is better than another: a prompt revision, a model swap, a retriever tweak, a new evaluator, a release candidate. Those questions are about evidence under uncertainty. Statistics is the language for them: it tells us how much trust to place in a measured gap, what assumptions the comparison rests on, and what sort of decision the evidence can support. Lesson A sizes ordinary sampling variation, Lesson B turns single scores into intervals, Lesson D asks whether a real change matters, and Lesson K checks whether the benchmark itself stayed comparable.`,
+  maths:`The basic objects are simple even when the systems are not. An evaluation produces an **estimate**: a score observed on finite data. A comparison produces an **observed difference**: here \`0.86 - 0.84 = 0.02\`, or 2 percentage points. But a finite evaluation is not the whole population, so the estimate and the difference wobble from one plausible sample to another.
+
+One quick way to size that wobble for a proportion is the standard error scale from Lesson A: roughly \`SE(p̂) ≈ √(p̂(1-p̂)/n)\`, and for two independent estimates \`SE(diff) ≈ √(SE_A² + SE_B²)\`. With 500 rows per prompt, the 2-point gap here is about \`0.89\` standard errors wide. That is not the course's proof that the prompts are the same; it is only an orientation that says "this gap is small relative to the evaluation's own wobble". The later lessons derive the formulas, repair the assumptions when rows are paired or clustered, and turn this sketch into a proper analysis.`,
+  assumptions:`- The prompt comparison is treated here as a rough independent-draws orientation. If the same rows were scored by both prompts, the sharper paired comparison of Lesson F is the right method.
+- The evaluation rows represent the cases the decision cares about. If the benchmark is unrepresentative, statistics can quantify precision around the wrong target (Lesson I).
+- The metric definition and ground truth are comparable across runs. If labels, scorers or row inclusion changed, the gap mixes system change with benchmark change (Lesson K).
+- Variation does not come only from the model. Outcomes can move with the examples chosen, the evaluators, the operating conditions, the prompt framing and the class mix, which is why evidence must be read with its design, not as a naked number.`,
+  example:`Synthetic. Prompt A scores **84.0%** and Prompt B **86.0%** on **500** evaluated rows each. That is an observed improvement of **2.0** percentage points, or **10** more rows correct out of 500 for Prompt B.
+
+Using the independent-draws standard-error scale only as an orientation, the gap's standard error is **2.26** percentage points. The observed gain is therefore **0.89** standard errors wide. That is exactly the kind of result that starts an engineering conversation rather than ending one: perhaps Prompt B is better, perhaps the gap is ordinary variation, perhaps the benchmark is thin on the cases that matter. Lesson A derives the wobble, Lesson B turns each score into an interval, Lesson F uses the fact that prompt tests usually score the same rows, and Lesson L shows how a release decision combines evidence with cost.`,
+  pitfall:`Treating AI evaluation as though every number were a fact instead of a measurement. That leads straight to avoidable mistakes: shipping a worse system because a lucky benchmark looked good, rejecting a genuinely better one because the test was too small, gaming a benchmark instead of improving the real task, and writing reports whose confidence exceeds their evidence. The equal and opposite pitfall is statistics as ritual: quoting a p-value or interval without first asking the engineering question, the data-generating process and the operational consequence (Lessons D, E and L).`,
+  application:`Project Frog is judged by measurements, not by a single theorem of correctness. Did a prompt improve keeper recall? Did a new retrieval step help the note field? Did a weekly drop come from the model, the scenario mix or the labels arriving selectively? Those are LLM-evaluation, agent-evaluation, retrieval-evaluation, human-review, benchmark and experimentation questions in one disguise. The course's workflow is therefore: measure honestly, quantify uncertainty, check representativeness and dependence, then decide. Lessons H to N make each part concrete on the case.`,
+  diagnostic:{ q:`A team sees an agent's headline score rise from 81% to 85%, while inference cost doubles. One engineer says "four points is obviously better; ship it". What key questions are missing?`,
+    a:`At least three. First: how much uncertainty sits around the 81% and 85%, and is the comparison paired or independent (Lessons A and F)? Second: is the benchmark representative of the traffic the doubled cost would serve, or is the gain concentrated in a thin slice (Lessons I and K)? Third: even if the gain is real, is it meaningful enough to justify the cost on the classes and workflows that matter (Lessons D and L)? The missing move is from point estimate straight to decision, skipping measurement quality and consequence.` },
+  exercise:`Take one live AI-engineering decision you own or influence — a prompt comparison, an agent change, a retrieval tweak, a release rule, a human-review policy. Write down the metric, the unit being sampled, what could make the number move besides a true system change, and which later lesson you need first: Lesson A for sampling variation, Lesson F for paired comparisons, Lesson I for representativeness, or Lesson L for the decision rule.
+
+The goal is not to become a statistician.
+
+The goal is to become a better AI engineer.`,
+  calc:{ inputs:[["pA","Prompt A score (%)",84,0,100,0.1],["pB","Prompt B score (%)",86,0,100,0.1],["n","Evaluation rows per prompt",500,1,1e9,1]],
+    compute:(v)=>{ const a=v.pA/100, b=v.pB/100, seA=S.seProp(a,v.n), seB=S.seProp(b,v.n), sed=Math.hypot(seA,seB), gain=b-a;
+      return {gainPts:gain*100,rowsEach:v.n,extra:gain*v.n,seGapPts:sed*100,z:gain/sed,verdict:Math.abs(gain/sed)<1?"orientation only: gather more evidence":"gap worth investigating with the later lessons"}; },
+    outputs:[["gainPts","observed improvement (points)",1],["rowsEach","evaluation rows per prompt",0],["extra","extra correct rows for Prompt B",0],["seGapPts","gap on the standard-error scale (points)",2],["z","gap in standard errors",2]],
+    expect:{gainPts:2.0,rowsEach:500,extra:10,seGapPts:2.26,z:0.89},
+    verdictKey:"verdict",
+    note:"Orientation only. Lesson A derives the standard-error comparison, Lesson B gives intervals for each prompt, Lesson F uses the paired design most prompt evaluations actually have, and Lesson L asks whether the gain is worth shipping." } },
+
 { id:"A", title:"Sampling distributions and standard error",
   gentle:`Two runs, two numbers: 0.84 for the last release and 0.81 for the candidate, both on 500 frames. Did it get worse?
 
@@ -918,6 +963,12 @@ What an alarm produces in the meantime is a **diagnosis record** (Cards page), a
 /* Exams: four questions per lesson, marked in the browser. `a` is the index
    of the correct option; `why` is shown after marking, whatever was chosen. */
 const EXAMS = {
+  INTRO: [
+    { q:"Prompt A scores 84% and Prompt B 86% on 500 rows each. The first statistically literate response is:", o:["ship Prompt B immediately; the higher score settles it","ask what uncertainty, design and benchmark assumptions sit behind the two numbers","average the two prompts because both are close","ignore the gap because all AI metrics are noisy"], a:1, why:"Statistics starts by treating the numbers as measurements made by a design. Before deciding, ask how much ordinary variation is expected, whether the same rows were scored, and whether the benchmark represents the decision the team actually faces." },
+    { q:"Which statement best captures why AI engineering needs statistics more than a simple correctness check?", o:["AI systems are always nondeterministic, so correctness never matters","statistics is mainly for making reports look rigorous","many AI decisions compare measured performance under finite data, uncertain labels and changing case mixes rather than a single pass/fail specification","once a model is evaluated once, its quality is known"], a:2, why:"The core issue is evidence under uncertainty: finite samples, imperfect judges, changing mixes and comparative decisions such as prompts, models, retrievers and releases." },
+    { q:"A score rises from 81% to 85% while inference cost doubles. Which additional question belongs before a release decision?", o:["whether the improvement is real and whether it is meaningful enough to justify the added cost","whether 85 is larger than 81 by four points","whether the model card wording sounds confident","whether a different team would have chosen the same prompt"], a:0, why:"Point estimates alone do not make release decisions. The gap needs uncertainty around it, and a decision rule must compare the likely gain with its cost on the task that matters." },
+    { q:"Which is a classic cost of poor statistical reasoning in AI evaluation?", o:["removing all uncertainty from product work","guaranteeing that every benchmark is representative","replacing engineering judgement with formulas","releasing worse systems or rejecting better ones because random variation was misread as evidence"], a:3, why:"Misreading variation cuts both ways: lucky runs look like progress, underpowered evaluations hide genuine gains, and teams optimise the reported number instead of the real task." }
+  ],
   A: [
     { q:"Verdict accuracy is 0.84 on 500 independent rows. Its standard error is closest to:", o:["0.0016","0.036","0.0164","0.16"], a:2, why:"√(0.84 × 0.16 / 500) = 0.0164. The variance of a proportion is p(1 − p)/n; the standard error is its square root." },
     { q:"The standard error of the difference between two independent estimates is:", o:["the sum of the two standard errors","the square root of the sum of their squares","the difference of the two standard errors","their average"], a:1, why:"Variances add for independent quantities, so the standard error of the difference is √(SE_A² + SE_B²)." },
