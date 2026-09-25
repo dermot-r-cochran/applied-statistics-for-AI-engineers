@@ -33,7 +33,16 @@ the story?
 
 It is written for an experienced engineer who has met probability and
 statistics before and has practical responsibility for evaluation
-harnesses, metric pipelines and release decisions. Foundations are
+harnesses, metric pipelines and release decisions — whether what ships
+is a trained model, a prompt sent to a hosted language model, or a
+generative workflow chaining retrieval and several model calls. The
+course treats all of these as *the system*: a reworded prompt, a model
+version swapped behind an API and a retrained weight file are all
+changes to be evaluated the same way. Generative systems add
+nondeterministic outputs (repeated runs of one input are repeated
+observations, Lesson J) and judged outputs (a rubric, a similarity score
+or a model acting as judge is a measurement with its own error, Lessons K
+and M), and the lessons say where. Foundations are
 reactivated rather than taught from zero; every formula is derived far
 enough to be re-derived; every assumption is stated; every worked
 example is synthetic and says so, apart from one real companion dataset (see
@@ -68,7 +77,7 @@ keeps your best score per lesson and a scorecard for the course.
 | C | Proportion and classification-metric uncertainty | Why is F1 on a rare class so much less certain than accuracy? |
 | D | Effect sizes and practical significance | Who decides whether three points matter, and on what scale? |
 | E | Hypothesis tests and statistical power | If the regression were real, would this evaluation have noticed? |
-| F | Paired comparison of model versions | Both runs scored the same rows; does that change the answer? |
+| F | Paired comparison of system versions | Both runs scored the same rows; does that change the answer? |
 | G | Bootstrap and permutation methods | No formula was derived for this metric; what now? |
 | H | Class imbalance and metric aggregation | How does 0.89 accuracy hide 3-in-10 recall on the class that matters? |
 | I | Sampling bias, stratification and weighting | The set is 70% safari and production is 40%; what does the headline estimate? |
@@ -110,7 +119,7 @@ and means nothing; the system does not exist; every number about it is
 synthetic. It was chosen because a contact sheet has exactly the
 structure that makes evaluation statistics hard — rows inside documents
 inside projects, rare positive classes, judges who disagree, a new
-camera that changes the inputs without changing the model — and because
+camera that changes the inputs without changing the system — and because
 the domain needs no expertise to follow. A second, smaller example, an
 AI reader of short-story drafts, appears where text similarity and
 disagreeing editors need it. The case is described in full on the site's
