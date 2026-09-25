@@ -185,6 +185,14 @@ see.
 
 ## The two tracks
 
+**On the page they are *words first* and *straight in*** (Dermot,
+2026-09-25, on whether to rename gentle/standard as standard/advanced:
+no, since the tracks differ in the on-ramp, not the depth, and "advanced"
+would claim a depth the straight-in track does not have). `TRACK_NAMES`
+in the data section holds the page names; the keys stay `gentle` and
+`standard` everywhere in the code and in localStorage, so a saved
+preference survives the rename. The paragraphs below use the keys.
+
 Added 2026-09-19 at Dermot's direction (*a lighter, gentler optional
 introduction track based on a few calibration questions at the start*).
 `CALIBRATION` holds the start page: four scored questions (`q`, `o`, `a`),
