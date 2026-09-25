@@ -63,9 +63,9 @@ the top of any lesson, and either can be chosen without answering.
 
 ## The lessons
 
-Fourteen, in the same nine parts each: the engineering question (with
+Sixteen, in the same nine parts each: the engineering question (with
 the **business question** behind it first, in a decision-maker's words;
-the **For leaders** page gathers the fourteen as the course's executive
+the **For leaders** page gathers the sixteen as the course's executive
 summary), the
 statistical principle, the essential mathematics, the assumptions, a
 worked synthetic example with a live calculator seeded to it and a figure that
@@ -91,6 +91,8 @@ keeps your best score per lesson and a scorecard for the course.
 | L | Decision-oriented evaluation reporting | One page, one hour, one decision rule. |
 | M | Confidence, calibration and combining scores | Does 0.9 mean nine in ten, and is the product the system's confidence? |
 | N | Drift and monitoring | The weekly rate fell; what must be established before anyone touches the model? |
+| O | Negative tests and counter-examples | Forty blank frames refused; how much does that prove, and what does one counter-example do? |
+| P | Outliers and robustness | One sheet took four hours and the mean doubled; did the candidate get slower? |
 
 Every lesson carries a **figure**: the worked example as a picture,
 drawn by the page from the calculator's own numbers and redrawn whenever

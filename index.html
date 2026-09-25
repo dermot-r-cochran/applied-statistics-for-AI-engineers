@@ -41,7 +41,7 @@ th,td{border:1px solid var(--line);padding:.3rem .55rem;text-align:left;vertical
 th{background:var(--soft)}
 .card{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:1rem 1.1rem;margin:1rem 0}
 .business{background:var(--soft);border-left:4px solid var(--accent);padding:.6rem .8rem;border-radius:4px;margin:.6rem 0 .9rem}
-.leaders li{margin:1rem 0}.leaders li p{margin:.3rem 0}
+.leaders{list-style:none;padding-left:0}.leaders li{margin:1rem 0}.leaders li p{margin:.3rem 0}
 .calc{font-family:system-ui,sans-serif;font-size:.93rem}
 .calc .inputs{display:grid;grid-template-columns:repeat(auto-fill,minmax(11rem,1fr));gap:.5rem .9rem;margin:.5rem 0 .8rem}
 .calc label{display:flex;flex-direction:column;gap:.15rem;font-size:.85rem;color:var(--mute)}
@@ -126,7 +126,7 @@ footer{border-top:1px solid var(--line);color:var(--mute);font-size:.82rem;paddi
 /* =====================================================================
    WORLD DATA
    Everything a reader meets lives here, as plain literals: the running
-   example, the reasoning rules, the fourteen lessons, the reference
+   example, the reasoning rules, the sixteen lessons, the reference
    cards and the glossary. The engine below renders them and never needs
    editing to add a lesson. Prose uses a small markup: blank line between
    paragraphs, `code`, **bold**, "- " for list items, "| " rows for a
@@ -151,7 +151,7 @@ Foundations are reactivated, not taught from zero; every formula is derived far 
 
 The examples follow one fictional system throughout, described under **The case**: an AI reviewer of photographic contact sheets whose verdicts are scored against the photographer's own decisions. It was chosen because a contact sheet has exactly the structure that makes evaluation statistics hard — rows inside documents inside projects, rare positive classes, judges who disagree — and because the domain is ordinary enough that nothing in it distracts from the statistics. A second, smaller example, an AI reader of short-story drafts, appears where text similarity and disagreeing judges need it. Neither system exists.
 
-Fourteen lessons, each in the same nine parts: the engineering question, the principle, the mathematics, the assumptions, a worked synthetic example with a live calculator, the common misreading, the application to the case, one diagnostic question and one exercise, then a four-question exam marked on the page. Read them in order the first time; each leans on the last. Your best exam score per lesson and a scorecard for the course sit below; the **Session note** page builds the five-line closing note the lessons ask for.`,
+Sixteen lessons, each in the same nine parts: the engineering question, the principle, the mathematics, the assumptions, a worked synthetic example with a live calculator, the common misreading, the application to the case, one diagnostic question and one exercise, then a four-question exam marked on the page. Read them in order the first time; each leans on the last. Your best exam score per lesson and a scorecard for the course sit below; the **Session note** page builds the five-line closing note the lessons ask for.`,
   howToRead: `Each lesson's calculator is seeded with the worked example, so the numbers in the text are the numbers on screen; change an input and the text's claim can be re-tested. Progress is kept in this browser only.`,
   figure:{ title:"Where a correctness test stops",
     caption:`Ordinary software can often end at a correctness judgement against a written specification. An evaluation cannot: the score is a measurement taken on finite data, so the work carries on into how much data produced it, what ordinary variation could account for, and what decision the evidence will carry. The nine parts of every lesson below are that second row, done properly.`,
@@ -990,12 +990,112 @@ What an alarm produces in the meantime is a **diagnosis record** (Cards page), a
     compute:(v)=>{ const p=v.k/v.n, se=Math.sqrt(v.p0*(1-v.p0)/v.n), z=(p-v.p0)/se; return {p,se,z,pval:2*(1-S.Phi(Math.abs(z))),famAlarm:1-Math.pow(1-v.alpha,v.checks),bonf:v.alpha/v.checks,mde:1.96*se}; },
     outputs:[["p","observed rate",3],["se","SE under baseline",4],["z","z",2],["pval","two-sided p",3],["famAlarm","P(≥1 false alarm per year)",2],["bonf","per-check α for family α",4],["mde","smallest 'significant' shift",3]],
     expect:{p:0.070,se:0.0162,z:-3.08,pval:0.002,famAlarm:0.93},
-    note:"Try 40,000 rows a week and watch the smallest significant shift become meaningless." } }
+    note:"Try 40,000 rows a week and watch the smallest significant shift become meaningless." } },
+
+{ id:"O", title:"Negative tests and counter-examples",
+  business:`Does the system fail where it should, and what would prove it wrong? A release is usually tested on what it should get right; the cases it must refuse, a blank input, a duplicate, a frame that is nothing, are where a system embarrasses a business in public. This lesson is about testing for the answer that must be no, how many clean refusals it takes before a claim of "never" can be believed, and why one counter-example outweighs any number of confirmations.`,
+  gentle:`The reviewer has never called a blank frame a Keeper, and the release note wants to say it never will. Forty blank and corrupt frames were tried and all forty were refused.
+
+**The one idea.** Passing forty negative tests does not prove "never"; it puts a ceiling on how often the failure can happen. With no failures in forty tries, the true failure rate could still be as high as about seven per cent, and to be confident it is under one per cent takes about three hundred clean tries. One failure, on the other hand, settles the "never" claim on the spot: a single counter-example is worth more than all the confirmations, because it is the only kind of evidence that can move a claim of never.
+
+**The example in words.** Forty blanks refused: the honest statement is "fewer than about one in fourteen", not "never". To say "fewer than one in a hundred" the team needs to try about three hundred blanks and see none get through. If the three hundred are all the same kind of blank, the claim covers that kind of blank and no other.
+
+**An everyday version.** A smoke alarm that has never gone off in a house that has never had a fire has not been tested. Forty mornings of toast without a false alarm says something about false alarms; it says nothing about whether it would sound in a fire. You test a smoke alarm by making smoke.
+
+**So the answer is** to build the cases the system must refuse on purpose, count how many were tried and how many got through, report the ceiling that count buys, and treat the first counter-example as a permanent test rather than an edge case to explain away.`,
+  figure:{ title:"What forty clean refusals buy",
+    gentle:`Three bars. The first is the failure rate actually observed on the negative cases, which is zero when none got through. The second is the ceiling that many clean tries can promise with ninety-five per cent confidence, about seven per cent for forty. The third is the rate the business wanted to claim. The ceiling has to come down under the target before the claim is honest, and only more clean tries bring it down; the calculator says how many.`,
+    caption:`The observed failure rate \`k/n\` on the negative controls, the one-sided 95% upper bound (\`1 − 0.05^(1/n)\` when \`k = 0\`, the Wilson bound otherwise) and the target rate. The claim is supported only when the bound sits under the target.`,
+    draw:(v,r)=>{ const max=Math.max(r.upper,v.u,r.rate)*1.35||0.1;
+      return {type:"bars",max,ylabel:"failure rate on negative controls",bars:[{label:"observed",sub:`${v.k} of ${v.n} got through`,width:1,value:r.rate,cls:"f0",text:fmt(r.rate,3)},{label:"95% upper bound",sub:`what ${v.n} tries can promise`,width:1,value:r.upper,cls:"f2",text:fmt(r.upper,3)},{label:"target",sub:`needs about ${tickN(r.needed)} clean tries`,width:1,value:v.u,cls:"f3",text:fmt(v.u,3)}]}; } },
+  question:`The reviewer has never once called a blank or corrupt frame a Keeper, and the release note wants to say it never will. Forty such frames were tried and all forty were refused. How much does forty clean refusals prove, and what would one counter-example do to the claim?`,
+  principle:`Positive tests measure what a system does; **negative tests** measure what it refuses, and the two are not the same evidence. A system that says Keeper to everything scores perfectly on keeper recall (Lesson C) and is useless; only a set of cases that must come back "no", a **negative control set**, catches it. A universal claim, "it never does X", is never proven by confirmations and is refuted by a single **counter-example**; what a run of clean negatives buys is not proof but a ceiling: an upper bound on the failure rate, which falls only as the count of clean tries rises. So the questions to ask of any "never" are: how many were tried, how alike were they, and what is the bound. And the first counter-example is not an edge case to explain; it is the most informative row in the evaluation, and it becomes a permanent regression test the way Lesson K keeps a manifest.`,
+  maths:`If the true failure rate on negatives is \`p\`, the chance that \`n\` independent tries all pass is \`(1 − p)^n\`. Zero failures in \`n\` tries therefore rules out, at 95% confidence, every \`p\` for which \`(1 − p)^n < 0.05\`:
+
+\`p_upper = 1 − 0.05^(1/n) ≈ 3/n\` (the rule of three; exact for small \`p\`),
+
+and the clean tries needed to support "under \`u\`" are \`n ≥ ln(0.05) / ln(1 − u) ≈ 3/u\`. With \`k > 0\` failures the ceiling is the one-sided Wilson upper bound of Lesson B at \`z = 1.645\`; one failure in forty already lifts it to about ten per cent. Two-sided intervals are the wrong tool here: nobody is asking whether the rate might be higher than zero, only how much higher it could be. The power argument of Lesson E runs the same way from the other side: a negative test set too small to see a one-per-cent failure rate will pass a system that has one.`,
+  assumptions:`- The negatives tried are the negatives production will send. Constructed negatives cover the failures someone thought of; a counter-example from production is worth more than any of them, and goes into the set.
+- The tries are independent: forty copies of the same blank frame are one try.
+- The system has not seen the negative set, or the pass says nothing (Lesson K).
+- "Refused" is defined before the run: a Near miss on a blank frame is a failure if the claim was Keeper-or-not, and not if it was Keeper-only.`,
+  example:`Synthetic, Reference Set 1. Forty negative controls, ten each of four kinds: blank frames, byte-corrupt files, exact duplicates of a frame already judged, and frames from a different photographer's card. All forty came back Folder or Barred; none was a Keeper. Observed failure rate 0 of 40.
+
+The 95% upper bound with \`k = 0\` and \`n = 40\` is \`1 − 0.05^(1/40) = 0.072\`; the rule of three gives \`3/40 = 0.075\`, the same to a rounding. So the honest sentence is "fewer than about one in fourteen", not "never". The release note wanted "under 1%": that needs \`ln(0.05)/ln(0.99) = 299\` clean tries, so about 260 more negatives, spread over the same four kinds, before the sentence can be written. Had one of the forty been called a Keeper, the claim of never would be gone and the ceiling would be about ten per cent.`,
+  pitfall:`"Forty passes, so it never happens." Forty passes bounds the rate at seven per cent. The mirror error is to dismiss the one failure that does turn up as "an edge case", when it is the single row that decided the question. A third: measuring only the positive class. A reviewer tuned until keeper recall is high (Lesson C) will drift toward saying Keeper more often, and without a negative control set nobody notices the false positives that bought the recall; Lesson H's rare classes make the same point from the other direction. And testing negatives the system already knows, a duplicate of a training frame, say, proves memory, not judgement.`,
+  application:`Project Frog keeps a **negative control set** beside Reference Set 1: blank frames, corrupt files, duplicates of judged frames, and frames from another photographer, versioned in the manifest of Lesson K. Every release runs it and reports \`k\` of \`n\` with the one-sided bound, never "no failures". The release note may say "no failure in 299 negatives, so under 1% at 95% confidence"; it may not say never. The first production counter-example, a blank frame called a Keeper, is added to the set the same day as a regression case, with its frame identifier, and stays there for every release after.`,
+  diagnostic:{ q:`A reviewer refuses 100 of 100 blank frames. A colleague says that proves the false-positive rate on blanks is under 1%. Is it?`,
+    a:`No. Zero in 100 gives a 95% upper bound of \`1 − 0.05^(1/100) = 0.030\`, about three per cent; under one per cent needs about 300 clean tries. And blank frames are one kind of negative; the claim covers blanks and nothing else. A hundred passes is worth reporting as "under three per cent on blank frames", which is a real result, just not the one the colleague wants.` },
+  exercise:`List the five things your system must refuse: the empty input, the malformed one, the duplicate, the out-of-domain case, the one that looks like a positive and is not. Build twenty of each, run them, and report \`k\` of \`n\` with the one-sided bound for each kind. Then find the first counter-example, from production if there is one, and make it a permanent test with its identifier.
+
+**No evaluation of your own?** Reference Set 3 has a predictor. Rule A's 30 false positives sit among the 5,688 pairs that were not assigned (6,086 pairs less 398 assigned), a false-positive rate of about 0.5 per cent, and the 16 labels rule A never finds are 16 standing counter-examples to the rule that a photograph's alt text names its subject. Compute the one-sided bound on rule A's false-positive rate, and write the sentence the release note could honestly carry. *Half an hour.*`,
+  calc:{ inputs:[["n","Negative cases tried",40,1,1e7,1],["k","That got through",0,0,1e7,1],["u","Target failure rate",0.01,0.0001,0.5,0.001]],
+    compute:(v)=>{ const n=v.n, k=Math.min(v.k,n), p=k/n, z=1.645;
+      let upper; if(k===0) upper=1-Math.pow(0.05,1/n); else { const z2=z*z/n; upper=(p+z2/2+z*Math.sqrt(p*(1-p)/n+z2/(4*n)))/(1+z2); }
+      return {rate:p,upper:Math.min(1,upper),three:3/n,needed:Math.ceil(Math.log(0.05)/Math.log(1-v.u))}; },
+    outputs:[["rate","observed failure rate",3],["upper","95% one-sided upper bound",3],["three","rule of three, 3/n",3],["needed","clean tries for the target",0]],
+    expect:{upper:0.072,three:0.075,needed:299},
+    note:"With no failures the bound is exact; with some, it is Wilson's one-sided bound." } },
+
+{ id:"P", title:"Outliers and robustness",
+  business:`One catastrophic case has dragged the average down; is the system bad, or was that one case? Averages are pulled by their extremes, and a decision made on a mean can be made by a single row nobody has looked at. This lesson shows how to tell whether a verdict rests on the bulk of the evidence or on a handful of outliers, which is the question to ask of every average a decision is about to lean on, and what to report instead when it does.`,
+  gentle:`The reviewer took about four minutes a sheet on the last release and nearly ten on the candidate. One sheet took four hours; the other thirty-nine took about four minutes each, as before.
+
+**The one idea.** The average is not robust: one row can move it by as much as it likes, and here one row moved it from four minutes to ten. The median, the middle value, barely moved. A verdict that changes when one row is removed was resting on that row, not on the evidence.
+
+**The example in words.** Thirty-nine sheets at four minutes and one at two hundred and forty. The mean is nine minutes and fifty-four seconds, which is what the release note would have carried; the median is four minutes; drop the highest and lowest sheet and the trimmed mean is four minutes too. The whole rise is the one sheet, and the one sheet is the thing to look at: a bug, a genuinely monstrous sheet, or a timing error, each of which sends the release somewhere different.
+
+**An everyday version.** Ten friends in a room earn about the same, and their average is what you would guess. One of them leaves and a billionaire walks in; the average income in the room is now hundreds of millions, and nobody in it feels any richer. The median has not moved, because the person in the middle is the same person.
+
+**So the answer is** to report the median and a trimmed mean beside the mean, name any row that moves a headline by more than its own standard error, and go and look at that row before anyone decides anything.`,
+  figure:{ title:"Forty sheets and one that took four hours",
+    gentle:`The forty review times on a line. Thirty-nine of them huddle at about four minutes and one sits far off to the right at four hours. The mean is marked, dragged out to nearly ten minutes by that one bar; the median is marked at four, where the huddle is, and the trimmed mean sits on it. The picture is redrawn from the calculator, so the outlier can be moved to see how far it drags the mean.`,
+    caption:`A synthetic sample of \`n\` review times: \`n − 1\` drawn around the bulk mean with its standard deviation, plus one at the outlier's value. The marks are the mean with the outlier in and the median, which the trimmed mean sits on. The seed is fixed.`,
+    draw:(v,r)=>{ const rg=S.rng(20240914), norm=()=>{ const u=Math.max(1e-12,rg()), w=rg(); return Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*w); };
+      const n=Math.max(2,Math.round(v.n)), vals=[]; for(let i=0;i<n-1;i++) vals.push(Math.max(0,v.m+v.s*norm())); vals.push(v.x);
+      const hi=Math.max(v.x,v.m+4*v.s)*1.05;
+      return {type:"hist",values:vals,bins:48,min:0,max:hi,cls:"f1",xlabel:"minutes per sheet",marks:[{x:r.meanWith,label:"mean",cls:"f2"},{x:r.median,label:"median",cls:""}]}; } },
+  question:`The mean time the reviewer takes per sheet went from 4.1 minutes on the last release to 9.9 on the candidate. One sheet took 240 minutes; the other 39 took about four, as before. Did the candidate get slower, and what should the release note say?`,
+  principle:`The mean is not **robust**: a single row can move it by any amount, and its standard error, computed from a standard deviation the same row has inflated, moves with it. The **median** and the **trimmed mean** are robust: they are set by the bulk of the rows and shrug off a few extremes. Which to report is not a matter of taste; it is a statement about what the decision rests on. The **influence** of a row is how far the headline moves when it is removed, and a row whose influence exceeds the headline's standard error decides the verdict on its own. An outlier is not to be deleted but examined: a data error, a genuine failure, and a real but rare case (Lesson H's costly class, Lesson N's new stratum) each has a different consequence, and only looking tells them apart. Lesson D's question, is the change big enough to matter, is meaningless until it is known how many rows the change is made of.`,
+  maths:`Removing one row of value \`x\` from a mean \`M\` over \`n\` rows moves it by \`(x − M)/(n − 1)\`; adding one moves it by \`(x − m)/n\`, so one row's influence on the mean is unbounded in \`x\`. The median has a **breakdown point** of one half: nearly half the rows must be replaced before it can be moved arbitrarily; the mean's breakdown point is zero. The \`α\`-trimmed mean drops the top and bottom \`⌈αn⌉\` rows and averages the rest; the winsorised mean replaces them with the nearest kept value instead.
+
+With the outlier in, the sample variance is \`[(n − 1)(s² + (m − M)²) + (x − M)²] / (n − 1)\` for a bulk of mean \`m\` and standard deviation \`s\`, so the standard error grows with the outlier too, and a normal-theory interval (Lesson B) around the inflated mean is wide enough to be honest and centred in the wrong place. The **sensitivity analysis** is the plain test: recompute the verdict with the \`k\` most extreme rows removed and report both. The bootstrap of Lesson G shows the same thing as a picture: resamples that include the outlier once, twice or not at all give a lumpy, wide distribution that a bell would hide. A robust scale for flagging extremes is the median absolute deviation, not the standard deviation, which the outlier has already inflated (the masking problem).`,
+  assumptions:`- The bulk is one population. If the rows are two kinds of sheet, the "outlier" may be the first member of the second kind, and the answer is a stratum (Lesson I), not a trimmed mean.
+- Trimming is symmetric and decided before the numbers are seen; trimming the rows that spoil the result is fraud with a name.
+- The extreme row is real until shown otherwise. A timing glitch and a four-hour sheet look identical in the table; only the sheet tells.`,
+  example:`Synthetic, Reference Set 1. \`n = 40\` sheets; thirty-nine with mean \`m = 4.00\` minutes and standard deviation \`s = 0.80\`, one at \`x = 240\` minutes. The mean with the outlier in is \`(39 × 4.00 + 240)/40 = 9.90\`; without it, 4.00. The shift is \`5.90\` minutes, all of it one row. The median stays at 4.00, and the 5% trimmed mean (two rows off each end) is \`4.00\`. The standard deviation with the outlier in is \`37.3\` minutes, against 0.8 without, so the standard error of the mean is \`5.90\`: the mean rose by 5.9 with a standard error of 5.9, which is no evidence of anything, and the interval it implies runs from about −2 to 22 minutes a sheet, which is nonsense as a description of a reviewer that took four minutes on thirty-nine of forty. The release note carries the median and the trimmed mean, names sheet 27, and says what was in it.`,
+  pitfall:`Two mirror-image errors. Deleting the outlier as "a glitch" before looking at it, which is how the one genuine failure in the set gets thrown away; and keeping it and reporting the mean alone, which is how one sheet becomes the release verdict. A third: flagging outliers by standard deviations from the mean, when the outlier has already inflated both the mean and the standard deviation it is being measured against, so that it masks itself. A fourth is Lesson J's: the outlier may be a cluster, one bad day's worth of sheets, and removing one row of it fixes nothing.`,
+  application:`Project Frog reports every per-sheet and per-frame headline three ways, the mean, the median and the 5% trimmed mean, and any row whose influence on a headline exceeds that headline's standard error is named in the report of Lesson L with its identifier. A named row is examined before the release meeting: a timing error is corrected in the data with a note in the manifest (Lesson K), a genuinely hard sheet becomes a candidate stratum for the next reference set, and a reviewer failure goes to the bug tracker. Trimming fractions are fixed in the manifest before a run, never chosen after it.`,
+  diagnostic:{ q:`On the same 40 sheets, the normal-theory 95% interval for the mean rise includes zero, and the bootstrap of Lesson G gives a histogram with two humps. Which is wrong?`,
+    a:`Neither. The bootstrap resamples the outlier zero, one or two times, so the resampled means jump in steps of about six minutes and the histogram is lumpy; the normal formula assumes a single bell and draws one. The two humps are the honest picture: the estimate depends on whether that one row is in the sample, which is exactly what the report has to say.` },
+  exercise:`For each headline metric in your evaluation, recompute it with the most extreme one per cent of rows removed and report both figures side by side. Name every row that moves a headline by more than that headline's standard error, and write one line per named row saying what it was.
+
+**No evaluation of your own?** Reference Set 2's sharpness score has a long right tail: the mean over all rows is about 375, the median about 121, and the top one per cent, 127 frames, moves the mean by about 39 on its own. Compute the mean, the median and the 1% trimmed mean, then find the frame with the highest score and decide from its row whether it is a picture or a texture. *An hour.*`,
+  calc:{ inputs:[["n","Rows",40,2,1e6,1],["m","Bulk mean",4,0,1e6,0.1],["s","Bulk standard deviation",0.8,0,1e6,0.1],["x","The outlier",240,0,1e9,1],["trim","Trim fraction each end",0.05,0,0.45,0.01]],
+    compute:(v)=>{ const n=v.n, M=((n-1)*v.m+v.x)/n, g=Math.ceil(v.trim*n);
+      const trimmed = g>=1 ? v.m : M;
+      const varWith=((n-1)*(v.s*v.s+(v.m-M)*(v.m-M))+(v.x-M)*(v.x-M))/(n-1), sdWith=Math.sqrt(varWith);
+      return {meanWith:M,meanWithout:v.m,shift:M-v.m,median:v.m,trimmed,sdWith,seWith:sdWith/Math.sqrt(n),seWithout:v.s/Math.sqrt(n-1)}; },
+    outputs:[["meanWith","mean, outlier in",2],["meanWithout","mean, outlier out",2],["shift","the one row's influence",2],["median","median",2],["trimmed","trimmed mean",2],["sdWith","SD, outlier in",1],["seWith","SE of the mean, outlier in",2],["seWithout","SE of the mean, outlier out",2]],
+    expect:{meanWith:9.90,shift:5.90,trimmed:4.00,sdWith:37.3,seWith:5.90},
+    note:"The bulk is taken symmetric, so its median and trimmed mean sit at the bulk mean; a trim of one row or more drops the outlier." } }
 ];
 
 /* Exams: four questions per lesson, marked in the browser. `a` is the index
    of the correct option; `why` is shown after marking, whatever was chosen. */
 const EXAMS = {
+  O: [
+    { q:"Zero failures in 40 negative tests. The strongest honest claim about the failure rate is:", o:["it is zero","it is under about 7% at 95% confidence","it is under 1% at 95% confidence","nothing can be said without a positive test"], a:1, why:"1 − 0.05^(1/40) ≈ 0.072, the rule of three's 3/40. Under 1% needs about 300 clean tries." },
+    { q:"One of the 40 negative tests is called a Keeper. The claim \"it never does\" is now:", o:["weakened but still usable","unchanged; one case is an edge case","refuted; and the case becomes a permanent regression test","true if the case is removed from the set"], a:2, why:"A universal claim is refuted by one counter-example. The case is the most informative row in the run and stays in the set." },
+    { q:"A reviewer scores 0.98 keeper recall and has no negative control set. What is unmeasured?", o:["its accuracy on keepers","how often it says Keeper to things that are not","its standard error","its calibration"], a:1, why:"Recall counts positives found; a reviewer that says Keeper to everything has recall 1. Only negatives that must be refused measure the false-positive side." },
+    { q:"Which negative control set says most about production?", o:["forty copies of one blank frame","ten each of four kinds the team thought of","the same ten plus the first counter-example that came from production","frames the system was trained on"], a:2, why:"Independence needs different cases; the production counter-example is the one failure nobody thought of, and it belongs in the set." }
+  ],
+  P: [
+    { q:"Thirty-nine sheets at 4 minutes and one at 240. The mean is 9.9. The release note should lead with:", o:["the mean, since it is the standard measure","the median and trimmed mean, with the one sheet named","the mean with the outlier deleted","the mean with a wider interval"], a:1, why:"The mean is one row's doing. Report the robust figures beside it and name the row, then look at the sheet before deciding anything." },
+    { q:"The influence of one row on the mean of n rows is bounded by:", o:["nothing; it grows with the row's value","1/n","the standard error","the median"], a:0, why:"Adding a row of value x moves the mean by (x − m)/n, which is unbounded in x. That is what not robust means; the median's breakdown point is one half." },
+    { q:"Flagging outliers as rows more than three standard deviations from the mean fails because:", o:["three is too few","the outlier has already inflated the mean and the standard deviation it is measured against","standard deviations do not apply to times","outliers are never that far out"], a:1, why:"Masking: the extreme row pulls the mean toward itself and widens the standard deviation, so it can sit within three of them. Use a robust scale such as the median absolute deviation." },
+    { q:"The one four-hour sheet turns out to be genuine: a sheet of 400 frames from an air show. The right move is:", o:["trim it and report the trimmed mean only","keep it in the mean and ship","record it as a candidate stratum and report the headline with and without it","delete the row"], a:2, why:"A real but rare case is a stratum question (Lesson I), not a deletion; the report carries both figures and says which row is which." }
+  ],
   A: [
     { q:"Verdict accuracy is 0.84 on 500 independent rows. Its standard error is closest to:", o:["0.0016","0.036","0.0164","0.16"], a:2, why:"√(0.84 × 0.16 / 500) = 0.0164. The variance of a proportion is p(1 − p)/n; the standard error is its square root." },
     { q:"The standard error of the difference between two independent estimates is:", o:["the sum of the two standard errors","the square root of the sum of their squares","the difference of the two standard errors","their average"], a:1, why:"Variances add for independent quantities, so the standard error of the difference is √(SE_A² + SE_B²)." },
@@ -1083,6 +1183,14 @@ const EXAMS = {
 };
 
 const CARDS = [
+  { id:"negatives", title:"Negative control set", lesson:"O", lines:[
+    "The kinds of case the system must refuse: empty, malformed, duplicate, out of domain, looks-positive-but-is-not",
+    "Count tried per kind, and count that got through; the definition of \"got through\" written before the run",
+    "The one-sided 95% upper bound per kind (1 − 0.05^(1/n) with no failures; Wilson otherwise), never the word never",
+    "Clean tries still needed to support the target rate, about 3 over the target",
+    "Counter-examples from production, each with its identifier and the date it was added; none ever removed",
+    "Version and hash of the set, in the manifest beside the reference set"
+  ] },
   { id:"manifest", title:"Reference-set manifest", lesson:"K", lines:[
     "Name and version; row count; content hash",
     "Population claim: what production mix this set represents, and as of when",
@@ -1157,6 +1265,12 @@ const CARDS = [
 ];
 
 const GLOSSARY = [
+  ["Negative control","A case the system must refuse, tried on purpose: a blank input, a duplicate, an out-of-domain case. The false-positive side of an evaluation, which positive tests never measure. Lesson O."],
+  ["Counter-example","One case that does what the claim says never happens. It refutes the claim outright, and becomes a permanent regression test. Lesson O."],
+  ["Rule of three","With no failures in n independent tries, the 95% upper bound on the failure rate is about 3/n; exactly, 1 − 0.05^(1/n). Lesson O."],
+  ["Robust estimator","A summary that a few extreme rows cannot move far: the median, a trimmed mean. The mean is not one. Lesson P."],
+  ["Influence","How far a headline moves when one row is added or removed; for the mean, (x − m)/n, unbounded in x. A row whose influence exceeds the headline's standard error decides the verdict alone. Lesson P."],
+  ["Breakdown point","The fraction of rows that must be replaced before an estimator can be moved arbitrarily: zero for the mean, one half for the median. Lesson P."],
   ["Standard error","The standard deviation of a metric's sampling distribution: how much the number would move between re-draws of the same size. Lesson A."],
   ["Confidence interval","The output of a procedure that captures the true value a stated fraction of the time over repeated samples. Wilson for proportions by default. Lesson B."],
   ["Wilson interval","A proportion interval obtained by inverting the z-test; behaves at small n and near 0 and 1, unlike the Wald interval. Lesson B."],
@@ -1484,7 +1598,7 @@ if (typeof document !== "undefined") (function page(){
     home(){ const done=doneSet();
       return `<h2>${esc(SITE.tagline)}</h2>${md(SITE.intro)}${SITE.figure?figBox(SITE.figure.title,SITE.figure.spec,SITE.figure.caption):""}<p class="mute">${inline(SITE.howToRead)}</p><div class="track">Track: <b>${trackName()}</b> · <a href="#/start">start page: three minutes of calibration questions, and the two tracks</a></div><h3>The lessons</h3>${scorecard()}<ol class="roadmap">${LESSONS.map(l=>{ const r=examRecord(l.id), n=(EXAMS[l.id]||[]).length;
         return `<li><span class="letter">${l.id}</span><span><a href="#/lesson/${l.id}">${esc(l.title)}</a><small>${esc(firstSentence(l.question))}</small></span><span class="done">${done.has(l.id)?"read ":""}<span class="exam-score${r.attempts&&r.best>=passMark(l.id)?" pass":""}">${r.attempts?`exam ${r.best}/${n}`:""}</span></span></li>`; }).join("")}</ol>`; },
-    leaders(){ return `<h2>For leaders</h2><p>The fourteen questions behind the lessons, in the words a decision-maker asks them, one per lesson. Read down the page and it is the executive summary of the course: what each lesson lets a business decide, and what it stops a number from being taken to mean. Each answer is the lesson itself, which opens with the same question and then does the work.</p><ol class="leaders">${LESSONS.map(l=>`<li><b>${l.id}. ${esc(l.title)}</b><p>${inline(l.business||"")}</p><p class="mute"><a href="#/lesson/${l.id}">The lesson</a></p></li>`).join("")}</ol>`; },
+    leaders(){ return `<h2>For leaders</h2><p>The sixteen questions behind the lessons, in the words a decision-maker asks them, one per lesson. Read down the page and it is the executive summary of the course: what each lesson lets a business decide, and what it stops a number from being taken to mean. Each answer is the lesson itself, which opens with the same question and then does the work.</p><ol class="leaders">${LESSONS.map(l=>`<li><b>${l.id}. ${esc(l.title)}</b><p>${inline(l.business||"")}</p><p class="mute"><a href="#/lesson/${l.id}">The lesson</a></p></li>`).join("")}</ol>`; },
     case(){ return `<h2>The case: ${esc(CASE.name)}</h2>${md(CASE.summary)}${CASE.figure?figBox(CASE.figure.title,CASE.figure.spec,CASE.figure.caption):""}${md(CASE.body)}`; },
     rules(){ return `<h2>Core reasoning rules</h2><p>Ten distinctions the lessons return to. Each is a habit, not a formula: the question to ask before a number is allowed to mean something.</p>${RULES.map((r,i)=>`<div class="rule"><b>${i+1}. Distinguish ${esc(r[0].toLowerCase())}.</b> ${inline(r[1])}</div>`).join("")}`; },
     cards(){ return `<h2>Reference cards</h2><p>Templates the lessons ask you to fill. Copy the lines into your own documents; every line left blank is a finding.</p>${CARDS.map(c=>`<div class="card" id="card-${c.id}"><h4>${esc(c.title)} <span class="mute">(Lesson ${c.lesson})</span></h4><ul>${c.lines.map(l=>`<li>${inline(l)}</li>`).join("")}</ul></div>`).join("")}`; },

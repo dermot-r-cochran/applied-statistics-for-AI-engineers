@@ -5,11 +5,11 @@ code in this repository.
 
 ## What this is
 
-A one-file course in applied statistics for AI evaluation: fourteen
-lessons (A–N) on sampling variation, intervals, classification-metric
+A one-file course in applied statistics for AI evaluation: sixteen
+lessons (A–P) on sampling variation, intervals, classification-metric
 uncertainty, effect sizes, power, paired comparison, resampling,
 aggregation, stratification, clustering, test-set governance, decision
-reporting, calibration and drift. Open `index.html` in any browser: no
+reporting, calibration, drift, negative tests and outliers. Open `index.html` in any browser: no
 server, no build, no dependencies, no network. Each lesson has the same
 nine parts, a live calculator seeded with its worked example, and a
 figure drawn from that calculator, so the numbers in the text, on screen
@@ -210,6 +210,27 @@ gentle track renders that page above the nine parts and changes nothing
 else; the track is a localStorage preference, switchable at the top of
 any lesson, and the suggestion never locks anything. Keep the gentle
 page's numbers the same as the example's, so the two never disagree.
+
+## Lessons O and P: negative tests, counter-examples, outliers
+
+Added 2026-09-25 at Dermot's direction (*if not already covered then
+please add one or more lessons around negative testing, counter examples
+and robustness against outliers in the data*; nothing in A–N covered
+them). **O, Negative tests and counter-examples:** a negative control set
+measures the false-positive side positive tests never see; zero failures
+in `n` tries buys a ceiling, `1 − 0.05^(1/n)`, about `3/n`, never a
+"never"; one counter-example refutes a universal claim and becomes a
+permanent regression case; its calculator gives the one-sided bound
+(exact at `k = 0`, Wilson at `z = 1.645` otherwise) and the clean tries a
+target needs. The card *Negative control set* is its template. **P,
+Outliers and robustness:** the mean's unbounded influence against the
+median and the trimmed mean, the inflated standard error, masking,
+sensitivity analysis and the bootstrap's lumpy picture; its calculator is
+a symmetric bulk plus one outlier, and its note says so. P's fallback
+exercise quotes Reference Set 2's sharpness tail (mean about 375, median
+about 121, the top one per cent 127 frames moving the mean by about 39),
+and `tools/check.js` pins those four to the csv like the other Reference
+Set 2 figures.
 
 ## Adding a lesson
 

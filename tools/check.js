@@ -206,6 +206,17 @@ if (BOOK) {
       ["rows with no ISO", rows.filter(r => !(r[idx("iso")] || "").trim()).length, 2474],
     ];
     facts.forEach(([what, got, want]) => { if (got !== want) fail(`the exercises say Reference Set 2 has ${want} ${what}; the csv has ${got}`); });
+    // Lesson P quotes the sharpness score's tail: its mean, its median, the size of the top one per cent and what that one per cent does to the mean
+    const sharp = rows.map(r => parseFloat(r[idx("sharpness")])).filter(x => isFinite(x)).sort((a, b) => a - b);
+    const mean = (a) => a.reduce((s, x) => s + x, 0) / a.length;
+    const top = Math.floor(sharp.length * 0.01);
+    const tail = [
+      ["mean sharpness", Math.round(mean(sharp)), 375],
+      ["median sharpness", Math.round(sharp[Math.floor(sharp.length / 2)]), 121],
+      ["frames in the top one per cent", top, 127],
+      ["shift of the mean from the top one per cent", Math.round(mean(sharp) - mean(sharp.slice(0, sharp.length - top))), 39],
+    ];
+    tail.forEach(([what, got, want]) => { if (got !== want) fail(`Lesson P says Reference Set 2's ${what} is about ${want}; the csv gives ${got}`); });
   }
 }
 // ---- Reference Set 3 -------------------------------------------------
