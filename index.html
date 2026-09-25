@@ -129,7 +129,11 @@ const SITE = {
   tagline: "Evaluation metrics and confidence intervals for people who ship AI systems.",
   intro: `This is a course in applied statistics, not in any AI framework. It reactivates the statistics you already met and connects each idea to one recurring engineering question: **is what I am seeing a real change in the system, or something else** — sampling variation, sampling bias, measurement error, a change in the test set, a change in the class mix, drift, or an aggregation that hides the story?
 
-It assumes you have met probability and statistics before and have shipped or evaluated models. Foundations are reactivated, not taught from zero; every formula is derived far enough that you could re-derive it; every assumption is stated; and every worked example is synthetic and says so. **The case** also names a real companion dataset, Reference Set 2, kept apart from the lessons' own numbers so the two are never confused.
+It assumes you have met probability and statistics before and have shipped or evaluated an AI system of some kind: a trained model, a fine-tuned one, a prompt sent to a hosted language model, or a workflow that chains retrieval, several model calls and a parser. The course does not care which. **A system is whatever produces the output being scored**, and a change to it — new weights, a reworded prompt, a model version swapped behind an API, a different temperature, an extra step in the chain — is evaluated the same way: run it on a fixed set, score the outputs against ground truth, and ask whether the difference is real. Where you read *model* below, read *whichever of these you ship*.
+
+Generative systems add two things to that picture, and neither needs new statistics, only the right lesson. The same prompt on the same input can give a different output on each run, so a score is a draw even when the rows are fixed; repeated runs of one input are repeated observations, which Lesson J handles, and a comparison of two prompts on the same inputs is a paired one (Lesson F). And free-text output is usually scored by a rubric, a similarity measure or another model acting as judge, each of which is a measurement with its own error, which Lesson K's disagreeing annotators and Lesson M's calibration already describe.
+
+Foundations are reactivated, not taught from zero; every formula is derived far enough that you could re-derive it; every assumption is stated; and every worked example is synthetic and says so. **The case** also names a real companion dataset, Reference Set 2, kept apart from the lessons' own numbers so the two are never confused.
 
 The examples follow one fictional system throughout, described under **The case**: an AI reviewer of photographic contact sheets whose verdicts are scored against the photographer's own decisions. It was chosen because a contact sheet has exactly the structure that makes evaluation statistics hard — rows inside documents inside projects, rare positive classes, judges who disagree — and because the domain is ordinary enough that nothing in it distracts from the statistics. A second, smaller example, an AI reader of short-story drafts, appears where text similarity and disagreeing judges need it. Neither system exists.
 
@@ -144,7 +148,7 @@ Fourteen lessons, each in the same nine parts: the engineering question, the pri
 
 const CASE = {
   name: "Project Frog",
-  summary: `**Project Frog** is the codename of a fictional AI system that reviews a photographer's contact sheets. The name means nothing; it is a codename, the way real internal projects have codenames, and the system does not exist. Everything measured about it in these lessons is synthetic.`,
+  summary: `**Project Frog** is the codename of a fictional AI system that reviews a photographer's contact sheets. The name means nothing; it is a codename, the way real internal projects have codenames, and the system does not exist. Everything measured about it in these lessons is synthetic. The lessons never say how the reviewer is built — a trained classifier, a prompted language model, or a workflow of both — because nothing in the statistics depends on it; a release may be new weights or a reworded prompt, and both are scored the same way.`,
   body: `**What the system does.** Given a contact sheet — every frame from one outing's memory card — the reviewer emits one row per frame, with these fields:
 
 | Field | Kind | Scored how |
@@ -484,7 +488,7 @@ Power to detect a true three-point drop with 500 frames per arm is **0.239**: th
     expect:{z:1.25,p:0.212,power:0.239,nNeed:2517},
     note:"Independent two-arm design. A paired design on the same rows needs far fewer; see Lesson F." } },
 
-{ id:"F", title:"Paired comparison of model versions",
+{ id:"F", title:"Paired comparison of system versions",
   gentle:`It turns out both releases were scored on the same 500 frames. Lesson A treated them as two separate draws. Does that change the answer?
 
 **The one idea.** When every frame was seen by both versions, compare them **frame by frame**. Frames both got right and frames both got wrong say nothing about the difference; the information is in the frames where they disagree. Pairing takes out the wobble the two runs share, because they share the frames.
