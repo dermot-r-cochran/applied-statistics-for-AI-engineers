@@ -49,7 +49,7 @@ are the `four-islands-quest` rules, which this repository inherits whole:
 
 ## The case, and its name
 
-The examples follow one fictional system, codenamed **Project Frog**: an
+The examples follow one fictional system, called **Proofsheet**: an
 AI reviewer of photographic contact sheets whose per-frame output
 (identifier, verdict, category, note, reason, evidence, relations) is
 scored against the photographer's own decisions. Rows are frames,
@@ -65,10 +65,14 @@ section and is the single source for it.
   this repository** — not in content, commits, pull requests or comments.
   `tools/check.js` fails the build if it appears anywhere; the check
   assembles the string from character codes so it does not contain it.
-- "Project Frog" is a codename and means nothing. **It is about AI rather
-  than frogs**: no amphibian content, no pond puns. The earlier
-  amphibian-monitoring fiction an assistant built was removed on the same
-  day.
+- The system is called **Proofsheet** (Dermot, 2026-09-25: *Proofsheet
+  sounds cool*), the darkroom's old word for a contact sheet: it names
+  what the system reads and, checked that day, belongs to no company or
+  product. From 2026-09-14 to 2026-09-25 the codename was "Project Frog",
+  which turned out to be a real construction-software company's name (and
+  a near miss on JFrog); the earlier rule that it was *about AI rather
+  than frogs*, no amphibian content, no pond puns, stands as history. Don't
+  reintroduce the old codename, and don't name the system after a brand.
 - Photography was Dermot's suggestion for the case: it has the row /
   document / project structure, rare classes, disagreeing judges, and
   needs no expertise. Creative-writing evaluation (an AI reader of story

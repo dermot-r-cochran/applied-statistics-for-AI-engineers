@@ -118,11 +118,12 @@ five-line **session note** every lesson ends with.
 
 ## The case
 
-The examples follow one fictional system throughout, under the codename
-**Project Frog**: an AI reviewer of photographic contact sheets, whose
+The examples follow one fictional system throughout, called
+**Proofsheet**: an AI reviewer of photographic contact sheets, whose
 per-frame verdicts, categories, notes, reasons, evidence and links are
-scored against the photographer's own decisions. The name is a codename
-and means nothing; the system does not exist; every number about it is
+scored against the photographer's own decisions. The name is the
+darkroom's old word for a contact sheet and belongs to no product; the
+system does not exist; every number about it is
 synthetic. It was chosen because a contact sheet has exactly the
 structure that makes evaluation statistics hard — rows inside documents
 inside projects, rare positive classes, judges who disagree, a new
