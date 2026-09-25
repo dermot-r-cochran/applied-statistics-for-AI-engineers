@@ -125,7 +125,7 @@ AI reader of short-story drafts, appears where text similarity and
 disagreeing editors need it. The case is described in full on the site's
 **The case** page.
 
-**Reference Set 2**, added 21 September 2026, is real: 12,713 frames from the author's own outings, with real exposure data and a real sharpness score, scored against which frames he actually kept (41 of them, 0.32%). There is still no reviewer — nothing scored these frames, real or fictional — so it is ground truth without a subject, offered for a reader's own arithmetic rather than used in any lesson's worked example. `data/reference-set-2.csv` has every row.
+**Reference Set 2**, added 21 September 2026, is real: 12,713 frames from the author's own outings, with real exposure data and a real sharpness score, scored against which frames he actually kept (41 of them, 0.32%). There is still no reviewer — nothing scored these frames, real or fictional — so it is ground truth without a subject, offered for a reader's own arithmetic rather than used in any lesson's worked example. `data/reference-set-2.csv` has every row; the photographs themselves are not in the repository, only their rows, and the kept ones are on the author's site.
 
 ## Repository
 
