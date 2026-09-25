@@ -17,7 +17,16 @@ header{border-bottom:1px solid var(--line);padding:.9rem 1.2rem;display:flex;fle
 header h1{font-size:1.15rem;margin:0;font-weight:normal}
 header h1 a{text-decoration:none;color:var(--fg)}
 header nav a{margin-right:1rem;font-size:.92rem}
-main{max-width:46rem;margin:0 auto;padding:1.4rem 1.2rem 4rem}
+.wrap{max-width:46rem;margin:0 auto}
+main{padding:1.4rem 1.2rem 4rem}
+aside#side{display:none}
+/* Wide screens: the reading column keeps its measure and a sidebar with the
+   lesson list uses the width beside it (Dermot, 25 Sept 2026: too much white
+   space left and right on a desktop). Under 1200px nothing changes. */
+@media (min-width:1200px){html{font-size:18px}.wrap{max-width:84rem;display:grid;grid-template-columns:15rem minmax(0,56rem);gap:3rem;justify-content:center;padding:0 1.2rem}
+aside#side{display:block;position:sticky;top:0;align-self:start;max-height:100vh;overflow:auto;padding:1.6rem 0 2rem;font-family:system-ui,sans-serif;font-size:.85rem;line-height:1.4}
+aside#side h3{margin:.3rem 0 .5rem}aside#side ol{list-style:none;padding:0;margin:0}aside#side li{margin:.2rem 0}aside#side a{text-decoration:none;color:var(--fg)}aside#side a:hover{text-decoration:underline}
+aside#side .now>a{color:var(--accent);font-weight:600}aside#side .sideparts{margin:.2rem 0 .5rem 1rem;font-size:.8rem}aside#side .sideparts li{margin:.05rem 0}aside#side .sideparts a{color:var(--mute)}aside#side .done{color:var(--ok)}aside#side .more{margin-top:.8rem;color:var(--mute)}}
 h2{font-size:1.5rem;font-weight:normal;margin:1.6rem 0 .6rem;line-height:1.25}
 h3{font-size:1.02rem;margin:1.6rem 0 .4rem;text-transform:uppercase;letter-spacing:.06em;color:var(--mute);font-family:system-ui,sans-serif;font-weight:600}
 h4{margin:1rem 0 .3rem;font-size:1.05rem}
@@ -106,7 +115,10 @@ footer{border-top:1px solid var(--line);color:var(--mute);font-size:.82rem;paddi
   <h1><a href="#/">Applied Statistics for AI Engineers</a></h1>
   <nav aria-label="Sections"><a href="#/start">Start here</a><a href="#/">Lessons</a><a href="#/case">The case</a><a href="#/rules">Rules</a><a href="#/cards">Cards</a><a href="#/glossary">Glossary</a><a href="#/reading">Reading</a><a href="#/session">Session note</a></nav>
 </header>
+<div class="wrap">
+<aside id="side" aria-label="Lessons"></aside>
 <main id="main" tabindex="-1"></main>
+</div>
 <footer>One file, no dependencies, no network. Every worked example is synthetic and labelled as such; one companion dataset, Reference Set 2, is real and says so. Text CC BY 4.0, engine MIT. <a href="https://github.com/dermot-r-cochran/applied-statistics-for-AI-engineers">Source</a>.</footer>
 <script>
 /* =====================================================================
@@ -1463,6 +1475,12 @@ if (typeof document !== "undefined") (function page(){
       return `<p class="mute">Lesson ${l.id} · ${LESSONS.indexOf(l)+1} of ${LESSONS.length}</p><h2>${l.id}. ${esc(l.title)}</h2>${trackLine(l)}${gentle}<ul class="parts">${PARTS.map((p,i)=>`<li><a href="#/lesson/${l.id}#part-${i+1}">${i+1}. ${esc(p[1])}</a></li>`).join("")}<li><a href="#/lesson/${l.id}#part-10">10. Exam</a></li></ul>${parts}${exam}<p><button type="button" id="mark-done">Mark this lesson read</button> <span class="mute" id="done-msg"></span></p>${nav(l)}`; }
   };
 
+  // The sidebar on wide screens: every lesson, a tick for the ones marked read,
+  // and the ten parts under the lesson open now. Hidden by CSS under 1200px.
+  const side = document.getElementById("side");
+  const sideNav = (cur) => { if (!side) return; const done=doneSet();
+    side.innerHTML = `<h3>Lessons</h3><ol>${LESSONS.map(l=>`<li class="${l.id===cur?"now":""}"><a href="#/lesson/${l.id}">${l.id}. ${esc(l.title)}</a>${done.has(l.id)?' <span class="done" title="marked read">✓</span>':""}${l.id===cur?`<ol class="sideparts">${PARTS.map((p,i)=>`<li><a href="#/lesson/${l.id}#part-${i+1}">${i+1}. ${esc(p[1])}</a></li>`).join("")}<li><a href="#/lesson/${l.id}#part-10">10. Exam</a></li></ol>`:""}</li>`).join("")}</ol><p class="more"><a href="#/case">The case</a> · <a href="#/rules">Rules</a> · <a href="#/cards">Cards</a> · <a href="#/glossary">Glossary</a> · <a href="#/session">Session note</a></p>`; };
+
   const route = () => {
     const h = location.hash.replace(/^#\/?/,""); const [path, frag] = h.split("#"); const seg = path.split("/");
     let html;
@@ -1470,6 +1488,7 @@ if (typeof document !== "undefined") (function page(){
     else if (views[seg[0]] && seg[0]!=="lesson") html = views[seg[0]]();
     else html = views.home();
     main.innerHTML = html;
+    sideNav(seg[0]==="lesson" && seg[1] ? seg[1].toUpperCase() : null);
     document.title = (seg[0]==="lesson" ? `Lesson ${seg[1].toUpperCase()} — ` : "") + SITE.title;
     main.querySelectorAll(".calc").forEach(el => { runCalc(el); el.addEventListener("input", () => runCalc(el)); });
     main.querySelectorAll(".reveal-btn").forEach(b => b.addEventListener("click", () => { const t=document.getElementById(b.getAttribute("aria-controls")); t.hidden=!t.hidden; b.setAttribute("aria-expanded", String(!t.hidden)); b.textContent = t.hidden ? "Show an answer" : "Hide the answer"; }));
