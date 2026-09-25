@@ -61,7 +61,10 @@ the top of any lesson, and either can be chosen without answering.
 
 ## The lessons
 
-Fourteen, in the same nine parts each: the engineering question, the
+Fourteen, in the same nine parts each: the engineering question (with
+the **business question** behind it first, in a decision-maker's words;
+the **For leaders** page gathers the fourteen as the course's executive
+summary), the
 statistical principle, the essential mathematics, the assumptions, a
 worked synthetic example with a live calculator seeded to it and a figure that
 follows it, the common misreading, the application to the case, one

@@ -40,6 +40,8 @@ table{border-collapse:collapse;margin:.6rem 0;font-size:.93rem;font-family:syste
 th,td{border:1px solid var(--line);padding:.3rem .55rem;text-align:left;vertical-align:top}
 th{background:var(--soft)}
 .card{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:1rem 1.1rem;margin:1rem 0}
+.business{background:var(--soft);border-left:4px solid var(--accent);padding:.6rem .8rem;border-radius:4px;margin:.6rem 0 .9rem}
+.leaders li{margin:1rem 0}.leaders li p{margin:.3rem 0}
 .calc{font-family:system-ui,sans-serif;font-size:.93rem}
 .calc .inputs{display:grid;grid-template-columns:repeat(auto-fill,minmax(11rem,1fr));gap:.5rem .9rem;margin:.5rem 0 .8rem}
 .calc label{display:flex;flex-direction:column;gap:.15rem;font-size:.85rem;color:var(--mute)}
@@ -113,13 +115,13 @@ footer{border-top:1px solid var(--line);color:var(--mute);font-size:.82rem;paddi
 <body>
 <header>
   <h1><a href="#/">Applied Statistics for AI Engineers</a></h1>
-  <nav aria-label="Sections"><a href="#/start">Start here</a><a href="#/">Lessons</a><a href="#/case">The case</a><a href="#/rules">Rules</a><a href="#/cards">Cards</a><a href="#/glossary">Glossary</a><a href="#/reading">Reading</a><a href="#/session">Session note</a></nav>
+  <nav aria-label="Sections"><a href="#/start">Start here</a><a href="#/">Lessons</a><a href="#/leaders">For leaders</a><a href="#/case">The case</a><a href="#/rules">Rules</a><a href="#/cards">Cards</a><a href="#/glossary">Glossary</a><a href="#/reading">Reading</a><a href="#/session">Session note</a></nav>
 </header>
 <div class="wrap">
 <aside id="side" aria-label="Lessons"></aside>
 <main id="main" tabindex="-1"></main>
 </div>
-<footer>One file, no dependencies, no network. Every worked example is synthetic and labelled as such; one companion dataset, Reference Set 2, is real and says so. Text CC BY 4.0, engine MIT. <a href="https://github.com/dermot-r-cochran/applied-statistics-for-AI-engineers">Source</a>.</footer>
+<footer>Everything here runs in your browser, and nothing is sent anywhere. Every worked example is synthetic and labelled as such; one companion dataset, Reference Set 2, is real and says so. Text CC BY 4.0, engine MIT. <a href="https://github.com/dermot-r-cochran/applied-statistics-for-AI-engineers">Source</a>.</footer>
 <script>
 /* =====================================================================
    WORLD DATA
@@ -261,6 +263,7 @@ const RULES = [
 
 const LESSONS = [
 { id:"A", title:"Sampling distributions and standard error",
+  business:`Is the new version worse, or did the number just wobble? Two evaluations of the same system will not give the same score, and a decision-maker who has been shown a three-point drop needs to know how much of a drop the measurement itself produces before deciding anything. This lesson gives the size of that wobble, so a change can be called real or noise before it is called good or bad.`,
   gentle:`Two runs, two numbers: 0.84 for the last release and 0.81 for the candidate, both on 500 frames. Did it get worse?
 
 **The one idea.** A score from 500 frames is like a count of heads from 500 coin tosses: run it again on another 500 frames from the same system and it comes out a little different. That wobble has a size, and the size is called the **standard error**. Nothing about the system changed to produce it; it is what sampling does.
@@ -311,6 +314,7 @@ The standard error of the difference is \`√(0.0164² + 0.0175²) = 0.0240\`. T
     note:"Independent-draws formula. If both runs scored the same rows, Lesson F's paired calculator is the right one." } },
 
 { id:"B", title:"Estimation and confidence intervals",
+  business:`How sure can we be from a small sample? A team reports ninety per cent accuracy from ten cases; the business needs the honest range that number could really be in, because a decision made on ten cases carries a very different risk from one made on a thousand. This lesson turns a single figure into the range it stands for, and says which way of computing that range to trust.`,
   gentle:`Nine verdicts right out of ten. Someone wants to write "90% accurate" on the report.
 
 **The one idea.** Ninety percent is what happened on those ten frames. The reviewer's true rate is unknown, and with ten frames a wide range of true rates could easily have produced 9 of 10. A **confidence interval** is that range, drawn by a method that captures the true value most of the time.
@@ -366,6 +370,7 @@ The Wald interval is nonsense above 1 and too narrow below. Wilson and the exact
     note:"Try 48 of 50, and 0 of 12." } },
 
 { id:"C", title:"Proportion and classification-metric uncertainty",
+  business:`Accuracy sounds fine, so why do the people using it say it misses the things they care about? A system can be right most of the time and still fail on the rare, valuable cases, and anyone deciding whether it is fit for purpose needs the measures that see those cases. This lesson explains precision and recall as what is missed and what is wrongly flagged, and how sure each figure is on the cases that matter.`,
   gentle:`Keepers are about 16% of frames. Verdict accuracy is 0.916, which sounds fine, and the photographer says it misses keepers. Both can be true.
 
 **The one idea.** When most frames are not keepers, a reviewer that says "not a keeper" to everything scores well on accuracy while missing every keeper there is. So the keeper class needs its own numbers: **precision** (of the frames it called keepers, how many really were), **recall** (of the real keepers, how many it found) and **F1**, a balance of the two.
@@ -416,6 +421,7 @@ A row bootstrap with 2,000 resamples (seeded, so the calculator reproduces it) g
     note:"Row bootstrap, 2,000 resamples, fixed seed. Percentile interval." } },
 
 { id:"D", title:"Effect sizes and practical significance",
+  business:`How big a change is worth acting on? Not every measurable difference matters to the business, and not every difference that matters is large. This lesson separates a change that is real from a change that is big enough to block a release, spend money or alter a plan, and it says whose call the threshold is and why it has to be set before the numbers arrive.`,
   gentle:`Suppose the three-point gap from Lesson A were real. Is a three-point drop something to block a release over?
 
 **The one idea.** Statistics can say whether a change is probably real. It cannot say whether the change matters; that is a judgement about consequences, and someone has to own it. The size of a change, on a scale that means something to the people affected, is its **effect size**.
@@ -457,6 +463,7 @@ The photographer reviews about 2,000 frames a month and spends about half a minu
     note:"The last two outputs are the effect size that a decision can use." } },
 
 { id:"E", title:"Hypothesis tests and statistical power",
+  business:`If the new version really were worse, would this evaluation even have noticed? An evaluation can pass a bad change simply because it was too small to catch it, and a green result from a small test is not the reassurance it looks like. Before trusting one, ask how likely the test was to find a problem of the size that would hurt; this lesson gives that number and the cost of raising it.`,
   gentle:`Lesson A said the gap was "not significant". Before concluding the candidate is fine, ask the other question: if it really were three points worse, how likely was this evaluation to notice?
 
 **The one idea.** An evaluation that would miss a real change most of the time cannot clear a candidate by not finding one. The chance that an evaluation notices a change of a given size is its **power**. Low power turns "not significant" into "did not look hard enough".
@@ -503,6 +510,7 @@ Power to detect a true three-point drop with 500 frames per arm is **0.239**: th
     note:"Independent two-arm design. A paired design on the same rows needs far fewer; see Lesson F." } },
 
 { id:"F", title:"Paired comparison of system versions",
+  business:`We tested both versions on the same cases; does that help? A great deal: comparing two systems on the same material removes most of the noise, so a smaller evaluation gives a firmer answer, and a difference that looked like nothing can turn out to be real. This lesson shows why that design is worth insisting on when a comparison is commissioned, and how it changes the verdict.`,
   gentle:`It turns out both releases were scored on the same 500 frames. Lesson A treated them as two separate draws. Does that change the answer?
 
 **The one idea.** When every frame was seen by both versions, compare them **frame by frame**. Frames both got right and frames both got wrong say nothing about the difference; the information is in the frames where they disagree. Pairing takes out the wobble the two runs share, because they share the frames.
@@ -548,6 +556,7 @@ McNemar: \`χ² = (35 − 20)²/55 = 4.09\`, \`p = 0.043\`; exact binomial on 35
     note:"Use the exact p when b + c is under about 25." } },
 
 { id:"G", title:"Bootstrap and permutation methods",
+  business:`Our most important metric has no textbook formula; can we still put error bars on it? Yes. The measures a business actually cares about are often bespoke, and this lesson gives a general, honest way to measure the uncertainty of any of them by resampling the evidence, so a bespoke number can be reported with the same confidence as a standard one, and a difference between two versions can be tested without a formula.`,
   gentle:`The photographer's favourite metric is the sheet pass rate: did the reviewer catch every barred frame on the sheet. There are 40 sheets, the two releases differ on it, and no formula so far was made for it.
 
 **The one idea.** When no formula fits, let the computer re-draw the data. **Bootstrap:** draw 40 sheets at random from the 40, with repeats allowed, compute the pass rate, and do it thousands of times; the spread of those pass rates is the uncertainty. **Permutation:** shuffle which release each result belongs to, compute the gap, repeat; that shows how big a gap chance alone makes.
@@ -610,6 +619,7 @@ The two methods disagree at the margin, and that is the lesson of a twelve-unit 
     note:"Up to 16 units the permutation test enumerates every sign assignment exactly; beyond that it samples 20,000." } },
 
 { id:"H", title:"Class imbalance and metric aggregation",
+  business:`The headline says ninety per cent; what is it hiding? When one kind of case is rare and costly, an average across everything can look excellent while the costly cases are mostly missed. This lesson shows how to read an aggregate, which breakdown to ask for first, and why the rare and expensive class should lead any report that a decision rests on.`,
   gentle:`Verdict accuracy is 0.892 and the release note says "near 90%". Barred frames are 2% of rows and the reviewer catches 3 in 10 of them.
 
 **The one idea.** An average over everything is dominated by whatever is common. The barred frames are rare, so their catastrophe barely moves the average. Which **aggregate** you report decides what can hide in it.
@@ -665,6 +675,7 @@ B is better on safari *and* on home ground, and worse pooled, because B was eval
     note:"The cost weight is a decision, made before the data. Set it to 1 to see macro recall; to 0 to see how the aggregate looks when Barred is ignored." } },
 
 { id:"I", title:"Sampling bias, stratification and weighting",
+  business:`Our test data does not look like our real traffic; what does the score mean? A score on a test set that over-represents the easy cases overstates what customers will see, and the gap can be large. This lesson gives a way to reweight a result to the real mix of work, and says when the test set has to be rebuilt instead of reweighted.`,
   gentle:`Reference Set 1 is 70% safari frames, because that is where the photographer had been. Production is nearer 40% safari, and the reviewer is much better on safari.
 
 **The one idea.** A headline accuracy is the accuracy of the mixture in the set. If production has a different mixture, the headline describes a world that does not exist. The fix is to compute the accuracy for each kind of shooting and recombine them in production's proportions: **reweighting**.
@@ -711,6 +722,7 @@ The set said 0.84 and production will experience about 0.80. The interval was ne
     note:"Two strata; the second's target weight is 1 minus the first's." } },
 
 { id:"J", title:"Clustered and repeated observations",
+  business:`Five hundred test cases sounds like a lot; is it? Cases that come from the same source, day or customer are not independent, and treating them as if they were makes every result look more certain than it is. This lesson gives the effective size of an evaluation, which is usually much smaller than the count, and what that does to the error bars a decision leans on.`,
   gentle:`Every standard error so far used 500 as the number of observations. The 500 frames came from 40 outings, and frames from one outing share the light, the subject and the photographer's mood that day.
 
 **The one idea.** Frames from the same outing are alike, so 500 of them carry less information than 500 frames from 500 different days. The effective number of independent observations is somewhere between 40 and 500. Standard errors computed with 500 are too small: the intervals are narrower than the truth.
@@ -757,6 +769,7 @@ The cluster bootstrap (Lesson G) sidesteps the formula: resample outings, keep t
     note:"Try 1,000 rows in 6 clusters with ρ = 0.3." } },
 
 { id:"K", title:"Test-set governance and reproducibility",
+  business:`The score changed; was it the system, the data or the labels? If the reference set or its ground truth moved between two runs, a comparison between them is not a comparison, however it is presented. This lesson sets the discipline of a frozen, versioned test set, so that a change in the number can be attributed to one cause and a release decision can be defended afterwards.`,
   gentle:`The candidate scored 0.818 on "the reference set" and the release 0.84 on "the reference set". Between the two runs sixty frames from a new trip were added and one barred label was changed.
 
 **The one idea.** Two numbers from two different sets are not comparable, however similar the sets' names. **Governance** means the set has a version, a comparison is made on one frozen version, and every change to a label is recorded with a reason and a date.
@@ -801,6 +814,7 @@ Second example, the story-draft reader: two editors annotate 200 draft notes as 
     note:"κ here assumes both annotators use the positive label at the same marginal rate." } },
 
 { id:"L", title:"Decision-oriented evaluation reporting",
+  business:`What should the one-page release report say, and how will we decide from it? A decision needs the rule agreed in advance, the numbers with their uncertainty, what changed in the test set, and what evidence would change the verdict, on one page and in that order. This lesson is that page, and the habit of writing the rule down before the numbers arrive is what keeps them from being read to taste.`,
   gentle:`Everything from A to K is on the table for the candidate. The release meeting is in an hour and wants one page.
 
 **The one idea.** A decision needs the metric, its interval, the unit it was computed on, what changed in the set, the rule agreed in advance, and what evidence would change the decision. Everything else is background. Writing the rule down before the numbers arrive is what keeps the numbers from being read to taste.
@@ -852,6 +866,7 @@ Had the sign been the other way — an improvement of 0.030 with the same standa
     note:"Enter d = −0.03 for the worked example's actual sign." } },
 
 { id:"M", title:"Confidence, calibration and combining scores",
+  business:`The system says it is ninety per cent confident; can we act on that without a person looking? Only if the confidence is calibrated, that is, if the things it calls ninety per cent are right about nine times in ten. This lesson shows how to check that before a decision is automated on it, what it costs when it is not true, and how to combine several scores into one without fooling anyone.`,
   gentle:`Beside every verdict the reviewer gives a confidence. The photographer wants to auto-accept anything above 0.9. Does 0.9 mean nine in ten are right?
 
 **The one idea.** Only if the reviewer is **calibrated**: group its verdicts by the confidence it stated and count how often each group was right. If the frames it called 0.9 are right 70% of the time, 0.9 is a label, not a probability. And when several component scores combine, the product, the mean and the minimum are three different claims about the whole.
@@ -925,6 +940,7 @@ Prefer keeping the vector of scores and learning a calibrated combiner on held-o
     note:"Bin centres are fixed at 0.1, 0.3, 0.5, 0.7, 0.9; the Brier score uses the bin centre as each row's stated score." } },
 
 { id:"N", title:"Drift and monitoring",
+  business:`The numbers have moved since launch; is the system degrading? Often it is the world that has changed and not the system: the inputs, the mix of work, the people using it. This lesson says what monitoring has to establish before anyone touches the model, and what to ask for when a metric drifts, so that money is not spent fixing something that is not broken.`,
   gentle:`The reviewer shipped. Three months on, the keeper rate it reports has fallen from 12% to 7%, and someone asks whether it has degraded. The reviewer has not changed.
 
 **The one idea.** The system is the same; the world it sees is not. A new camera, a month of macro, a photographer in a mood: each changes what comes in, and a reviewer built on last year's frames answers today's frames differently. That is **drift**, and it comes in kinds: the inputs changed, the truth changed, or the link between them changed.
@@ -1458,6 +1474,7 @@ if (typeof document !== "undefined") (function page(){
     home(){ const done=doneSet();
       return `<h2>${esc(SITE.tagline)}</h2>${md(SITE.intro)}${SITE.figure?figBox(SITE.figure.title,SITE.figure.spec,SITE.figure.caption):""}<p class="mute">${inline(SITE.howToRead)}</p><div class="track">Track: <b>${track()}</b> · <a href="#/start">start page: three minutes of calibration questions, and the two tracks</a></div><h3>The lessons</h3>${scorecard()}<ol class="roadmap">${LESSONS.map(l=>{ const r=examRecord(l.id), n=(EXAMS[l.id]||[]).length;
         return `<li><span class="letter">${l.id}</span><span><a href="#/lesson/${l.id}">${esc(l.title)}</a><small>${esc(firstSentence(l.question))}</small></span><span class="done">${done.has(l.id)?"read ":""}<span class="exam-score${r.attempts&&r.best>=passMark(l.id)?" pass":""}">${r.attempts?`exam ${r.best}/${n}`:""}</span></span></li>`; }).join("")}</ol>`; },
+    leaders(){ return `<h2>For leaders</h2><p>The fourteen questions behind the lessons, in the words a decision-maker asks them, one per lesson. Read down the page and it is the executive summary of the course: what each lesson lets a business decide, and what it stops a number from being taken to mean. Each answer is the lesson itself, which opens with the same question and then does the work.</p><ol class="leaders">${LESSONS.map(l=>`<li><b>${l.id}. ${esc(l.title)}</b><p>${inline(l.business||"")}</p><p class="mute"><a href="#/lesson/${l.id}">The lesson</a></p></li>`).join("")}</ol>`; },
     case(){ return `<h2>The case: ${esc(CASE.name)}</h2>${md(CASE.summary)}${CASE.figure?figBox(CASE.figure.title,CASE.figure.spec,CASE.figure.caption):""}${md(CASE.body)}`; },
     rules(){ return `<h2>Core reasoning rules</h2><p>Ten distinctions the lessons return to. Each is a habit, not a formula: the question to ask before a number is allowed to mean something.</p>${RULES.map((r,i)=>`<div class="rule"><b>${i+1}. Distinguish ${esc(r[0].toLowerCase())}.</b> ${inline(r[1])}</div>`).join("")}`; },
     cards(){ return `<h2>Reference cards</h2><p>Templates the lessons ask you to fill. Copy the lines into your own documents; every line left blank is a finding.</p>${CARDS.map(c=>`<div class="card" id="card-${c.id}"><h4>${esc(c.title)} <span class="mute">(Lesson ${c.lesson})</span></h4><ul>${c.lines.map(l=>`<li>${inline(l)}</li>`).join("")}</ul></div>`).join("")}`; },
@@ -1469,6 +1486,7 @@ if (typeof document !== "undefined") (function page(){
       const parts = PARTS.map((p,i)=>{ const key=p[0]; let body;
         if(key==="diagnostic") body = md(l.diagnostic.q)+`<p><button type="button" class="reveal-btn" aria-expanded="false" aria-controls="ans-${l.id}">Show an answer</button></p><div class="reveal" id="ans-${l.id}" hidden>${md(l.diagnostic.a)}</div>`;
         else if(key==="example") body = md(l.example)+lessonFig(l, calcDefaults(l.calc), false)+renderCalc(l);
+        else if(key==="question") body = (l.business ? `<p class="business"><b>The business question.</b> ${inline(l.business)}</p>` : "") + md(l.question);
         else body = md(l[key]);
         return `<section id="part-${i+1}"><h3>${i+1}. ${esc(p[1])}</h3>${body}</section>`; }).join("");
       const ex = EXAMS[l.id] || []; const rec = examRecord(l.id);
@@ -1481,7 +1499,7 @@ if (typeof document !== "undefined") (function page(){
   // and the ten parts under the lesson open now. Hidden by CSS under 1200px.
   const side = document.getElementById("side");
   const sideNav = (cur) => { if (!side) return; const done=doneSet();
-    side.innerHTML = `<h3>Lessons</h3><ol>${LESSONS.map(l=>`<li class="${l.id===cur?"now":""}"><a href="#/lesson/${l.id}">${l.id}. ${esc(l.title)}</a>${done.has(l.id)?' <span class="done" title="marked read">✓</span>':""}${l.id===cur?`<ol class="sideparts">${PARTS.map((p,i)=>`<li><a href="#/lesson/${l.id}#part-${i+1}">${i+1}. ${esc(p[1])}</a></li>`).join("")}<li><a href="#/lesson/${l.id}#part-10">10. Exam</a></li></ol>`:""}</li>`).join("")}</ol><p class="more"><a href="#/case">The case</a> · <a href="#/rules">Rules</a> · <a href="#/cards">Cards</a> · <a href="#/glossary">Glossary</a> · <a href="#/session">Session note</a></p>`; };
+    side.innerHTML = `<h3>Lessons</h3><ol>${LESSONS.map(l=>`<li class="${l.id===cur?"now":""}"><a href="#/lesson/${l.id}">${l.id}. ${esc(l.title)}</a>${done.has(l.id)?' <span class="done" title="marked read">✓</span>':""}${l.id===cur?`<ol class="sideparts">${PARTS.map((p,i)=>`<li><a href="#/lesson/${l.id}#part-${i+1}">${i+1}. ${esc(p[1])}</a></li>`).join("")}<li><a href="#/lesson/${l.id}#part-10">10. Exam</a></li></ol>`:""}</li>`).join("")}</ol><p class="more"><a href="#/leaders">For leaders</a> · <a href="#/case">The case</a> · <a href="#/rules">Rules</a> · <a href="#/cards">Cards</a> · <a href="#/glossary">Glossary</a> · <a href="#/session">Session note</a></p>`; };
 
   const route = () => {
     const h = location.hash.replace(/^#\/?/,""); const [path, frag] = h.split("#"); const seg = path.split("/");

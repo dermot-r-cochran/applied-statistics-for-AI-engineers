@@ -63,6 +63,10 @@ if (BOOK) {
     // the gentle track's plain-words page: present, substantial, and in words (no backtick mathematics)
     if (typeof l.gentle !== "string" || l.gentle.trim().length < 300) fail(`lesson ${l.id}: gentle page missing or too short`);
     else if (l.gentle.includes("`")) fail(`lesson ${l.id}: the gentle page is words, not notation`);
+    // the business question behind the engineering question: present, substantial, in words, and a question
+    if (typeof l.business !== "string" || l.business.trim().length < 150) fail(`lesson ${l.id}: business question missing or too short`);
+    else if (l.business.includes("`")) fail(`lesson ${l.id}: the business question is words, not notation`);
+    else if (!l.business.includes("?")) fail(`lesson ${l.id}: the business question does not ask one`);
     for (const [key, name] of PARTS) {
       if (key === "diagnostic") {
         if (!l.diagnostic || !l.diagnostic.q || !l.diagnostic.a) fail(`lesson ${l.id}: diagnostic needs q and a`);
