@@ -51,12 +51,14 @@ example is synthetic and says so, apart from one real companion dataset (see
 ## Two tracks
 
 The start page asks four short calibration questions and one about
-notation, and suggests a track. The **standard track** is each lesson's
-nine parts, expert to expert. The **gentle track** is the same nine
+notation, and suggests a track. **Straight in** is each lesson's
+nine parts, expert to expert. **Words first** is the same nine
 parts with a plain-words page in front of each lesson first: the question
 in everyday terms, the one idea, the worked example told in words with
 the same numbers, an everyday version of it, and a picture of it. Nothing
-is left out of the gentle track; it starts softer. The suggestion is only a suggestion, the track can be switched at
+is left out of the words-first track; it starts softer. (In the code the
+two are still `standard` and `gentle`, so a saved preference survives
+the naming.) The suggestion is only a suggestion, the track can be switched at
 the top of any lesson, and either can be chosen without answering.
 
 ## The lessons

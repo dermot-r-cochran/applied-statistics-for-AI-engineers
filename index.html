@@ -221,12 +221,18 @@ choosing, against real numbers rather than the lesson's own.
    at any lesson, whatever the questions said. Added 2026-09-19 at
    Dermot's direction: a lighter, gentler optional introduction track
    based on a few calibration questions at the start. */
+/* What the page calls the two tracks (Dermot, 2026-09-25, agreeing that
+   "standard" and "advanced" would misdescribe them: the tracks differ in
+   the on-ramp, not the depth). The keys stay `gentle` and `standard`, so a
+   saved preference survives the rename. */
+const TRACK_NAMES = { gentle: "words first", standard: "straight in" };
+
 const CALIBRATION = {
   intro: `Four short questions and one about you. They take about three minutes and are not an exam: nothing is scored for keeps and nothing is hidden behind them. They only decide which of two tracks to suggest.
 
-**Standard track.** Each lesson is its nine parts, expert to expert: the engineering question, the principle, the mathematics derived, the assumptions, a worked example with a live calculator, the common misreading, the application to the case, a diagnostic question and an exercise.
+**Straight in.** Each lesson is its nine parts, expert to expert: the engineering question, the principle, the mathematics derived, the assumptions, a worked example with a live calculator, the common misreading, the application to the case, a diagnostic question and an exercise.
 
-**Gentle track.** The same nine parts, but each lesson opens with a plain-words page first: what the question is in everyday terms, the one idea, the worked example told in words with the same numbers, an everyday version of it, and a picture of it. Then the nine parts, which say the same thing exactly. Nothing is left out of the gentle track; it just starts softer.
+**Words first.** The same nine parts, but each lesson opens with a plain-words page first: what the question is in everyday terms, the one idea, the worked example told in words with the same numbers, an everyday version of it, and a picture of it. Then the nine parts, which say the same thing exactly. Nothing is left out of the gentle track; it just starts softer.
 
 You can switch tracks at the top of any lesson.`,
   questions: [
@@ -243,12 +249,12 @@ You can switch tracks at the top of any lesson.`,
           o:["fine; I read that kind of thing daily","something I can follow, slowly","something I would rather have in words first"], gentleAt:2 },
   passAt: 3,
   verdict: {
-    gentle: `The suggestion is the **gentle track**: a plain-words page opens each lesson, then the nine parts. It is the same course; it starts softer. Switch at any lesson if it feels slow.`,
-    standard: `The suggestion is the **standard track**: straight to the nine parts. The plain-words pages are still there on the gentle track if a lesson ever lands awkwardly; switch at the top of any lesson.`
+    gentle: `The suggestion is **words first**: a plain-words page opens each lesson, then the nine parts. It is the same course; it starts softer. Switch at any lesson if it feels slow.`,
+    standard: `The suggestion is **straight in**: straight to the nine parts. The plain-words pages are still there on the words-first track if a lesson ever lands awkwardly; switch at the top of any lesson.`
   },
   figure:{ title:"Two tracks, one course",
-    caption:`Five questions choose a suggestion; either track then reads the same nine parts and exam. The gentle track puts a plain-words page with a picture of the worked example in front of each lesson, and the switch at the top of any lesson moves between the two.`,
-    spec:{type:"steps",rows:[{label:"start here",boxes:[{text:"five questions",sub:"about three minutes"},{text:"a suggestion",sub:"never a lock"}]},{label:"gentle track",boxes:[{text:"plain words first",sub:"idea, example, picture",cls:"ok"},{text:"the nine parts",sub:"the same, exactly"},{text:"the exam",sub:"four questions"}]},{label:"standard track",boxes:[{text:"the nine parts",sub:"expert to expert"},{text:"the exam",sub:"four questions"}]}]} }
+    caption:`Five questions choose a suggestion; either track then reads the same nine parts and exam. Words first puts a plain-words page with a picture of the worked example in front of each lesson; straight in does not; and the switch at the top of any lesson moves between the two.`,
+    spec:{type:"steps",rows:[{label:"start here",boxes:[{text:"five questions",sub:"about three minutes"},{text:"a suggestion",sub:"never a lock"}]},{label:"words first",boxes:[{text:"plain words first",sub:"idea, example, picture",cls:"ok"},{text:"the nine parts",sub:"the same, exactly"},{text:"the exam",sub:"four questions"}]},{label:"straight in",boxes:[{text:"the nine parts",sub:"expert to expert"},{text:"the exam",sub:"four questions"}]}]} }
 };
 
 const RULES = [
@@ -1434,7 +1440,8 @@ if (typeof document !== "undefined") (function page(){
   const examRecord = (id) => (store.get("exams",{})[id]) || {best:0,attempts:0};
   const passMark = (id) => Math.ceil((EXAMS[id]||[]).length*0.75);
   const track = () => store.get("track","standard");
-  const trackLine = (l) => `<div class="track">Track: <b>${track()==="gentle"?"gentle":"standard"}</b> · <a href="#" class="track-toggle">${track()==="gentle"?"switch this lesson to the standard track":"switch to the gentle track: a plain-words page first"}</a> · <a href="#/start">start page</a></div>`;
+  const trackName = () => TRACK_NAMES[track()] || track();
+  const trackLine = (l) => `<div class="track">Track: <b>${trackName()}</b> · <a href="#" class="track-toggle">${track()==="gentle"?"switch this lesson to straight in":"switch to words first: a plain-words page before the nine parts"}</a> · <a href="#/start">start page</a></div>`;
   const scorecard = () => { const rows=LESSONS.map(l=>({l,ex:EXAMS[l.id]||[],rec:examRecord(l.id)})); const taken=rows.filter(r=>r.rec.attempts);
     if(!taken.length) return `<div class="scorecard">No exams marked yet. Each lesson ends with four questions; your best score per lesson and the total appear here.</div>`;
     const got=taken.reduce((a,r)=>a+r.rec.best,0), of=taken.reduce((a,r)=>a+r.ex.length,0), passed=taken.filter(r=>r.rec.best>=passMark(r.l.id)).length;
@@ -1471,11 +1478,11 @@ if (typeof document !== "undefined") (function page(){
     start(){ const c=CALIBRATION, saved=store.get("calib",null);
       const qs = c.questions.map((x,i)=>`<li data-q="${i}"><div class="q">${inline(x.q)}</div>${x.o.map((o,j)=>`<label><input type="radio" name="q${i}" value="${j}" required>${inline(o)}</label>`).join("")}</li>`).join("");
       const sq = `<li data-q="self"><div class="q">${inline(c.self.q)}</div>${c.self.o.map((o,j)=>`<label><input type="radio" name="self" value="${j}" required>${inline(o)}</label>`).join("")}</li>`;
-      const prev = saved ? `<p class="mute">Last time: ${saved.score} of ${c.questions.length}${saved.wordsFirst?", and words first":""}; the track is set to <b>${track()}</b>. Answer again to reconsider, or just pick a track below.</p>` : "";
+      const prev = saved ? `<p class="mute">Last time: ${saved.score} of ${c.questions.length}${saved.wordsFirst?", and words first":""}; the track is set to <b>${trackName()}</b>. Answer again to reconsider, or just pick a track below.</p>` : "";
       return `<h2>Start here</h2>${md(c.intro)}${c.figure?figBox(c.figure.title,c.figure.spec,c.figure.caption):""}${prev}<form id="start-form" class="start"><ol>${qs}${sq}</ol><p><button type="submit">See the suggestion</button></p></form><div id="start-rec" class="rec" hidden></div>
-        <div class="rec"><b>Or choose now.</b><br><button type="button" class="track-btn" data-track="gentle">Take the gentle track</button><button type="button" class="track-btn" data-track="standard">Take the standard track</button><span class="mute">Either way, every lesson has a switch at the top.</span></div>`; },
+        <div class="rec"><b>Or choose now.</b><br><button type="button" class="track-btn" data-track="gentle">Words first</button><button type="button" class="track-btn" data-track="standard">Straight in</button><span class="mute">Either way, every lesson has a switch at the top.</span></div>`; },
     home(){ const done=doneSet();
-      return `<h2>${esc(SITE.tagline)}</h2>${md(SITE.intro)}${SITE.figure?figBox(SITE.figure.title,SITE.figure.spec,SITE.figure.caption):""}<p class="mute">${inline(SITE.howToRead)}</p><div class="track">Track: <b>${track()}</b> · <a href="#/start">start page: three minutes of calibration questions, and the two tracks</a></div><h3>The lessons</h3>${scorecard()}<ol class="roadmap">${LESSONS.map(l=>{ const r=examRecord(l.id), n=(EXAMS[l.id]||[]).length;
+      return `<h2>${esc(SITE.tagline)}</h2>${md(SITE.intro)}${SITE.figure?figBox(SITE.figure.title,SITE.figure.spec,SITE.figure.caption):""}<p class="mute">${inline(SITE.howToRead)}</p><div class="track">Track: <b>${trackName()}</b> · <a href="#/start">start page: three minutes of calibration questions, and the two tracks</a></div><h3>The lessons</h3>${scorecard()}<ol class="roadmap">${LESSONS.map(l=>{ const r=examRecord(l.id), n=(EXAMS[l.id]||[]).length;
         return `<li><span class="letter">${l.id}</span><span><a href="#/lesson/${l.id}">${esc(l.title)}</a><small>${esc(firstSentence(l.question))}</small></span><span class="done">${done.has(l.id)?"read ":""}<span class="exam-score${r.attempts&&r.best>=passMark(l.id)?" pass":""}">${r.attempts?`exam ${r.best}/${n}`:""}</span></span></li>`; }).join("")}</ol>`; },
     leaders(){ return `<h2>For leaders</h2><p>The fourteen questions behind the lessons, in the words a decision-maker asks them, one per lesson. Read down the page and it is the executive summary of the course: what each lesson lets a business decide, and what it stops a number from being taken to mean. Each answer is the lesson itself, which opens with the same question and then does the work.</p><ol class="leaders">${LESSONS.map(l=>`<li><b>${l.id}. ${esc(l.title)}</b><p>${inline(l.business||"")}</p><p class="mute"><a href="#/lesson/${l.id}">The lesson</a></p></li>`).join("")}</ol>`; },
     case(){ return `<h2>The case: ${esc(CASE.name)}</h2>${md(CASE.summary)}${CASE.figure?figBox(CASE.figure.title,CASE.figure.spec,CASE.figure.caption):""}${md(CASE.body)}`; },
@@ -1525,7 +1532,7 @@ if (typeof document !== "undefined") (function page(){
       const sp=sf.querySelector('input[name="self"]:checked'); const wordsFirst = !!sp && Number(sp.value)>=c.self.gentleAt;
       const gentle = score < c.passAt || wordsFirst; store.set("calib",{score,wordsFirst,when:Date.now()});
       const rec=document.getElementById("start-rec"); rec.hidden=false;
-      rec.innerHTML = `<p>${score} of ${c.questions.length}${wordsFirst?", and words first":""}.</p>${md(gentle?c.verdict.gentle:c.verdict.standard)}<button type="button" class="track-btn" data-track="${gentle?"gentle":"standard"}">Take the ${gentle?"gentle":"standard"} track</button><button type="button" class="track-btn" data-track="${gentle?"standard":"gentle"}">Take the ${gentle?"standard":"gentle"} track instead</button>`;
+      rec.innerHTML = `<p>${score} of ${c.questions.length}${wordsFirst?", and words first":""}.</p>${md(gentle?c.verdict.gentle:c.verdict.standard)}<button type="button" class="track-btn" data-track="${gentle?"gentle":"standard"}">${gentle?"Words first":"Straight in"}</button><button type="button" class="track-btn" data-track="${gentle?"standard":"gentle"}">Take the ${gentle?"standard":"gentle"} track instead</button>`;
       wireTrack(); rec.scrollIntoView(); });
     const wireTrack = () => main.querySelectorAll(".track-btn").forEach(b => b.addEventListener("click", () => { store.set("track", b.dataset.track); location.hash = "#/"; }));
     wireTrack();
