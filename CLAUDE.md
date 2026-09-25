@@ -89,6 +89,20 @@ hidden `a`), `exercise`. Prose uses the small markup the engine renders:
 blank line between paragraphs, `` `code` `` for mathematics, `**bold**`,
 `- ` lists, `| ` tables with the first row as header.
 
+**Every lesson also carries `business`: the business question behind the
+engineering question** (Dermot, 2026-09-25, answering a proposal of three
+shapes for a stakeholder layer with *yes, but have a business question or
+general context behind the engineering question*). One paragraph in a
+decision-maker's own words: the question they are really asking, the
+decision it serves, and what the lesson lets them decide or stops a number
+from being taken to mean. It renders first inside part 1, above the
+engineering question, as *The business question*, and the `#/leaders` page
+(*For leaders*) gathers the fourteen in order as the course's executive
+summary. Words, not notation: the check requires it substantial,
+backtick-free and containing a question mark. It is context for the
+engineering question, not a tenth part, so the nine-part format and the
+lessons page's first-sentence summary are unchanged.
+
 **Every exercise has a way through without an evaluation of your own.**
 Each one asks the reader to work on their own harness first, which is the
 point, but every reader between jobs, before a harness, or on a train
