@@ -150,6 +150,17 @@ require and no claims beyond what they support. Every lesson points at
 at least one other lesson (the check requires it), because the course is
 a web, not a list.
 
+**Advice, not orders** (Dermot, 2026-09-28: *don't tell the reader or student
+what to do, but offer advice, wisdom and general principles*; and, of the
+exercises, *I dislike the "mindless robot" style of do-this do-that*). The
+course offers a thing worth trying and why, the principle behind it, and the
+question worth sitting with; it does not issue instructions. An exercise
+names material and what becomes visible on it; an application states what
+Proofsheet's report carries and why, not what the reader must do. Where an
+instruction is unavoidable, *you may find it helpful to* is its shape (his
+wording for the Cards page, the same day). All seventeen exercises and the
+three applications that gave orders were rewritten on this rule that day.
+
 ## The figures
 
 Added 2026-09-21 at Dermot's direction (*make the tutorial more visual
