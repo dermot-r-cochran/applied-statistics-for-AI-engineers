@@ -63,9 +63,9 @@ the top of any lesson, and either can be chosen without answering.
 
 ## The lessons
 
-Sixteen, in the same nine parts each: the engineering question (with
+Seventeen, in the same nine parts each: the engineering question (with
 the **business question** behind it first, in a decision-maker's words;
-the **For leaders** page gathers the sixteen as the course's executive
+the **For leaders** page gathers the seventeen as the course's executive
 summary), the
 statistical principle, the essential mathematics, the assumptions, a
 worked synthetic example with a live calculator seeded to it and a figure that
@@ -93,6 +93,7 @@ keeps your best score per lesson and a scorecard for the course.
 | N | Drift and monitoring | The weekly rate fell; what must be established before anyone touches the model? |
 | O | Negative tests and counter-examples | Forty blank frames refused; how much does that prove, and what does one counter-example do? |
 | P | Outliers and robustness | One sheet took four hours and the mean doubled; did the candidate get slower? |
+| Q | The judge as an instrument | A second model scores every row and the expert decides some in passing; what is each worth, and how do they combine? |
 
 Every lesson carries a **figure**: the worked example as a picture,
 drawn by the page from the calculator's own numbers and redrawn whenever
@@ -104,7 +105,7 @@ reliability diagram: each is inline SVG with a caption, in words on the
 gentle track and in the lesson's notation on the standard one, and the
 check draws every one of them in CI. The home page carries one of its
 own, which is the only figure here not about a statistical object: it
-contrasts a correctness judgement with the four steps an evaluation
+contrasts a test verdict with the four steps an evaluation
 takes instead.
 
 Alongside them: the **case** the examples follow, ten **core reasoning
