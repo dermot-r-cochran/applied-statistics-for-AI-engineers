@@ -153,8 +153,13 @@ a web, not a list.
 **Advice, not orders** (Dermot, 2026-09-28: *don't tell the reader or student
 what to do, but offer advice, wisdom and general principles*; and, of the
 exercises, *I dislike the "mindless robot" style of do-this do-that*). The
-course offers a thing worth trying and why, the principle behind it, and the
-question worth sitting with; it does not issue instructions. An exercise
+course offers a thing worth trying and why, and the principle behind it; it
+does not issue instructions, and it does not pose questions for their own
+sake either (his words, same day: *deep learning and reflection need a
+softer tone but not Socratic questions for the sake of questions*). A
+question earns its place only when the material genuinely leaves one open.
+The imperative is for urgency, not importance: it belongs to a time-bound
+decision, never to a point the author wants stressed. An exercise
 names material and what becomes visible on it; an application states what
 Proofsheet's report carries and why, not what the reader must do. Where an
 instruction is unavoidable, *you may find it helpful to* is its shape (his
