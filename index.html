@@ -1246,6 +1246,15 @@ const EXAMS = {
 };
 
 const CARDS = [
+  { id:"choosing", title:"Choosing a metric: six questions, in order", lesson:"D", lines:[
+    "**The decision first.** What will be done differently if this number moves, and what does each kind of error cost, per class? Write that down before the data (Lesson D). The metric that answers that question is the primary one; every other metric in the toolbag answers a different question and is context, not a rival",
+    "**The unit.** Is it computed on the thing that is actually independent, row, document or project, and does the decision live at that level? A row metric for a document decision, or the reverse, answers a question nobody asked (Lessons J and H)",
+    "**The base rate.** Does it move when the class mix moves and the system does not? Accuracy and micro averages do. If so, report per class and cost-weighted, with the mix stated and the target weights beside it (Lessons H, I and N)",
+    "**The precision it can have.** On the rows that carry it, is its standard error small against the minimum meaningful effect, or is it precise about the wrong thing? A per-class figure from thirty positives is a sketch, and a headline from five thousand rows can be exactly wrong (Lessons A, C and E)",
+    "**Its honesty as a score.** Proper, so that hedging cannot improve it; calibrated, if anyone will read it as a probability; and if it is a proxy, a similarity, a judge model's verdict, validated against the outcome it stands in for, on this task's rows (Lessons M, C and Q)",
+    "**Its life as a target.** What could a system do to raise it without getting better, and which second metric would catch that? Name the pair: a recall needs its negative controls, a mean needs its median, a judge's score needs the expert interleave (Lessons O, P and Q)",
+    "**The line in the report.** The metric, the question it answers, its unit, its interval, and the metrics it was chosen over and why. A number without its question is a coordinate without a scale (Lesson L)"
+  ] },
   { id:"negatives", title:"Negative control set", lesson:"O", lines:[
     "The kinds of case the system must refuse: empty, malformed, duplicate, out of domain, looks-positive-but-is-not",
     "Count tried per kind, and count that got through; the definition of \"got through\" written before the run",
@@ -1360,6 +1369,7 @@ const GLOSSARY = [
   ["Judge (model as)","A second model asked to score the system's outputs. A measuring instrument, never ground truth: validated against the expert on a random interleave, corrected by its measured bias, versioned like a scorer. Lesson Q."],
   ["Random interleave","A few per cent of live rows sent to the expert whatever the judge said, chosen before the judge scores them. The only labels that measure the stream rather than the judge's doubts. Lesson Q."],
   ["Prediction-powered inference","An estimate from model-scored rows corrected by the model's bias measured on a small expert-labelled sample: the judge's number on everything, minus its measured generosity, with an interval that combines both. Lesson Q."],
+  ["Meta-metric","A property of a metric rather than of the system: whether it moves with the base rate, is computed on the independent unit, can be precise enough for the decision, is a proper and calibrated score, and can be gamed. The Choosing a metric card asks them in order, and Lesson D says whose decision comes first."],
 ];
 
 const READING = [
