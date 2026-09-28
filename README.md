@@ -109,8 +109,8 @@ contrasts a test verdict with the four steps an evaluation
 takes instead.
 
 Alongside them: the **case** the examples follow, ten **core reasoning
-rules**, nine **reference cards** (choosing a metric in six questions,
-the negative control set, the reference-set manifest, the
+rules**, ten **reference cards** (designing a metric as an instrument,
+choosing a metric in six questions, the negative control set, the reference-set manifest, the
 minimum-meaningful-effect statement, the comparability checklist, the
 confidence semantics card, the one-page report, the diagnosis record,
 the review checklist), a
