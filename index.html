@@ -153,10 +153,10 @@ The examples follow one fictional system throughout, described under **The case*
 
 Sixteen lessons, each in the same nine parts: the engineering question, the principle, the mathematics, the assumptions, a worked synthetic example with a live calculator, the common misreading, the application to the case, one diagnostic question and one exercise, then a four-question exam marked on the page. Read them in order the first time; each leans on the last. Your best exam score per lesson and a scorecard for the course sit below; the **Session note** page builds the five-line closing note the lessons ask for.`,
   howToRead: `Each lesson's calculator is seeded with the worked example, so the numbers in the text are the numbers on screen; change an input and the text's claim can be re-tested. Progress is kept in this browser only.`,
-  figure:{ title:"Where a correctness test stops",
-    caption:`Ordinary software can often end at a correctness judgement against a written specification. An evaluation cannot: the score is a measurement taken on finite data, so the work carries on into how much data produced it, what ordinary variation could account for, and what decision the evidence will carry. The nine parts of every lesson below are that second row, done properly.`,
+  figure:{ title:"Where a test verdict can stop",
+    caption:`The top row compresses a whole test strategy into the one thing every one of its verdicts shares: a comparison of observed behaviour with an expectation, whether that expectation is a written specification, a story's acceptance criteria or a tester's judgement, and however often it changes. It is not a claim that ordinary testing is simple or that requirements stand still. What can end there is the verdict. An evaluation's cannot: the score is a measurement taken on finite data, so the work carries on into how much data produced it, what ordinary variation could account for, and what decision the evidence will carry. The nine parts of every lesson below are that second row, done properly.`,
     spec:{type:"steps",rows:[
-      {label:"ordinary software",boxes:[{text:"correct / incorrect",sub:"against a written specification",cls:"f0"}]},
+      {label:"ordinary software",boxes:[{text:"pass / fail",sub:"behaviour against an expectation",cls:"f0"}]},
       {label:"AI engineering",boxes:[{text:"measure",sub:"on finite data",cls:"f1"},{text:"evaluate",sub:"how much data",cls:"f0"},{text:"infer",sub:"noise, or real",cls:"f2"},{text:"decide",sub:"and say why",cls:"ok"}]}]} }
 };
 
