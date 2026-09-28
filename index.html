@@ -1246,6 +1246,15 @@ const EXAMS = {
 };
 
 const CARDS = [
+  { id:"designing", title:"Designing a metric: an instrument, not a recipe", lesson:"Q", lines:[
+    "**What it is made of.** Nearly every named metric is one construction: a comparison of each row's output with its reference, a rule for aggregating those comparisons, and a normalisation onto a familiar scale. Write the three parts down for the new one; the ingredients are what the task supplies, and the recipe mostly writes itself",
+    "**Start from the cost.** If one row's error has a cost the decision can state, the metric is that cost averaged over the rows and its scale is already operational (Lesson D). If it cannot be stated, say what the metric is a proxy for, because a proxy is what it is",
+    "**Validity.** Does it measure the thing, or a stand-in for the thing? Validate it against the outcome it claims to track, on a sample of this task's rows, before it is allowed to stand in for it (Lessons C and Q). This is where most new metrics fail, and the study that tests it is called meta-evaluation",
+    "**Reliability.** Does it give the same answer twice: on a repeat run, between two raters, between two draws of the set? Cohen's κ and the standard error at an affordable size are the tests (Lessons K and A)",
+    "**Properness.** Can a system raise it by hedging, padding or gaming without getting better? Proper scoring rules cannot be; most bespoke metrics can, and the fix is a paired counter-metric named beside it (Lessons M and O)",
+    "**Unit and aggregation.** Define it at the row, the document and the project, and say which level the decision lives at; a metric that is silent about its unit will be computed at the wrong one (Lessons H and J)",
+    "**Discrimination and tractability.** It should separate systems already known to differ and move the right way when quality moves; and it must take an interval, which the bootstrap gives any metric, so the formula is never the barrier (Lesson G). The barrier is validation: an afternoon to define, a study to trust"
+  ] },
   { id:"choosing", title:"Choosing a metric: six questions, in order", lesson:"D", lines:[
     "**The decision first.** What will be done differently if this number moves, and what does each kind of error cost, per class? Write that down before the data (Lesson D). The metric that answers that question is the primary one; every other metric in the toolbag answers a different question and is context, not a rival",
     "**The unit.** Is it computed on the thing that is actually independent, row, document or project, and does the decision live at that level? A row metric for a document decision, or the reverse, answers a question nobody asked (Lessons J and H)",
@@ -1370,6 +1379,7 @@ const GLOSSARY = [
   ["Random interleave","A few per cent of live rows sent to the expert whatever the judge said, chosen before the judge scores them. The only labels that measure the stream rather than the judge's doubts. Lesson Q."],
   ["Prediction-powered inference","An estimate from model-scored rows corrected by the model's bias measured on a small expert-labelled sample: the judge's number on everything, minus its measured generosity, with an interval that combines both. Lesson Q."],
   ["Meta-metric","A property of a metric rather than of the system: whether it moves with the base rate, is computed on the independent unit, can be precise enough for the decision, is a proper and calibrated score, and can be gamed. The Choosing a metric card asks them in order, and Lesson D says whose decision comes first."],
+  ["Meta-evaluation","The study that validates a metric: how well it agrees with the outcome or judgement it stands in for, on this task's rows, and where the agreement breaks. A new metric costs an afternoon to define and a meta-evaluation to trust. Lesson Q, and the Designing a metric card."],
 ];
 
 const READING = [
