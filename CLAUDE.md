@@ -5,11 +5,12 @@ code in this repository.
 
 ## What this is
 
-A one-file course in applied statistics for AI evaluation: sixteen
-lessons (A–P) on sampling variation, intervals, classification-metric
+A one-file course in applied statistics for AI evaluation: seventeen
+lessons (A–Q) on sampling variation, intervals, classification-metric
 uncertainty, effect sizes, power, paired comparison, resampling,
 aggregation, stratification, clustering, test-set governance, decision
-reporting, calibration, drift, negative tests and outliers. Open `index.html` in any browser: no
+reporting, calibration, drift, negative tests, outliers, and the model
+judge as a measuring instrument validated on live-usage labels. Open `index.html` in any browser: no
 server, no build, no dependencies, no network. Each lesson has the same
 nine parts, a live calculator seeded with its worked example, and a
 figure drawn from that calculator, so the numbers in the text, on screen
@@ -27,7 +28,16 @@ prompt" and is the brief: learner profile, primary goal, teaching approach,
 core reasoning rules, method-selection guidance, progression A–L, the
 nine-part lesson format, the five-line session note. Lessons M and N were
 added for calibration and drift, which the spec's goals name and its
-progression did not reach.
+progression did not reach. Lesson Q was added on 2026-09-28 at Dermot's
+question of how statistical evaluation compares with, overlaps and
+complements a model used as a judge when an expert cannot review every
+decision; its answer is that the judge is an instrument, the expert's
+live decisions are the labels, a random interleave keeps them honest,
+and the corrected estimate (prediction-powered inference) is what gets
+quoted. **Reference Set 1 has one truth across the lessons** (settled
+2026-09-28): 80 keepers (16%), 10 Barred frames (2%), the release's
+four-class verdict accuracy 0.84 and the candidate's 0.81 on 500 frames,
+production volume 2,000 frames a month. A new example keeps to it.
 
 ## The prime directive
 
