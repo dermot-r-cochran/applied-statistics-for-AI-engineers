@@ -300,3 +300,29 @@ lesson format is his call.
 
 Engine MIT (`LICENSE`); the lessons, case, rules, cards and glossary
 CC BY 4.0 (`CONTENT-LICENSE.md`).
+
+## Related repositories
+
+The map of Dermot's public repositories and what crosses between them is
+`RELATED-REPOSITORIES.md` in `dermot-r-cochran/star-rangers`; this section
+names only this repository's own neighbours (added 2026-09-29 at his
+direction, after a session had to discover a sibling by listing his
+repositories).
+
+- **`dermot-r-cochran/dermot-cochran-photography`** is where the two real
+  datasets come from, as *The case* above records: Reference Set 2 is real
+  frames with real EXIF and a real kept-or-not ground truth, and Reference
+  Set 3 is that repository's `subjects:` tags crossed with two rules over
+  its `alt` text, rebuilt by `tools/build-reference-set-3.js` from a sibling
+  checkout. The alt text never ships. Because `tools/check.js` pins the
+  figures the lessons quote to the committed csv files, a rebuild after the
+  portfolio changes is a deliberate act that may move numbers in the prose,
+  never a side effect. Proofsheet itself is synthetic and is not the
+  portfolio.
+- **`dermot-r-cochran/four-islands-quest`** is where the prime directive above
+  was written; this repository inherits it whole.
+- **`dermot-r-cochran/photo-safari-tutorial-game`** and
+  **`dermot-r-cochran/photo-safari-range`** are the account's other one-file
+  pages. *Advice, not orders* was given here first, on 2026-09-28, and
+  extended to both games the same day; the three read as one voice on that
+  rule. No code crosses between them and this course.
