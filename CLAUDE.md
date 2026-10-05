@@ -301,6 +301,32 @@ lesson format is his call.
 Engine MIT (`LICENSE`); the lessons, case, rules, cards and glossary
 CC BY 4.0 (`CONTENT-LICENSE.md`).
 
+## Work that needs the desktop
+
+A Claude Code cloud session has this repository in a fresh container and
+nothing else of Dermot's. It cannot read `F:\` (the working folder and its
+TODO lists), the local memory store, or a key that lives only on his Windows
+machine, and the GitHub path it pushes through cannot publish tags. **When a
+piece of work stops at one of those limits, the step that is left gets an
+issue here labelled `needs-desktop`**, saying what is owed, the exact command
+or file where it is known, and anything it waits on. A sentence in a pull
+request body or in a session's closing report is not a record, because
+nothing reads those again (added 2026-10-05 at Dermot's direction, after a
+release tag in `star-rangers` sat unpushed for three days with a sentence in
+a merged pull request as the only note that it was owed).
+
+A desktop session lists the whole queue, across every repository, with
+`gh search issues --owner dermot-r-cochran --label needs-desktop --state open`.
+It checks the queue when it starts work, does what it can, and closes each
+issue with a line saying what was done.
+
+Two limits on what goes in. Issues here are publicly readable, so nothing
+personal goes in one. And a decision that is Dermot's is not a desktop step:
+it stays in the pull request that names it and does not take this label.
+
+No case has come up in this repository yet. The first one that does is
+named here, so the next session knows it on sight.
+
 ## Related repositories
 
 The map of Dermot's public repositories and what crosses between them is
