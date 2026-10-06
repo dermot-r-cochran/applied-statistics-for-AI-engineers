@@ -111,7 +111,7 @@ decision-maker's own words: the question they are really asking, the
 decision it serves, and what the lesson lets them decide or stops a number
 from being taken to mean. It renders first inside part 1, above the
 engineering question, as *The business question*, and the `#/leaders` page
-(*For leaders*) gathers the fourteen in order as the course's executive
+(*For leaders*) gathers the seventeen in order as the course's executive
 summary. Words, not notation: the check requires it substantial,
 backtick-free and containing a question mark. It is context for the
 engineering question, not a tenth part, so the nine-part format and the
@@ -120,11 +120,11 @@ lessons page's first-sentence summary are unchanged.
 **Every exercise has a way through without an evaluation of your own.**
 Each one asks the reader to work on their own harness first, which is the
 point, but every reader between jobs, before a harness, or on a train
-would otherwise do none of the fourteen. So each exercise carries a
+would otherwise do none of the seventeen. So each exercise carries a
 second paragraph opening `**No evaluation of your own?**` that puts the
 same work on one of the two real companion datasets, or on the lesson's
-own published numbers where neither can serve. Lessons C, F, H and M rest
-on **Reference Set 3**, which has a predictor; the other nine on
+own published numbers where neither can serve. Lessons C, F, H, M, O and Q
+rest on **Reference Set 3**, which has a predictor; the other ten on
 **Reference Set 2**; Lesson L on the lesson's own numbers, since no
 dataset here carries a release decision. Each also ends with how long it takes, in
 italics, because a one-paragraph task and an afternoon's task otherwise

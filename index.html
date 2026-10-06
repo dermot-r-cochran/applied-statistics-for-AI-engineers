@@ -477,7 +477,7 @@ The photographer reviews about 2,000 frames a month and spends about half a minu
 
 **The one idea.** An evaluation that would miss a real change most of the time cannot clear a candidate by not finding one. The chance that an evaluation notices a change of a given size is its **power**. Low power turns "not significant" into "did not look hard enough".
 
-**The example in words.** With 500 frames a side, a real three-point drop is caught only about as often as not: roughly a coin toss. To catch it reliably, say nine times in ten, takes several times as many frames. The lesson computes the number.
+**The example in words.** With 500 frames a side, a real three-point drop is caught only about one time in four; three times in four it slips through. Catching it four times in five takes about five times as many frames, 2,517 a side.
 
 **An everyday version.** A thirty-second search of the garden that finds no keys does not mean the keys are not in the garden. Before believing the result, ask how thorough the search was.
 
@@ -783,7 +783,7 @@ The cluster bootstrap (Lesson G) sidesteps the formula: resample outings, keep t
 
 **The one idea.** Two numbers from two different sets are not comparable, however similar the sets' names. **Governance** means the set has a version, a comparison is made on one frozen version, and every change to a label is recorded with a reason and a date.
 
-**The example in words.** The sixty new frames may be harder than the old ones; the changed label flips one frame for both runs. Either could explain part of the two-point gap, and nothing in the two numbers says which. Rerun both versions on the same frozen set and the question answers itself.
+**The example in words.** The sixty new frames may be harder than the old ones; the changed label flips one frame for both runs. Either could explain part of the two-point gap, and nothing in the two numbers says which. Rerunning both versions on the same frozen set answers the question by itself.
 
 **An everyday version.** Two exam results cannot be compared if the paper changed between them. First find out what changed; then compare the questions both papers shared.
 
@@ -880,7 +880,7 @@ Had the sign been the other way — an improvement of 0.030 with the same standa
 
 **The one idea.** Only if the reviewer is **calibrated**: group its verdicts by the confidence it stated and count how often each group was right. If the frames it called 0.9 are right 70% of the time, 0.9 is a label, not a probability. And when several component scores combine, the product, the mean and the minimum are three different claims about the whole.
 
-**The example in words.** Take every verdict the reviewer marked between 0.85 and 0.95 and check them against the photographer. If about nine in ten are right, the threshold can be trusted; if fewer, the auto-accept rule needs a higher bar or a corrected score. For the combined confidence: a product says every component must be right, a minimum says the weakest link decides, a mean says they trade off. Pick the one that matches what "the whole verdict is right" means.
+**The example in words.** The test is every verdict the reviewer marked between 0.85 and 0.95, checked against the photographer. If about nine in ten are right, the threshold can be trusted; if fewer, the auto-accept rule needs a higher bar or a corrected score. For the combined confidence: a product says every component must be right, a minimum says the weakest link decides, a mean says they trade off. The right one is whichever matches what "the whole verdict is right" means.
 
 **An everyday version.** A forecaster who says "90% chance of rain" is honest if, over all the days they said it, it rained on about nine in ten. If it rained on six in ten, the number was a mood, not a probability.
 
@@ -954,7 +954,7 @@ Prefer keeping the vector of scores and learning a calibrated combiner on held-o
 
 **The one idea.** The system is the same; the world it sees is not. A new camera, a month of macro, a photographer in a mood: each changes what comes in, and a reviewer built on last year's frames answers today's frames differently. That is **drift**, and it comes in kinds: the inputs changed, the truth changed, or the link between them changed.
 
-**The example in words.** Compare this month's frames to the reference set: the light, the subjects, the kinds of shooting. If the mix has moved, the reported rate should move with it and says nothing about the reviewer. Where truth arrives late, keep scoring a small labelled sample every week; that line, not the raw rate, says whether the reviewer still agrees with the photographer.
+**The example in words.** The first comparison worth making is this month's frames against the reference set: the light, the subjects, the kinds of shooting. If the mix has moved, the reported rate should move with it and says nothing about the reviewer. Where truth arrives late, a small labelled sample scored every week is what keeps the question answerable; that line, not the raw rate, says whether the reviewer still agrees with the photographer.
 
 **An everyday version.** A shop's takings fell this month. Before blaming the staff, check whether the street was closed for roadworks: same shop, different passers-by.
 

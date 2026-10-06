@@ -225,7 +225,7 @@ if (BOOK) {
 // figures quoted are a confusion matrix and a paired table, not just counts.
 {
   const csv3 = path.join(root, "data", "reference-set-3.csv");
-  if (!fs.existsSync(csv3)) fail("data/reference-set-3.csv is missing, and the case page and four exercises quote it");
+  if (!fs.existsSync(csv3)) fail("data/reference-set-3.csv is missing, and the case page and six exercises quote it");
   else {
     const split = (line) => { // the album column contains commas, so fields may be quoted
       const out = []; let cur = "", q = false;
@@ -276,6 +276,34 @@ if (BOOK) {
       if (got === null || Math.abs(got - want) > 0.0005) fail(`the course says Reference Set 3's ${what} is ${want}; the csv gives ${got === null ? "an empty bin" : got.toFixed(4)}`);
     });
   }
+}
+
+// ---- plain words on the gentle pages ---------------------------------
+// The gentle pages tell the worked example in words, and a number in words is
+// still a number. These are the ones a reader is most likely to carry away,
+// pinned like Lesson P's tail facts: each phrase must be on its lesson's
+// words-first page, and the value it stands for must sit within a tolerance of
+// what that lesson's calculator gives at its defaults. Deliberately a short
+// list, not a sweep of every digit, because words round on purpose.
+if (BOOK) {
+  const { LESSONS, S } = BOOK;
+  const at = (id) => { const l = LESSONS.find(x => x.id === id); const c = l && l.calc;
+    return c ? c.compute(Object.fromEntries(c.inputs.map(x => [x[0], x[2]]))) : null; };
+  const words = [
+    // lesson, phrase, what it stands for, the value it means, tolerance, the calculator's figure
+    ["A", "one time in five", "the chance of a gap that big from an unchanged system", 0.2, 0.03, (r) => 2 * (1 - S.Phi(r.z))],
+    ["E", "one time in four", "the power at 500 frames a side", 0.25, 0.03, (r) => r.power],
+    ["O", "seven per cent", "the ceiling after forty clean tries", 0.07, 0.005, (r) => r.upper],
+    ["P", "nine minutes and fifty-four seconds", "the mean with the outlier in, in minutes", 9 + 54 / 60, 0.5 / 60, (r) => r.meanWith],
+    ["Q", "about 81 in 100", "the corrected figure", 0.81, 0.005, (r) => r.corrected],
+  ];
+  words.forEach(([id, phrase, what, want, tol, of]) => {
+    const l = LESSONS.find(x => x.id === id), r = at(id);
+    if (!l || !r) { fail(`Lesson ${id}'s words-first page is pinned here, and the lesson or its calculator is missing`); return; }
+    if (!String(l.gentle).includes(phrase)) { fail(`Lesson ${id}'s words-first page no longer says "${phrase}" for ${what}; update the pin with the prose`); return; }
+    const got = of(r);
+    if (typeof got !== "number" || Math.abs(got - want) > tol) fail(`Lesson ${id}'s words-first page says "${phrase}" for ${what}; the calculator gives ${typeof got === "number" ? got.toFixed(4) : got}`);
+  });
 }
 
 // ---- the page is one file with no network --------------------------
