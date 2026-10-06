@@ -45,7 +45,7 @@ or a model acting as judge is a measurement with its own error, Lessons K
 and M), and the lessons say where. Foundations are
 reactivated rather than taught from zero; every formula is derived far
 enough to be re-derived; every assumption is stated; every worked
-example is synthetic and says so, apart from one real companion dataset (see
+example is synthetic and says so, apart from two real companion datasets (see
 **The case**, below).
 
 ## Two tracks
@@ -137,12 +137,13 @@ disagreeing editors need it. The case is described in full on the site's
 
 **Reference Set 2**, added 21 September 2026, is real: 12,713 frames from the author's own outings, with real exposure data and a real sharpness score, scored against which frames he actually kept (41 of them, 0.32%). There is still no reviewer — nothing scored these frames, real or fictional — so it is ground truth without a subject, offered for a reader's own arithmetic rather than used in any lesson's worked example. `data/reference-set-2.csv` has every row; the photographs themselves are not in the repository, only their rows, and the kept ones are on the author's site.
 
+**Reference Set 3**, added 22 September 2026, supplies the half Reference Set 2 lacks: a predictor. The author's own subject tags on 179 photographs, crossed with a 34-label vocabulary, give 6,086 (photo, label) pairs, 398 of which carry the subject; two deliberately crude rules read each photograph's alt text and guess. So it has real labels and a real system output, and the exercises of Lessons C, F, H, M, O and Q fall back to it. `data/reference-set-3.csv` holds the pairs, the verdict, both rules' guesses and a graded score; the alt text itself is not in the repository.
+
 ## Repository
 
 - `index.html` — the whole site: a WORLD DATA section holding the
   lessons, case, rules, cards and glossary as plain literals, and an
   ENGINE section that renders them and runs the calculators.
-- `data/reference-set-2.csv` — Reference Set 2 (see **The case**): real, not loaded by the page, a companion file for a reader's own computation.
 - `data/reference-set-2.csv`, `data/reference-set-3.csv` — the two real
   companion datasets the exercises fall back to, both described on the
   site's **The case** page. Neither is loaded by the page, which keeps the
