@@ -155,9 +155,38 @@ disagreeing editors need it. The case is described in full on the site's
   draws from its calculator's defaults with a caption in words, that cards and
   glossary entries point at lessons, and that the page is one file with
   no network. Run it with `node tools/check.js`; it installs nothing.
-- `.github/workflows/ci.yml` runs the check on every push and pull
+- `tools/check-docs.js` — the documentation gate beside it: every
+  relative link in a Markdown file resolves, no Markdown file has more
+  than one front-matter block, and every count this README states (the
+  lessons and their table, the rules, the cards, the exam and calibration
+  lengths, the two reference sets' sizes) matches the book and the csv
+  files. Run it with `node tools/check-docs.js`.
+- `.github/workflows/ci.yml` runs both checks on every push and pull
   request; `pages.yml` serves `index.html` from GitHub Pages on every
   push to `main`.
+
+What this README claims, and what proves it (a claim names its check or
+says it has none):
+
+- Nine parts in every lesson, a business question, a words-first page, a
+  figure drawn from the calculator's defaults, an exam of at least four
+  questions with a reason for every answer, every lesson pointing at
+  another — `tools/check.js`, the *lessons* and *exams* sections.
+- Every calculator reproduces the numbers its worked example quotes —
+  `tools/check.js`, *calculator reproduces the worked example*.
+- Every exercise offers a way through without an evaluation of your own,
+  and the Reference Set 2 and 3 figures the exercises and the case quote
+  match the csv files — `tools/check.js`, *exercises* and *Reference Set 3*.
+- Ten rules, cards and glossary entries that point at lessons, a reading
+  list that points at real lessons — `tools/check.js`, *rules, cards,
+  glossary, session*.
+- One file, no network, no replaced name — `tools/check.js`, its last two
+  sections, and the *one file* step of `.github/workflows/ci.yml`.
+- The counts and the lesson table on this page — `tools/check-docs.js`.
+- Progress, best scores, the scorecard and the chosen track kept in the
+  browser's localStorage, switching track at the top of a lesson, and a
+  figure redrawing when a calculator input changes — no test yet: the check loads the script without a DOM and cannot see
+  browser behaviour.
 
 The rules are the ones the author's other one-file tutorial repositories
 follow: no dependencies, no build, no network, one reviewable file, never

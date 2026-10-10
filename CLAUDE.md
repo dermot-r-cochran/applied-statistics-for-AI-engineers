@@ -268,7 +268,8 @@ Append to `LESSONS` with the next letter, all nine parts, a `gentle`
 page, a calculator with `expect` values that the prose quotes, and a
 `figure` drawn from that calculator. Add glossary entries that name
 the lesson and, if it introduces a template, a card that points at it.
-Update the table in `README.md`. Then `node tools/check.js`.
+Update the table in `README.md` and the count of lessons it states. Then
+`node tools/check.js` and `node tools/check-docs.js`.
 
 `EXAMS[id]` is the lesson's exam (added 2026-09-14 at Dermot's direction:
 *add an exam and score card at the end of each lesson*): four or more
@@ -292,7 +293,13 @@ it fully, and never add a source you have not verified exists as cited.
 
 `.github/workflows/pages.yml` serves `index.html` from GitHub Pages on
 every push to `main`; CI (`ci.yml`) runs the check on every push and pull
-request and installs nothing. Content at Dermot's direction opens a pull
+request and installs nothing. Since 10 October 2026 it also runs
+`tools/check-docs.js`, which pins the README's counts and lesson table to
+the book and the csv files, resolves every relative link in the Markdown
+and refuses a second front-matter block; the README names, for each claim
+it makes, the check that proves it or says there is none (the README-proof
+convention, Dermot's decision of that day across his repositories).
+Content at Dermot's direction opens a pull
 request and merges on green; a change to the case, the rules or the
 lesson format is his call.
 
