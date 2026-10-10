@@ -19,6 +19,9 @@ jobs:
       - name: Every lesson has its nine parts and every calculator reproduces its worked example
         run: node tools/check.js
 
+      - name: Every relative link resolves, one front-matter block at most, and the README's counts match the book
+        run: node tools/check-docs.js
+
       - name: The page is one file with its two sections
         run: |
           grep -q "WORLD DATA" index.html
