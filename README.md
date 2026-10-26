@@ -135,7 +135,7 @@ AI reader of short-story drafts, appears where text similarity and
 disagreeing editors need it. The case is described in full on the site's
 **The case** page.
 
-**Reference Set 2**, added 21 September 2026, is real: 12,713 frames from the author's own outings, with real exposure data and a real sharpness score, scored against which frames he actually kept (41 of them, 0.32%). There is still no reviewer — nothing scored these frames, real or fictional — so it is ground truth without a subject, offered for a reader's own arithmetic rather than used in any lesson's worked example. `data/reference-set-2.csv` has every row; the photographs themselves are not in the repository, only their rows, and the kept ones are on the author's site.
+**Reference Set 2**, added 21 September 2026, is real: 12,713 frames from the author's own outings, with real exposure data and a real sharpness score, scored against which frames he actually kept (41 of them, 0.32%). There is still no reviewer — nothing scored these frames, real or fictional — so it is ground truth without a subject, offered for a reader's own arithmetic rather than used in any lesson's worked example. `data/reference-set-2.csv` has every row; the photographs themselves are not in the repository, only their rows, and the kept ones are on the author's site. Since 26 October 2026 one model does score them, outside the lessons: the keeper model in `examples/`, a delegate model a language model built and trained on these labels, with its results read on its own page.
 
 **Reference Set 3**, added 22 September 2026, supplies the half Reference Set 2 lacks: a predictor. The author's own subject tags on 179 photographs, crossed with a 34-label vocabulary, give 6,086 (photo, label) pairs, 398 of which carry the subject; two deliberately crude rules read each photograph's alt text and guess. So it has real labels and a real system output, and the exercises of Lessons C, F, H, M, O and Q fall back to it. `data/reference-set-3.csv` holds the pairs, the verdict, both rules' guesses and a graded score; the alt text itself is not in the repository.
 
@@ -149,6 +149,11 @@ disagreeing editors need it. The case is described in full on the site's
   site's **The case** page. Neither is loaded by the page, which keeps the
   no-network rule. The second is rebuilt by `tools/build-reference-set-3.js`
   from a sibling photography checkout — a local tool CI never runs.
+- `examples/keeper-model.js` and `examples/keeper-model.md` — a worked
+  delegate model: a small logistic regression on Reference Set 2, built
+  and trained by a language model on the photographer's own decisions,
+  with its calibration and shortlist results read honestly. Run it with
+  `node examples/keeper-model.js`; it installs nothing.
 - `tools/check.js` — the CI gate. It loads the script without a DOM and
   checks that every lesson has its nine parts, that every calculator
   reproduces the numbers its worked example quotes, that every figure
@@ -183,6 +188,8 @@ says it has none):
 - One file, no network, no replaced name — `tools/check.js`, its last two
   sections, and the *one file* step of `.github/workflows/ci.yml`.
 - The counts and the lesson table on this page — `tools/check-docs.js`.
+- The keeper model's figures on its own page are the ones a run produces —
+  `node examples/keeper-model.js --check`, a step of `.github/workflows/ci.yml`.
 - Progress, best scores, the scorecard and the chosen track kept in the
   browser's localStorage, switching track at the top of a lesson, and a
   figure redrawing when a calculator input changes — no test yet: the check loads the script without a DOM and cannot see
