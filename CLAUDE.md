@@ -92,6 +92,22 @@ section and is the single source for it.
 - **Reference Set 2 is the first of two exceptions, and it is scoped narrowly** (Dermot, 21 September 2026, widening issue #20 from weak frames only to *any relevant frame of mine*): real photographs, real EXIF, a real sharpness score, and real ground truth (kept or not). **There is still no reviewer** — nothing scores these frames, so nothing about an AI system is claimed real. It lives in `data/reference-set-2.csv`, described on the case page and in the README, and is never wired into a lesson's `calc`/`expect`: those stay Reference-Set-1 synthetic, so the check's guarantee that a lesson's numbers reproduce is untouched.
 - **Reference Set 3 adds the half Reference Set 2 lacks** (Dermot, 22 September 2026, on the same permission): a predictor. The photographer's own subject tags on 179 photographs, crossed with the 34-label vocabulary, give 6,086 (photo, label) pairs, and two deliberately crude rules read each photograph's alt text and guess. So it carries real labels **and** a real system output, which is what lets Lessons F and M use real numbers at last. **The alt text itself never ships**: the photographs are CC BY-NC-ND and this repository CC BY 4.0, and no lesson needs the prose, only what a rule made of it — `data/reference-set-3.csv` holds slug, album, category, country, year, label, the verdict, both rules and a graded score. `tools/build-reference-set-3.js` rebuilds it from a sibling checkout of the photography repository; it is a **local tool**, never run by CI, which reads only the committed csv. It found three photo pages carrying a UTF-8 byte order mark, invisible to that site's own parser and fatal to a naive one.
 
+## The keeper model (examples/)
+
+Added 26 October 2026 at Dermot's direction (*in applied stats repo as an
+example model … also as an example of a delegate model generated and trained
+using an LLM*). `examples/keeper-model.js` fits a logistic regression to
+Reference Set 2 with each outing held out in turn, and `keeper-model.md`
+reads the result: calibrated but uninformative across outings, a useful
+first sort within one. It is real data and a real model, outside the
+lessons, so the Reference Set 2 rule still holds: nothing is wired into a
+lesson's `calc`/`expect`, and nothing about Proofsheet is claimed real. Node
+with no dependencies, like the tools. `--check` (run in CI) requires the page
+to quote every figure the run produces, so a change to the features, the fit
+or the csv moves the prose deliberately or fails. The page says who built the
+model and that one feature set was chosen after seeing another's results;
+keep both statements true.
+
 ## The lesson format
 
 Nine parts, in this order, every lesson: `question` (the engineering
