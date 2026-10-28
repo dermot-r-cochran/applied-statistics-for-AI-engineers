@@ -121,7 +121,7 @@ footer{border-top:1px solid var(--line);color:var(--mute);font-size:.82rem;paddi
 <aside id="side" aria-label="Lessons"></aside>
 <main id="main" tabindex="-1"></main>
 </div>
-<footer>Everything here runs in your browser, and nothing is sent anywhere. Every worked example is synthetic and labelled as such; one companion dataset, Reference Set 2, is real and says so. Text CC BY 4.0, engine MIT. <a href="https://github.com/dermot-r-cochran/applied-statistics-for-AI-engineers">Source</a>.</footer>
+<footer>Everything here runs in your browser, and nothing is sent anywhere. Every worked example is synthetic and labelled as such; two companion datasets, Reference Sets 2 and 3, are real and say so. Text CC BY 4.0, engine MIT. <a href="https://github.com/dermot-r-cochran/applied-statistics-for-AI-engineers">Source</a>.</footer>
 <script>
 /* =====================================================================
    WORLD DATA
@@ -147,7 +147,7 @@ It assumes you have met probability and statistics before and have shipped or ev
 
 Generative systems add two things to that picture, and neither needs new statistics, only the right lesson. The same prompt on the same input can give a different output on each run, so a score is a draw even when the rows are fixed; repeated runs of one input are repeated observations, which Lesson J handles, and a comparison of two prompts on the same inputs is a paired one (Lesson F). And free-text output is usually scored by a rubric, a similarity measure or another model acting as judge, each of which is a measurement with its own error, which Lesson K's disagreeing annotators and Lesson M's calibration already describe, and which Lesson Q treats as an instrument in its own right, validated on the expert's own live decisions.
 
-Foundations are reactivated, not taught from zero; every formula is derived far enough that you could re-derive it; every assumption is stated; and every worked example is synthetic and says so. **The case** also names a real companion dataset, Reference Set 2, kept apart from the lessons' own numbers so the two are never confused.
+Foundations are reactivated, not taught from zero; every formula is derived far enough that you could re-derive it; every assumption is stated; and every worked example is synthetic and says so. **The case** also names two real companion datasets, Reference Sets 2 and 3, kept apart from the lessons' own numbers so real and synthetic are never confused.
 
 The examples follow one fictional system throughout, described under **The case**: an AI reviewer of photographic contact sheets whose verdicts are scored against the photographer's own decisions. It was chosen because a contact sheet has exactly the structure that makes evaluation statistics hard — rows inside documents inside projects, rare positive classes, judges who disagree — and because the domain is ordinary enough that nothing in it distracts from the statistics. A second, smaller example, an AI reader of short-story drafts, appears where text similarity and disagreeing judges need it. Neither system exists.
 
@@ -188,7 +188,7 @@ const CASE = {
 
 **Reference Set 2, added 2026-09-21.** Everywhere above, "synthetic" means the whole
 measurement: a fictional reviewer scored against fictional ground truth. Reference Set 2
-breaks that in one place only. It is real: 12,713 frames from 33 real outings, shot
+was the first of two places to break that; Reference Set 3, below, is the second. It is real: 12,713 frames from 33 real outings, shot
 2023–2026, each with the camera's real exposure settings and a real sharpness score
 (the variance of the Laplacian on a quarter-scale grey decode — a focus proxy, not a
 quality judgment). Ground truth is real too: 41 frames the photographer actually kept
@@ -207,6 +207,8 @@ not a picture, and the sharpness score is the nearest the rows come to telling t
 a low score beside a kept neighbour being a miss and a middling one an ordinary frame. Try Lesson H's
 imbalance arithmetic on it, or Lesson C's precision/recall at a sharpness threshold of your
 choosing, against real numbers rather than the lesson's own.
+
+Since 26 October 2026 one model does score these frames, outside the lessons: the keeper model in the repository's \`examples/\` folder, a small logistic regression that a language model designed, trained and checked on these same keep decisions, with its results read on \`examples/keeper-model.md\`. Across outings it is calibrated and says almost nothing; within one outing it is a useful first sort. It is not Proofsheet, it is not a reviewer in the sense above, and nothing it produces reaches a lesson's numbers.
 
 **Reference Set 3, added 2026-09-22.** Reference Set 2 has ground truth and no system, which is why two lessons could not use it. This one has both. The photographer tags every photograph with subjects from a fixed vocabulary — *Elephants*, *Wild Cats*, *Silhouettes*, thirty-four of them — and every photograph also carries alt text describing what is in the frame. Crossing 179 tagged photographs with those 34 labels gives **6,086 (photo, label) pairs**, of which **398** carry the subject. Two deliberately crude rules then read the alt text and guess: rule A fires when the whole label appears in it, rule B when any content word of the label does. That is a real rare-class problem with a real predictor, and the rules are crude on purpose, because where they fail is the lesson. Rule A gets **100** pairs right, calls **30** wrongly and misses **298**, which is a precision of 0.769 against a recall of 0.251. **The labels are the photographer's own curation and the rules are this repository's**; the alt text itself is not here, because the photographs are licensed CC BY-NC-ND and this course is CC BY 4.0, and no lesson needs the prose — only what a rule made of it. \`data/reference-set-3.csv\` carries slug, album, category, country, year, label, the verdict, both rules and a graded score; \`tools/build-reference-set-3.js\` rebuilds it from a checkout of the photography repository and is a local tool, not part of the build.`,
   figure:{ title:"How the rows nest",
