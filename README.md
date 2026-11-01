@@ -187,7 +187,10 @@ says it has none):
   glossary, session*.
 - One file, no network, no replaced name — `tools/check.js`, its last two
   sections, and the *one file* step of `.github/workflows/ci.yml`.
-- The counts and the lesson table on this page — `tools/check-docs.js`.
+- The counts and the lesson table on this page — `tools/check-docs.js`;
+  the page's own written-out count of its lessons, in its description,
+  its intro and its leaders page — `tools/check.js`, *the page's own
+  count of its lessons*.
 - The keeper model's figures on its own page are the ones a run produces —
   `node examples/keeper-model.js --check`, a step of `.github/workflows/ci.yml`.
 - Progress, best scores, the scorecard and the chosen track kept in the

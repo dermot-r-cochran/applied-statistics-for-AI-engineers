@@ -306,6 +306,27 @@ if (BOOK) {
   });
 }
 
+// ---- the page's own count of its lessons -----------------------------
+// Three places on the page write the number of lessons out in words rather
+// than reading LESSONS.length: the description a search engine or a link
+// preview shows, the home page's intro, and the first line of the leaders
+// page. check-docs.js pins the README's count to the book; these are pinned
+// here for the same reason, after the description said fourteen for five
+// weeks with seventeen lessons on the page.
+if (BOOK) {
+  const WORDS = ["zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten", "eleven", "twelve",
+    "thirteen", "fourteen", "fifteen", "sixteen", "seventeen", "eighteen", "nineteen", "twenty"];
+  const counts = [
+    ["the page's description", /(\w+) lessons with a live calculator each/],
+    ["the home page's intro", /\n(\w+) lessons, each in the same nine parts/],
+    ["the leaders page", /The (\w+) questions behind the lessons/],
+  ];
+  counts.forEach(([where, re]) => { const m = html.match(re);
+    if (!m) { fail(`${where} no longer says how many lessons there are; update the pattern in tools/check.js with the prose`); return; }
+    const n = WORDS.indexOf(m[1].toLowerCase());
+    if (n !== BOOK.LESSONS.length) fail(`${where} says ${m[1]} lessons; the book has ${BOOK.LESSONS.length}`); });
+}
+
 // ---- the page is one file with no network --------------------------
 if (/<script[^>]+src=/i.test(html) || /fetch\(|XMLHttpRequest|<link[^>]+href="(https?:|\/\/)/i.test(html)) fail("index.html reaches for the network");
 if (!/WORLD DATA/.test(html) || !/ENGINE/.test(html)) fail("index.html has lost its two section markers");

@@ -284,7 +284,12 @@ Append to `LESSONS` with the next letter, all nine parts, a `gentle`
 page, a calculator with `expect` values that the prose quotes, and a
 `figure` drawn from that calculator. Add glossary entries that name
 the lesson and, if it introduces a template, a card that points at it.
-Update the table in `README.md` and the count of lessons it states. Then
+Update the table in `README.md` and the count of lessons it states. The
+page also writes its count out in words in three places that do not read
+`LESSONS.length`: the `<meta>` description, `SITE.intro` and the first
+line of the leaders view; `tools/check.js` pins each to the book, so a
+new lesson moves all three or fails (added 1 November 2026, after the
+description had said fourteen since Lesson O). Then
 `node tools/check.js` and `node tools/check-docs.js`.
 
 `EXAMS[id]` is the lesson's exam (added 2026-09-14 at Dermot's direction:
