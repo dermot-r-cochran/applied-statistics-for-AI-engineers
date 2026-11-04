@@ -31,6 +31,11 @@ if (BOOK) {
   const { LESSONS, CARDS, GLOSSARY, PARTS, RULES, SESSION_FIELDS, fmt, md, plain, firstSentence, FIG } = BOOK;
   if (!FIG || typeof FIG.render !== "function") fail("the engine has lost FIG, the figure renderer");
   if (typeof plain !== "function" || typeof firstSentence !== "function") fail("the engine has lost plain/firstSentence, which the lessons page summarises with");
+  // every mention of a lesson renders as a link to it, so the web the gate below counts is one a reader can follow
+  { const beyond = String.fromCharCode(65 + LESSONS.length), linked = md(`see Lessons A and B, Lesson C's note, and Lesson ${beyond}.`);
+    for (const id of ["A", "B", "C"]) if (!linked.includes(`href="#/lesson/${id}"`)) fail(`the engine no longer renders a mention of Lesson ${id} as a link to it`);
+    if (linked.includes(`href="#/lesson/${beyond}"`)) fail(`the engine links Lesson ${beyond}, which does not exist`);
+    if (md("the resample count `B` and a bare B").includes("href=")) fail("the engine links a bare capital, which is a variable in this course"); }
 
   // ---- lessons ---------------------------------------------------------
   // A cross-reference is the word Lesson(s) and then ids: "Lesson F", "Lessons A

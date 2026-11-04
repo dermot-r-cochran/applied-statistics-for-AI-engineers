@@ -176,7 +176,9 @@ says it has none):
 - Nine parts in every lesson, a business question, a words-first page, a
   figure drawn from the calculator's defaults, an exam of at least four
   questions with a reason for every answer, every lesson pointing at
-  another — `tools/check.js`, the *lessons* and *exams* sections.
+  another, and every mention of a lesson in the prose rendered as a link
+  to it —
+  `tools/check.js`, the *lessons* and *exams* sections.
 - Every calculator reproduces the numbers its worked example quotes —
   `tools/check.js`, *calculator reproduces the worked example*.
 - Every exercise offers a way through without an evaluation of your own,

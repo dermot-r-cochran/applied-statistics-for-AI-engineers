@@ -164,7 +164,10 @@ get their numbers by running the engine under Node, never by estimating.
 Register: expert to expert, plain, no hedging beyond what the statistics
 require and no claims beyond what they support. Every lesson points at
 at least one other lesson (the check requires it), because the course is
-a web, not a list.
+a web, not a list; and since 4 November 2026 the engine renders every
+*Lesson X* mention in the prose as a link to that lesson, so the web can
+be followed, not only counted (the check requires that too; a bare
+capital is a variable and is never linked).
 
 **Advice, not orders** (Dermot, 2026-09-28: *don't tell the reader or student
 what to do, but offer advice, wisdom and general principles*; and, of the
