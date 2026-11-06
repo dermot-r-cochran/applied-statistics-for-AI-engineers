@@ -56,6 +56,10 @@ are the `four-islands-quest` rules, which this repository inherits whole:
 - **Never rewrite `index.html` programmatically.** Author by hand or with
   an assistant. The check reads the script by loading it into a bare VM
   context — no `document`, so the page never boots — and reads `BOOK`.
+  `tools/check-page.js` runs the same script a second time with a stub
+  document, so the page section below `BOOK` is read too (see *The page
+  is read without a browser*); it reads nothing out of the file but its
+  markup, and the page gets no test hook.
 
 ## The case, and its name
 
@@ -284,7 +288,9 @@ Set 2 figures.
 ## Adding a lesson
 
 Append to `LESSONS` with the next letter, all nine parts, a `gentle`
-page, a calculator with `expect` values that the prose quotes, and a
+page, a calculator with `expect` values that the prose quotes (and a
+number input that moves an output and one that moves the figure, which
+`tools/check-page.js` needs to prove the calculator live), and a
 `figure` drawn from that calculator. Add glossary entries that name
 the lesson and, if it introduces a template, a card that points at it.
 Update the table in `README.md` and the count of lessons it states. The
@@ -293,7 +299,8 @@ page also writes its count out in words in three places that do not read
 line of the leaders view; `tools/check.js` pins each to the book, so a
 new lesson moves all three or fails (added 1 November 2026, after the
 description had said fourteen since Lesson O). Then
-`node tools/check.js` and `node tools/check-docs.js`.
+`node tools/check.js`, `node tools/check-docs.js` and
+`node tools/check-page.js`.
 
 `EXAMS[id]` is the lesson's exam (added 2026-09-14 at Dermot's direction:
 *add an exam and score card at the end of each lesson*): four or more
@@ -322,10 +329,82 @@ request and installs nothing. Since 10 October 2026 it also runs
 the book and the csv files, resolves every relative link in the Markdown
 and refuses a second front-matter block; the README names, for each claim
 it makes, the check that proves it or says there is none (the README-proof
-convention, Dermot's decision of that day across his repositories).
+convention, Dermot's decision of that day across his repositories). Since
+6 November 2026 it also runs `tools/check-page.js`, which reads the page
+on a stub document (the section below).
 Content at Dermot's direction opens a pull
 request and merges on green; a change to the case, the rules or the
 lesson format is his call.
+
+## The page is read without a browser
+
+Added 6 November 2026 on the next-improvement question, the week the two
+photo-safari siblings did the same (the range on the 5th, where it found
+three flaws; the tutorial on the 6th). Everything below `BOOK` — the
+router, the views, the sidebar, the live calculators and their figures,
+the reveal buttons, the exams and the scorecard, the start page and its
+suggestion, the track toggle, the mark-read button, the session note,
+and what localStorage keeps — had no test, because `tools/check.js` loads
+no document, and the README said so in one "no test yet" line.
+`tools/check-page.js` runs the same script with a stub for the browser.
+Unlike the siblings' pages, this one builds its views as `innerHTML`
+strings and wires them with `querySelectorAll`, so the stub is a small
+HTML parser (the page's own markup, so `main` and `side` are real
+elements, and anything a view writes is parsed into the tree) and a
+selector matcher for the selectors the page uses: tag, `#id`, `.class`,
+`[attr="value"]`, `:checked` and the descendant combinator. Beside them
+a `location` whose hash fires `hashchange`, a localStorage in memory, a
+`window.scrollTo` that counts, and a `scrollIntoView` that records what
+was scrolled to. It then does what a reader does: opens the page on no
+hash and reads the home view; reads every static view and holds each to
+its data (the leaders' seventeen questions, the cards and their lesson
+links, the glossary and reading counts, the start form's five
+questions); sends an unknown route and an unknown lesson to the home
+view; opens every lesson straight in and holds the ten parts, the
+business question, the pager, the sidebar's lit lesson with its ten
+parts, the document title, and every lesson link on the page to a
+lesson that exists; holds the calculator at its defaults to its own
+`compute` and the figure to its own `draw`, then moves number inputs in
+turn until one has moved the outputs and one the figure, holding both to
+the calculator each time (a figure that cannot be drawn for the inputs,
+Lesson B's `k` past `n`, must say so in its place; Lesson N's `p0` moves
+the outputs and not its mosaics, which are fixed numbers, so its `n`
+proves the figure); shows and hides the diagnostic's answer; sits every
+exam four times (unanswered, every answer right, one wrong, two wrong)
+and holds the score line, every question's mark with the right option
+quoted and its reason shown, the pass at three of four and not at two,
+and the best kept; marks each lesson read;
+reads the home view's rows and scorecard after all seventeen; follows a
+hash with a part fragment to the part; switches to words first and holds
+every lesson's words-first page to its words, its figure in words and no
+notation; answers the start page with everything wrong, one short of
+`passAt`, at `passAt` and with everything right, both self-reports, and
+follows each suggestion's button; types, builds, clears and retypes the
+session note; and reopens the page on the same store, left on words
+first, then on a corrupt one. A new lesson's calculator therefore needs
+a number input that moves an output at its displayed decimals and one
+that moves the figure, which every calculator so far has. The stub lives in the
+tool, the page gets no test hook, and a document API the page section
+starts to use is added to the stub when the check fails with a TypeError
+naming it. Twenty mutations of the page section (right and wrong
+inverted, the best score not kept, mark-read not saved, the calculator
+not live, the figure not redrawn, the words-first page dropped, the pass
+mark one lower, the fragment not scrolled to, an unknown lesson shown as
+Lesson A, the reveal label stuck, the sidebar never lit, the toggle
+saving nothing, the start page always suggesting straight in, the note
+not saved, the scorecard miscounting, a corrupt store throwing; and,
+after the counter-critic found the first draft's README claiming more
+than the check held, the track kept in memory only, the reason shown on
+right answers only, wrong answers marked right, and words first
+suggested only at a score of zero) each failed it. Its first run on the
+shipped page found no flaw.
+
+One thing it confirms without judging: a lesson link inside an exam
+question (Lesson J's fourth, since every mention became a link on 4
+November) followed before the exam is marked loses the picks made so
+far, because `route` rebuilds the view. That is how the page has always
+treated an unmarked exam on any navigation, and whether it should keep
+the picks is Dermot's call, not a defect the check fails on.
 
 ## Licence
 
