@@ -166,7 +166,16 @@ disagreeing editors need it. The case is described in full on the site's
   lessons and their table, the rules, the cards, the exam and calibration
   lengths, the two reference sets' sizes) matches the book and the csv
   files. Run it with `node tools/check-docs.js`.
-- `.github/workflows/ci.yml` runs both checks on every push and pull
+- `tools/check-page.js` — the page read without a browser. It runs the
+  same script a second time against a stub document built from the
+  page's own markup, then opens every view, and every lesson on both
+  tracks, moves calculator inputs and holds the outputs and the figure
+  to the calculator's own arithmetic, shows a diagnostic answer, sits
+  every exam at the pass mark and below it, marks lessons read, answers
+  the start page either side of its pass mark, writes and clears the
+  session note, and reopens the page on the same browser store. Run it with
+  `node tools/check-page.js`; it installs nothing.
+- `.github/workflows/ci.yml` runs the three checks on every push and pull
   request; `pages.yml` serves `index.html` from GitHub Pages on every
   push to `main`.
 
@@ -195,10 +204,16 @@ says it has none):
   count of its lessons*.
 - The keeper model's figures on its own page are the ones a run produces —
   `node examples/keeper-model.js --check`, a step of `.github/workflows/ci.yml`.
-- Progress, best scores, the scorecard and the chosen track kept in the
-  browser's localStorage, switching track at the top of a lesson, and a
-  figure redrawing when a calculator input changes — no test yet: the check loads the script without a DOM and cannot see
-  browser behaviour.
+- Every view renders, and every lesson on both tracks; the sidebar lights
+  the lesson open; a hash naming a part scrolls to it; a calculator's
+  outputs and figure follow a changed input; the exam marks every answer
+  right, wrong or unanswered with its reason, and passes at three of
+  four and not at two; the start page suggests words first below its
+  pass mark or on the self-report and straight in from the pass mark up;
+  the track switches at the top of a lesson; and progress, best scores,
+  the scorecard, the chosen track and the session note are kept in the
+  browser's localStorage and survive reopening the page —
+  `tools/check-page.js`, by the comment each section sits under.
 
 The rules are the ones the author's other one-file tutorial repositories
 follow: no dependencies, no build, no network, one reviewable file, never
