@@ -311,6 +311,39 @@ if (BOOK) {
   });
 }
 
+// ---- every calculator answers at the edges of its own inputs --------
+// A calculator's inputs declare a minimum and a maximum, and a reader can
+// type either. At each one (the others at their defaults), and with every
+// input at its minimum and at its maximum, the calculator and its figure
+// have to come back within a budget, because the page runs them on every
+// keystroke and a slow one freezes the tab. Found on 7 November 2026 by a
+// read of the figures in a real browser: Lesson B's exact interval took
+// eighteen seconds at a thousand rows and Lesson C's bootstrap six at ten
+// thousand, each from a loop that grew with the count typed. The budget is
+// loose on purpose (Lesson P draws a million synthetic sheets at its
+// maximum in about three seconds here); what it refuses is the loop that
+// never comes back. A figure may decline to draw, as Lesson A's does when
+// an accuracy is 0 or 1, and the page says so in its place; it may not hang.
+if (BOOK) {
+  const { LESSONS, FIG } = BOOK;
+  const BUDGET = 10000;
+  LESSONS.forEach(l => {
+    const c = l.calc; if (!c || !l.figure) return;
+    const numeric = c.inputs.filter(i => i[3] !== null);
+    const defaults = Object.fromEntries(c.inputs.map(i => [i[0], i[2]]));
+    const edges = [];
+    numeric.forEach(i => { edges.push([`${i[0]} at its minimum`, { ...defaults, [i[0]]: i[3] }]); edges.push([`${i[0]} at its maximum`, { ...defaults, [i[0]]: i[4] }]); });
+    edges.push(["every input at its minimum", { ...defaults, ...Object.fromEntries(numeric.map(i => [i[0], i[3]])) }]);
+    edges.push(["every input at its maximum", { ...defaults, ...Object.fromEntries(numeric.map(i => [i[0], i[4]])) }]);
+    edges.forEach(([where, v]) => {
+      const t0 = Date.now();
+      try { const r = c.compute(v); try { FIG.render(l.figure.draw(v, r), l.figure.title); } catch (e) { /* declining to draw is allowed */ } } catch (e) { /* a compute that throws shows dashes on the page */ }
+      const ms = Date.now() - t0;
+      if (ms > BUDGET) fail(`lesson ${l.id}: the calculator took ${(ms / 1000).toFixed(1)} s with ${where}; the page would freeze`);
+    });
+  });
+}
+
 // ---- the page's own count of its lessons -----------------------------
 // Three places on the page write the number of lessons out in words rather
 // than reading LESSONS.length: the description a search engine or a link

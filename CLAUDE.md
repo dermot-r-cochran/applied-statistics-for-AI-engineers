@@ -236,6 +236,44 @@ Read the figures back in a browser after changing one: layout faults
 (clipped legends, colliding labels) are exactly what the check cannot
 see.
 
+**The figures were read in a real browser on 7 November 2026**, the
+step `tools/check-page.js` left open: every lesson's figure at its
+calculator's defaults and at the edges of its inputs (each input at its
+minimum and its maximum with the others at their defaults, then all at
+their minimum and all at their maximum), plus the three static figures,
+measured with `getBBox` for text outside the viewBox and text over
+text. At the defaults two were wrong on the shipped page: Lesson Q's
+row labels were cut at the left edge (the `intervals` gutter was a fixed
+170 units and *corrected: judge minus its measured bias* is wider), and
+Lesson P's *median* sat two units above the top edge (a `hist` mark
+label staggered to a second row had no room). Both are repaired in the
+engine, by the gutter following the longest label as `steps` already
+did and by the histogram starting below the rows its labels need; the
+other fifteen figures and the three static ones keep every element
+where it was. At the edges the labels collide in three figures, left as
+they are because the inputs that cause it are degenerate or extreme:
+Lesson E's two critical-value labels when the standard error is near
+zero (`pA` at 0.001, or a billion rows), Lesson H's `ylines` labels when
+two recalls coincide or exceed 1, and Lesson J's y-axis tick labels past
+the left edge from about a million rows. Everything else at the edges
+either draws cleanly or says it cannot be drawn.
+
+The read also found what no layout stub could: three calculators froze
+the tab well inside their declared input ranges, because their cost grew
+with the count typed. Lesson B's exact interval summed `k` binomial
+terms, each costing `k` more, sixty times per bound: three seconds at
+500 rows, eighteen at a thousand. Lesson C's bootstrap drew 2,000
+resamples row by row: six seconds at ten thousand rows, a minute at a
+hundred thousand. Lesson F's exact McNemar used the same sum. The
+binomial distribution function is now the regularised incomplete beta
+by its continued fraction (one cost at any `n`), and the bootstrap draws
+its cells as successive conditional binomials above 2,000 rows, keeping
+the row-by-row stream below that so every number the prose quotes is
+unchanged; `tools/check.js` now times every calculator at the same
+edges and fails one that takes longer than ten seconds. The layout read
+itself stays manual: a browser is the only thing that knows a font's
+width, and the record above is what to compare against next time.
+
 ## The two tracks
 
 **On the page they are *words first* and *straight in*** (Dermot,

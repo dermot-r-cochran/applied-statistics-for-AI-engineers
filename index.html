@@ -1451,8 +1451,29 @@ const S = (() => {
   const seProp = (p,n) => Math.sqrt(p*(1-p)/n);
   const wald = (k,n,z) => { const p=k/n, h=z*seProp(p,n); return [p-h,p+h]; };
   const wilson = (k,n,z) => { const p=k/n, d=1+z*z/n, c=(p+z*z/(2*n))/d, h=z*Math.sqrt(p*(1-p)/n+z*z/(4*n*n))/d; return [c-h,c+h]; };
-  const logChoose = (n,k) => { let s=0; for(let i=1;i<=k;i++) s+=Math.log(n-k+i)-Math.log(i); return s; };
-  const binomCdf = (k,n,p) => { if(p<=0) return 1; if(p>=1) return k>=n?1:0; let s=0; for(let i=0;i<=k;i++) s+=Math.exp(logChoose(n,i)+i*Math.log(p)+(n-i)*Math.log(1-p)); return Math.min(1,s); };
+  // The binomial distribution function is the regularised incomplete beta,
+  // evaluated by its continued fraction, so one evaluation costs the same at
+  // ten rows as at a billion. Until 7 November 2026 it was a sum of k terms,
+  // each costing k more, and the exact interval (sixty bisection steps on it)
+  // took three seconds at 500 rows and eighteen at a thousand; the tab froze.
+  const lgamma = (x) => { // Lanczos (g = 7, nine coefficients); |error| below 1e-13 for x > 0
+    const c=[0.99999999999980993,676.5203681218851,-1259.1392167224028,771.32342877765313,-176.61502916214059,12.507343278686905,-0.13857109526572012,9.9843695780195716e-6,1.5056327351493116e-7];
+    if(x<0.5) return Math.log(Math.PI/Math.sin(Math.PI*x))-lgamma(1-x);
+    x-=1; let a=c[0]; const t=x+7.5; for(let i=1;i<9;i++) a+=c[i]/(x+i); return 0.5*Math.log(2*Math.PI)+(x+0.5)*Math.log(t)-t+Math.log(a); };
+  const logChoose = (n,k) => lgamma(n+1)-lgamma(k+1)-lgamma(n-k+1);
+  const betacf = (a,b,x) => { // the continued fraction, by the modified Lentz method
+    const tiny=1e-300, qab=a+b, qap=a+1, qam=a-1; let c=1, d=1-qab*x/qap; if(Math.abs(d)<tiny) d=tiny; d=1/d; let h=d;
+    for(let m=1;m<=10000;m++){ const m2=2*m; let aa=m*(b-m)*x/((qam+m2)*(a+m2)); d=1+aa*d; if(Math.abs(d)<tiny) d=tiny; c=1+aa/c; if(Math.abs(c)<tiny) c=tiny; d=1/d; h*=d*c;
+      aa=-(a+m)*(qab+m)*x/((a+m2)*(qap+m2)); d=1+aa*d; if(Math.abs(d)<tiny) d=tiny; c=1+aa/c; if(Math.abs(c)<tiny) c=tiny; d=1/d; const del=d*c; h*=del; if(Math.abs(del-1)<3e-14) break; }
+    return h; };
+  const ibeta = (a,b,x) => { if(x<=0) return 0; if(x>=1) return 1; const bt=Math.exp(lgamma(a+b)-lgamma(a)-lgamma(b)+a*Math.log(x)+b*Math.log(1-x));
+    return x<(a+1)/(a+b+2) ? bt*betacf(a,b,x)/a : 1-bt*betacf(b,a,1-x)/b; };
+  const binomCdf = (k,n,p) => { if(k<0) return 0; if(k>=n||p<=0) return 1; if(p>=1) return 0; return ibeta(n-k,k+1,1-p); };
+  // One binomial draw by inversion from the mode: exact, and the steps it takes
+  // grow with the standard deviation, not with n.
+  const binomInv = (n,p,u) => { if(n<=0||p<=0) return 0; if(p>=1) return n; const m=Math.min(n,Math.floor(n*p)); let F=binomCdf(m,n,p), f=Math.exp(logChoose(n,m)+m*Math.log(p)+(n-m)*Math.log(1-p)), k=m;
+    if(u<=F){ while(u<=F-f&&k>0){ F-=f; f*=k/(n-k+1)*(1-p)/p; k--; } return k; }
+    while(u>F&&k<n){ f*=(n-k)/(k+1)*p/(1-p); k++; F+=f; } return k; };
   const clopper = (k,n,a) => {
     const solve = (f) => { let lo=0, hi=1; for(let i=0;i<60;i++){ const m=(lo+hi)/2; if(f(m)) lo=m; else hi=m; } return (lo+hi)/2; };
     const L = k===0 ? 0 : solve(p => 1-binomCdf(k-1,n,p) < a/2);
@@ -1469,7 +1490,15 @@ const S = (() => {
   const pct = (xs,q) => { const s=[...xs].sort((a,b)=>a-b); const i=(s.length-1)*q, lo=Math.floor(i), hi=Math.ceil(i); return s[lo]+(s[hi]-s[lo])*(i-lo); };
   const bootstrapCounts = (counts,B,seed,fn) => { // multinomial resample of a small contingency table
     const n=sum(counts), r=rng(seed), cum=[]; let acc=0; counts.forEach(c=>{acc+=c/n;cum.push(acc);});
-    const out={}; for(let b=0;b<B;b++){ const c=counts.map(()=>0); for(let i=0;i<n;i++){ const u=r(); let j=0; while(u>cum[j]&&j<c.length-1) j++; c[j]++; }
+    // Up to 2,000 rows each resample draws the rows one by one, which is the
+    // stream the worked examples were quoted from. Above that the cells are
+    // drawn as successive conditional binomials (the same distribution, one
+    // draw per cell), because the row-by-row loop took six seconds at ten
+    // thousand rows and a minute at a hundred thousand (7 November 2026).
+    const draw = n<=2000
+      ? () => { const c=counts.map(()=>0); for(let i=0;i<n;i++){ const u=r(); let j=0; while(u>cum[j]&&j<c.length-1) j++; c[j]++; } return c; }
+      : () => { const c=[]; let left=n, pLeft=1; counts.forEach((k,j)=>{ const pj=k/n; const d = j===counts.length-1 ? left : binomInv(left, pLeft>0?Math.min(1,pj/pLeft):0, r()); c.push(d); left-=d; pLeft-=pj; }); return c; };
+    const out={}; for(let b=0;b<B;b++){ const c=draw();
       const v=fn(c); for(const k in v){ (out[k]=out[k]||[]).push(v[k]); } }
     const res={}; for(const k in out){ const xs=out[k].filter(x=>!isNaN(x)); res[k]=[pct(xs,0.025),pct(xs,0.975)]; } return res; };
   const bootstrapMean = (d,B,seed) => { const r=rng(seed), m=d.length, ms=[]; for(let b=0;b<B;b++){ let s=0; for(let i=0;i<m;i++) s+=d[Math.floor(r()*m)]; ms.push(s/m); } return [pct(ms,0.025),pct(ms,0.975)]; };
@@ -1556,7 +1585,10 @@ const FIG = (() => {
   const clampTo = (min,max) => (x) => Math.max(min,Math.min(max,x));
 
   const kinds = {
-    intervals(p,alt){ const padL=170, padR=24; const bands=p.bands||[], marks=p.marks||[]; const top=bands.length?46:16;
+    intervals(p,alt){ const padR=24; const bands=p.bands||[], marks=p.marks||[]; const top=bands.length?46:16;
+      // the label gutter follows the longest row label, as steps does, so a long
+      // one is not cut at the left edge (Lesson Q's were, until 7 November 2026)
+      const padL=Math.min(320,Math.max(170,...p.rows.map(r=>tw(r.label||"")+20)));
       const sx=scale(p.min,p.max,padL,W-padR), cl=clampTo(p.min,p.max); let s="", y=top; const rowY=[]; p.rows.forEach(r=>{ const rh=r.dots?46:34; rowY.push(y+rh/2); y+=rh; }); const axY=y+6;
       bands.forEach((b,i)=>{ const a=sx(cl(b.from)), c=sx(cl(b.to)); s+=`<rect x="${nf(a)}" y="${top-4}" width="${nf(Math.max(0,c-a))}" height="${nf(axY-top+2)}" class="band ${b.cls}"/>`;
         if(b.label){ const mid=(a+c)/2, w=tw(b.label); const anchor = mid-w/2<padL-40 ? "start" : mid+w/2>W-padR ? "end" : "middle"; const lx = anchor==="start" ? Math.max(a,padL-40) : anchor==="end" ? Math.min(c,W-padR) : mid; s+=txt(lx,top-(i%2?26:12),b.label,"sm mute",anchor); } });
@@ -1589,12 +1621,17 @@ const FIG = (() => {
       let h=base+(p.bars.some(b=>b.sub)?44:30); if(narrow){ const lg=legend(p.bars.map(b=>({cls:b.cls||"f1",label:`${b.label}: ${b.text||tick(b.value)}${b.sub?" ("+b.sub+")":""}`})),padL,base+24); s+=lg.s; h=base+24+lg.h; }
       return svg(h,s,alt); },
 
-    hist(p,alt){ const padL=24, padR=24, top=34, base=170; const vals=p.values.filter(x=>isFinite(x)); if(!vals.length) return svg(60,txt(W/2,30,"nothing to draw","mute","middle"),alt);
+    hist(p,alt){ const padL=24, padR=24; const vals=p.values.filter(x=>isFinite(x)); if(!vals.length) return svg(60,txt(W/2,30,"nothing to draw","mute","middle"),alt);
       const min=p.min!==undefined?p.min:Math.min(...vals), max=p.max!==undefined?p.max:Math.max(...vals), B=p.bins||30, span=(max-min)||1; const counts=new Array(B).fill(0);
       vals.forEach(v=>{ let i=Math.floor((v-min)/span*B); if(i>=B) i=B-1; if(i<0) i=0; counts[i]++; }); const peak=Math.max(...counts); const sx=scale(min,max,padL,W-padR); let s="";
+      // mark labels are laid out first, staggered where two would collide, and the
+      // picture starts below the rows they need: a second row used to sit above
+      // the top edge (Lesson P's "median", until 7 November 2026)
+      const placed=[]; (p.marks||[]).forEach(m=>{ if(!m.label) return; const x=sx(Math.max(min,Math.min(max,m.x))); let row=0; placed.forEach(q=>{ if(Math.abs(q.x-x)<(tw(m.label)+tw(q.label))/2+8) row=Math.max(row,q.row+1); }); placed.push({x,row,label:m.label}); });
+      const extra=14*Math.max(0,...placed.map(q=>q.row)), top=34+extra, base=170+extra;
       counts.forEach((c,i)=>{ const a=sx(min+span*i/B), b=sx(min+span*(i+1)/B), y=base-(c/peak)*(base-top); s+=`<rect x="${nf(a+0.5)}" y="${nf(y)}" width="${nf(Math.max(0.5,b-a-1))}" height="${nf(base-y)}" class="${p.cls||"f1"}"/>`; });
-      const placed=[]; (p.marks||[]).forEach(m=>{ const x=sx(Math.max(min,Math.min(max,m.x))); s+=`<line x1="${nf(x)}" y1="${top-6}" x2="${nf(x)}" y2="${nf(base)}" class="mark ${m.cls||""}"/>`;
-        if(m.label){ let row=0; placed.forEach(q=>{ if(Math.abs(q.x-x)<(tw(m.label)+tw(q.label))/2+8) row=Math.max(row,q.row+1); }); placed.push({x,row,label:m.label}); s+=txt(Math.max(padL+tw(m.label)/2,Math.min(W-padR-tw(m.label)/2,x)),top-10-row*14,m.label,"sm mute","middle"); } });
+      (p.marks||[]).forEach(m=>{ const x=sx(Math.max(min,Math.min(max,m.x))); s+=`<line x1="${nf(x)}" y1="${top-6}" x2="${nf(x)}" y2="${nf(base)}" class="mark ${m.cls||""}"/>`; });
+      placed.forEach(q=>{ s+=txt(Math.max(padL+tw(q.label)/2,Math.min(W-padR-tw(q.label)/2,q.x)),top-10-q.row*14,q.label,"sm mute","middle"); });
       const ax=axis(sx,min,max,base,p.ticks,p.xlabel); s+=ax.s; return svg(ax.bottom,s,alt); },
 
     xy(p,alt){ const padL=64, padR=24, top=30, base=210; const sx=scale(p.xmin,p.xmax,padL,W-padR), sy=scale(p.ymin,p.ymax,base,top); let s="";
