@@ -319,14 +319,20 @@ if (BOOK) {
 // keystroke and a slow one freezes the tab. Found on 7 November 2026 by a
 // read of the figures in a real browser: Lesson B's exact interval took
 // eighteen seconds at a thousand rows and Lesson C's bootstrap six at ten
-// thousand, each from a loop that grew with the count typed. The budget is
-// loose on purpose (Lesson P draws a million synthetic sheets at its
-// maximum in about three seconds here); what it refuses is the loop that
-// never comes back. A figure may decline to draw, as Lesson A's does when
-// an accuracy is 0 or 1, and the page says so in its place; it may not hang.
+// thousand, Lesson F's exact McNemar nineteen at ten thousand discordant
+// rows, each from a loop that grew with the count typed. Each edge runs
+// inside the VM with a timeout, so a loop that never comes back fails by
+// name here instead of leaving the CI job hanging. The budget is loose on
+// purpose (the slowest edge that remains, Lesson C's bootstrap with forty
+// million rows in every cell, takes about five seconds here); what it
+// refuses is the loop that never comes back. A figure may decline to
+// draw, as Lesson A's does when an accuracy is 0 or 1, and the page says
+// so in its place; it may not hang.
 if (BOOK) {
-  const { LESSONS, FIG } = BOOK;
+  const { LESSONS } = BOOK;
   const BUDGET = 10000;
+  const edge = "(() => { const l = LESSONS.find(x => x.id === __edge.id); const v = __edge.v; let r; try { r = l.calc.compute(v); } catch (e) { return; }"
+    + " try { FIG.render(l.figure.draw(v, r), l.figure.title); } catch (e) { /* declining to draw is allowed */ } })()";
   LESSONS.forEach(l => {
     const c = l.calc; if (!c || !l.figure) return;
     const numeric = c.inputs.filter(i => i[3] !== null);
@@ -336,12 +342,15 @@ if (BOOK) {
     edges.push(["every input at its minimum", { ...defaults, ...Object.fromEntries(numeric.map(i => [i[0], i[3]])) }]);
     edges.push(["every input at its maximum", { ...defaults, ...Object.fromEntries(numeric.map(i => [i[0], i[4]])) }]);
     edges.forEach(([where, v]) => {
-      const t0 = Date.now();
-      try { const r = c.compute(v); try { FIG.render(l.figure.draw(v, r), l.figure.title); } catch (e) { /* declining to draw is allowed */ } } catch (e) { /* a compute that throws shows dashes on the page */ }
+      ctx.__edge = { id: l.id, v };
+      const t0 = Date.now(); let timedOut = false;
+      try { vm.runInContext(edge, ctx, { timeout: BUDGET }); }
+      catch (e) { timedOut = !!(e && e.code === "ERR_SCRIPT_EXECUTION_TIMEOUT"); fail(timedOut ? `lesson ${l.id}: the calculator had not answered after ${BUDGET / 1000} s with ${where}; the page would freeze` : `lesson ${l.id}: the edge run itself failed with ${where}: ${e.message}`); }
       const ms = Date.now() - t0;
-      if (ms > BUDGET) fail(`lesson ${l.id}: the calculator took ${(ms / 1000).toFixed(1)} s with ${where}; the page would freeze`);
+      if (ms > BUDGET && !timedOut) fail(`lesson ${l.id}: the calculator took ${(ms / 1000).toFixed(1)} s with ${where}; the page would freeze`);
     });
   });
+  delete ctx.__edge;
 }
 
 // ---- the page's own count of its lessons -----------------------------

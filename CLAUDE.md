@@ -266,11 +266,15 @@ terms, each costing `k` more, sixty times per bound: three seconds at
 resamples row by row: six seconds at ten thousand rows, a minute at a
 hundred thousand. Lesson F's exact McNemar used the same sum. The
 binomial distribution function is now the regularised incomplete beta
-by its continued fraction (one cost at any `n`), and the bootstrap draws
-its cells as successive conditional binomials above 2,000 rows, keeping
-the row-by-row stream below that so every number the prose quotes is
-unchanged; `tools/check.js` now times every calculator at the same
-edges and fails one that takes longer than ten seconds. The layout read
+by its continued fraction (its iterations grow slowly with `n`, about a
+hundred at forty thousand rows and a thousand at forty million, never
+with `k` squared), and the bootstrap draws its cells as successive
+conditional binomials above 2,000 rows, keeping the row-by-row stream
+below that so every number the prose quotes is unchanged;
+`tools/check.js` now runs every calculator at the same edges inside the
+VM with a ten-second timeout, so one that takes longer, or never comes
+back, fails by name (the slowest that remains is Lesson C with forty
+million rows in every cell, about five seconds under Node). The layout read
 itself stays manual: a browser is the only thing that knows a font's
 width, and the record above is what to compare against next time.
 

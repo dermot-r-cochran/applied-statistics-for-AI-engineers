@@ -1452,8 +1452,9 @@ const S = (() => {
   const wald = (k,n,z) => { const p=k/n, h=z*seProp(p,n); return [p-h,p+h]; };
   const wilson = (k,n,z) => { const p=k/n, d=1+z*z/n, c=(p+z*z/(2*n))/d, h=z*Math.sqrt(p*(1-p)/n+z*z/(4*n*n))/d; return [c-h,c+h]; };
   // The binomial distribution function is the regularised incomplete beta,
-  // evaluated by its continued fraction, so one evaluation costs the same at
-  // ten rows as at a billion. Until 7 November 2026 it was a sum of k terms,
+  // evaluated by its continued fraction, whose iterations grow slowly with n
+  // (about a thousand at forty million rows) and never with k squared.
+  // Until 7 November 2026 it was a sum of k terms,
   // each costing k more, and the exact interval (sixty bisection steps on it)
   // took three seconds at 500 rows and eighteen at a thousand; the tab froze.
   const lgamma = (x) => { // Lanczos (g = 7, nine coefficients); |error| below 1e-13 for x > 0
