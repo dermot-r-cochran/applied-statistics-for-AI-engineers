@@ -13,6 +13,10 @@ on:
 jobs:
   check:
     runs-on: ubuntu-latest
+    # The checks take under a minute. A job still running at ten minutes is
+    # a loop that never came back, and should fail rather than hold the
+    # runner for the six hours GitHub allows.
+    timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
 

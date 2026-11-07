@@ -190,6 +190,13 @@ says it has none):
   `tools/check.js`, the *lessons* and *exams* sections.
 - Every calculator reproduces the numbers its worked example quotes —
   `tools/check.js`, *calculator reproduces the worked example*.
+- Every calculator comes back within ten seconds under Node at each
+  input's minimum and maximum, and with every input at either end —
+  `tools/check.js`, *every calculator answers at the edges of its own
+  inputs*; a browser is slower than Node, and the seconds a calculator
+  takes there are its own. That the figures lay out cleanly in a browser (no label cut
+  or over another) has no check; it was read by hand on 7 November 2026,
+  and `CLAUDE.md` records what was found.
 - Every exercise offers a way through without an evaluation of your own,
   and the Reference Set 2 and 3 figures the exercises and the case quote
   match the csv files — `tools/check.js`, *exercises* and *Reference Set 3*.
