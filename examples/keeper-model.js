@@ -129,6 +129,11 @@ function shortlist(score, k) { // keeps inside the top k% of their own outing
   return hit;
 }
 const sharp = rows.map(r => +r.sharpness), bright = rows.map(r => +r.brightness);
+function wilson(k, m, z = 1.96) { // 95% score interval for k of m
+  const q = k / m, den = 1 + z * z / m, mid = (q + z * z / (2 * m)) / den;
+  const half = z * Math.sqrt(q * (1 - q) / m + z * z / (4 * m * m)) / den;
+  return [mid - half, mid + half];
+}
 
 // ---- report ----------------------------------------------------------
 const pc = (x, dp) => (100 * x).toFixed(dp) + "%";
@@ -142,24 +147,33 @@ const R = {
   sharp5: shortlist(sharp, 5), sharp10: shortlist(sharp, 10), sharp20: shortlist(sharp, 20),
   bright5: shortlist(bright, 5),
 };
+R.wilson5 = wilson(R.model5, kept).map(v => v.toFixed(2));
+R.deciles = deciles.map((b, i) => ({ bin: i + 1, pred: pc(mean(b.map(j => p[j])), 3), obs: pc(mean(b.map(j => y[j])), 3), kept: b.reduce((s, j) => s + y[j], 0) }));
 console.log(`frames ${R.frames}, kept ${R.kept} (${R.base}), outings ${R.outings}, ISO filled on ${R.isoMissing}`);
 console.log(`ROC AUC ${R.auc}; average precision ${R.ap} against ${R.apChance} by chance`);
 console.log(`Brier ${R.brier} against ${R.brierBase} for always predicting the base rate`);
 console.log(`mean predicted ${R.meanPred} against ${R.base} observed; ECE over ten quantile bins ${R.ece}`);
-deciles.forEach((b, i) => console.log(`  decile ${String(i + 1).padStart(2)}  predicted ${pc(mean(b.map(j => p[j])), 3)}  observed ${pc(mean(b.map(j => y[j])), 3)}  kept ${b.reduce((s, j) => s + y[j], 0)}`));
+R.deciles.forEach(b => console.log(`  decile ${String(b.bin).padStart(2)}  predicted ${b.pred}  observed ${b.obs}  kept ${b.kept}`));
 console.log(`top 1% (${R.topN} frames): predicted ${R.topPred}, kept ${R.topKept}`);
 console.log(`per-outing shortlist, model:     top 5% ${R.model5}, top 10% ${R.model10}, top 20% ${R.model20} of ${kept}`);
 console.log(`per-outing shortlist, sharpness: top 5% ${R.sharp5}, top 10% ${R.sharp10}, top 20% ${R.sharp20}; brightness top 5% ${R.bright5}`);
 
 if (process.argv.includes("--check")) {
   // The write-up quotes these; a figure that drifts from the run fails here.
-  const doc = fs.readFileSync(path.join(__dirname, "keeper-model.md"), "utf8");
+  // Whitespace is collapsed first, so a figure may sit across a line break.
+  const doc = fs.readFileSync(path.join(__dirname, "keeper-model.md"), "utf8").replace(/\s+/g, " ");
+  const chance = (k) => Math.round(kept * k / 100);
   const quoted = {
     auc: R.auc, ap: R.ap, apChance: R.apChance, brier: R.brier, brierBase: R.brierBase, meanPred: R.meanPred,
-    base: R.base, ece: R.ece, topN: `${R.topN} frames`, topPred: R.topPred,
-    model5: `| 5% | ${R.model5} |`, model10: `| 10% | ${R.model10} |`, model20: `| 20% | ${R.model20} |`,
-    sharp: `| ${R.sharp5} |`, frames: R.frames, isoMissing: R.isoMissing,
+    base: R.base, ece: R.ece, frames: R.frames, isoMissing: R.isoMissing,
+    outings: `${R.frames}** frames from ${R.outings} outings; ${R.kept} kept`, heldOut: `the other ${R.outings - 1} outings`,
+    keeps: `Every one of the ${R.kept} keeps`, ofKept: `Keeps found (of ${R.kept})`,
+    top: `highest-scored 1% (${R.topN} frames) averaged ${R.topPred} predicted and held ${R.topKept === 0 ? "none" : R.topKept} of the keeps`,
+    model5: `| 5% | ${R.model5} | ${chance(5)} | ${R.sharp5} |`, model10: `| 10% | ${R.model10} | ${chance(10)} | ${R.sharp10} |`,
+    model20: `| 20% | ${R.model20} | ${chance(20)} | ${R.sharp20} |`, bright5: `Brightness alone finds ${R.bright5}.`,
+    wilson: `a Wilson interval on ${R.model5} of ${R.kept} runs from about ${R.wilson5[0]} to ${R.wilson5[1]}`,
   };
+  R.deciles.forEach(b => { quoted[`decile${b.bin}`] = `| ${b.bin} | ${b.pred} | ${b.obs} | ${b.kept} |`; });
   const missing = Object.entries(quoted).filter(([, v]) => !doc.includes(String(v)));
   if (missing.length) { console.error("keeper-model.md does not quote: " + missing.map(([k, v]) => `${k} ${v}`).join("; ")); process.exit(1); }
   console.log("ok: keeper-model.md quotes every figure this run produces");
