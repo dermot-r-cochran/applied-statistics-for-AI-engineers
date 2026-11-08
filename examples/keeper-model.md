@@ -60,9 +60,22 @@ better than a model that gives every frame 0.32%, and the ranking across
 outings is barely better than chance. This is the trap Lesson M describes:
 a model can be well calibrated simply by never leaving the base rate. Its
 highest-scored 1% (127 frames) averaged 1.37% predicted and held none of
-the keeps. The decile table that `node examples/keeper-model.js` prints
-shows the same thing bin by bin. At this base rate each decile holds about
-four keeps, so no single bin's gap is evidence on its own (Lesson C).
+the keeps. The decile table shows the same thing bin by bin, lowest
+predictions first. At this base rate each decile holds about four keeps, so
+no single bin's gap is evidence on its own (Lesson C).
+
+| Decile | Mean predicted | Observed | Keeps |
+| --- | --- | --- | --- |
+| 1 | 0.053% | 0.629% | 8 |
+| 2 | 0.097% | 0.157% | 2 |
+| 3 | 0.137% | 0.000% | 0 |
+| 4 | 0.184% | 0.236% | 3 |
+| 5 | 0.246% | 0.236% | 3 |
+| 6 | 0.309% | 0.315% | 4 |
+| 7 | 0.374% | 0.551% | 7 |
+| 8 | 0.455% | 0.393% | 5 |
+| 9 | 0.571% | 0.157% | 2 |
+| 10 | 0.887% | 0.551% | 7 |
 
 **Within an outing, it earns its keep.** Asked a smaller question, "which
 frames of *this* outing are worth a first look?", the model does better.
