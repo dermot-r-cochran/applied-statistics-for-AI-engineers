@@ -2,7 +2,8 @@
 // The CI gate. Loads index.html's script into a bare VM context (no
 // document, so the page never boots) and checks the book: every lesson
 // has its nine parts, every calculator reproduces the numbers its worked
-// example quotes, every lesson's figure draws from its calculator's
+// example quotes (and a chosen list of the figures the prose quotes from it
+// elsewhere, the second cases), every lesson's figure draws from its calculator's
 // defaults with a caption in words, every card and glossary entry points
 // at a lesson, and the repository never uses the name of the framework
 // the case replaced. Cross-references are counted only where the prose
@@ -308,6 +309,109 @@ if (BOOK) {
     if (!String(l.gentle).includes(phrase)) { fail(`Lesson ${id}'s words-first page no longer says "${phrase}" for ${what}; update the pin with the prose`); return; }
     const got = of(r);
     if (typeof got !== "number" || Math.abs(got - want) > tol) fail(`Lesson ${id}'s words-first page says "${phrase}" for ${what}; the calculator gives ${typeof got === "number" ? got.toFixed(4) : got}`);
+  });
+}
+
+// ---- the second cases ------------------------------------------------
+// `expect` holds a calculator to the worked example at its default inputs,
+// and to the example part of the prose. The prose quotes the calculators
+// well beyond that: the contrast case inside an example (405 of 500), a
+// pitfall's slice (48 of 50), a diagnostic's answer, an exam's reason, and
+// the cases a calculator's own note or a figure's caption invites ("Try
+// 1,000 rows in 6 clusters", "Enter d = −0.03"). A reader who types one of
+// those in sees the calculator's number beside the prose's, and one of them
+// runs a branch the defaults never reach (Lesson O's bound once a failure has
+// got through), so until 14 November 2026 nothing in CI had ever run that
+// branch for its answer. Each row below is one
+// such figure: the phrase must be in the part named, and the lesson's own
+// calculator, at the inputs the prose states, must give it. A plain number
+// is held to its own decimals, and has to stand in the prose as a whole
+// number (152 is not found inside 1,152); a phrase that rounds in words
+// ("about ten per cent") is held to the value it means, within a tolerance.
+// The rows at the defaults are outputs `expect` does not name, or figures
+// quoted in a part other than the example. Like the list
+// above it is chosen, not swept: the figures a reader can reproduce on the
+// page, and no digit that the calculator does not produce.
+if (BOOK) {
+  const { LESSONS, EXAMS, fmt } = BOOK;
+  const lesson = (id) => LESSONS.find(x => x.id === id);
+  const run = (id, over) => { const c = lesson(id).calc; return c.compute({ ...Object.fromEntries(c.inputs.map(x => [x[0], x[2]])), ...over }); };
+  // where a phrase sits: a part by its key, "diagnostic q" or "diagnostic a", or "exam 3" for the third question and its reason
+  const textOf = (l, where) => {
+    const exam = /^exam (\d+)$/.exec(where);
+    if (exam) { const x = (EXAMS[l.id] || [])[exam[1] - 1]; return x ? `${x.q}\n${x.why}` : null; }
+    if (where === "diagnostic q" || where === "diagnostic a") return l.diagnostic ? l.diagnostic[where.slice(-1)] : null;
+    return typeof l[where] === "string" ? l[where] : null;
+  };
+  const second = [
+    // lesson, part, inputs away from the defaults, phrase in the prose, what it is, the calculator's figure (an output's key, or a function of the result), then for a rounded phrase the value it means and the tolerance
+    ["A", "example", {}, "−0.017", "the low end of the interval for the difference", "lo"],
+    ["A", "example", {}, "0.077", "the high end of the interval for the difference", "hi"],
+    ["A", "diagnostic a", { kA: 57, nA: 60, kB: 54, nB: 60 }, "0.028", "the standard error of 0.95 on 60 rows", "seA"],
+    ["A", "diagnostic a", { kA: 57, nA: 60, kB: 54, nB: 60 }, "0.039", "the standard error of 0.90 on 60 rows", "seB"],
+    ["A", "diagnostic a", { kA: 57, nA: 60, kB: 54, nB: 60 }, "about one standard error", "the five-point gap on the 60-row slice", "z", 1, 0.1],
+    ["B", "example", { k: 405, n: 500 }, "0.773", "Wilson's low for 405 of 500", "wilsonLo"],
+    ["B", "example", { k: 405, n: 500 }, "0.842", "Wilson's high for 405 of 500", "wilsonHi"],
+    ["B", "pitfall", { k: 48, n: 50 }, "0.906", "Wald's low for 48 of 50", "waldLo"],
+    ["B", "pitfall", { k: 48, n: 50 }, "1.014", "Wald's high for 48 of 50", "waldHi"],
+    ["B", "exam 1", {}, "0.714", "Wald's low for 9 of 10", "waldLo"],
+    ["B", "exam 1", {}, "1.086", "Wald's high for 9 of 10", "waldHi"],
+    ["D", "maths", {}, "1.23", "the odds ratio", "orat"],
+    ["D", "example", {}, "1.23", "the odds ratio", "orat"],
+    ["D", "pitfall", { pA: 0.36, pB: 0.30 }, "20% improvement", "the relative difference from 0.30 to 0.36", "rel", 0.20, 0.0005],
+    ["E", "example", { pB: 0.79 }, "946", "the rows per arm for a five-point drop", "nNeed"],
+    ["E", "diagnostic a", { pA: 0.30, pB: 0.45 }, "roughly 165", "the barred frames per arm for 0.30 against 0.45", "nNeed", 165, 3],
+    ["F", "diagnostic q", { b: 8, c: 2 }, "3.6", "McNemar's statistic for 8 against 2", "chi"],
+    ["F", "diagnostic q", { b: 8, c: 2 }, "0.06", "the approximate p for 8 against 2", "p"],
+    ["F", "diagnostic q", { b: 8, c: 2 }, "0.11", "the exact p for 8 against 2", "pExact"],
+    ["F", "exam 2", {}, "4.09", "McNemar's statistic for 35 against 20", "chi"],
+    ["F", "exam 2", {}, "0.043", "its p", "p"],
+    ["H", "example", {}, "0.892", "Folder recall", "rFolder"],
+    ["H", "example", {}, "0.750", "Keeper recall", "rKeeper"],
+    ["H", "example", {}, "0.600", "Near-miss recall", "rNear"],
+    ["I", "example", {}, "27% larger", "the weighted standard error against a set of 500 drawn 200 and 300", (r) => r.seW / run("I", { n1: 200, n2: 300 }).seW - 1, 0.27, 0.005],
+    ["I", "example", {}, "37% larger", "the weighted standard error against the naive one", (r) => r.seW / r.seNaive - 1, 0.37, 0.005],
+    ["I", "example", {}, "1.88", "the design effect of the weighting", "deff"],
+    ["J", "example", {}, "12.5", "the rows per outing", "m"],
+    ["J", "pitfall", { n: 1000, clusters: 6, rho: 0.3 }, "≈ 50", "the design effect of 1,000 rows in six projects", "deff", 50, 1],
+    ["J", "pitfall", { n: 1000, clusters: 6, rho: 0.3 }, "about 20", "their effective size", "neff", 20, 0.5],
+    ["J", "pitfall", { n: 1000, clusters: 6, rho: 0.3 }, "a factor of seven", "how far the row-count intervals are off", "factor", 7, 0.2],
+    ["J", "diagnostic a", { n: 500, clusters: 10 }, "10.8", "the design effect of ten outings of fifty", "deff"],
+    ["J", "diagnostic a", { n: 500, clusters: 10 }, "46", "their effective size", "neff"],
+    ["J", "diagnostic a", { n: 500, clusters: 50 }, "2.8", "the design effect of fifty outings of ten", "deff"],
+    ["J", "diagnostic a", { n: 500, clusters: 50 }, "179", "their effective size", "neff"],
+    ["J", "exam 2", {}, "152", "the effective sample size", "neff"],
+    ["K", "exam 2", {}, "0.818", "the pooled accuracy", "pooled"],
+    ["L", "example", { d: -0.03 }, "−0.054", "the lower bound at the worked example's own sign", "lcb"],
+    ["L", "example", { d: -0.03 }, "−0.006", "the upper bound at the worked example's own sign", "ucb"],
+    ["L", "exam 2", {}, "0.006", "the lower bound", "lcb"],
+    ["N", "maths", {}, "≈ 0.001", "the per-check α that Bonferroni gives", "bonf", 0.001, 0.0001],
+    ["N", "exam 1", {}, "0.93", "the chance of a false alarm in a year", "famAlarm"],
+    ["O", "maths", { k: 1 }, "about ten per cent", "the ceiling once one of forty has got through", "upper", 0.10, 0.01],
+    ["O", "example", { k: 1 }, "about ten per cent", "the ceiling once one of forty has got through", "upper", 0.10, 0.01],
+    ["O", "diagnostic a", { n: 100 }, "0.030", "the ceiling after a hundred clean tries", "upper"],
+    ["O", "exam 1", {}, "0.072", "the ceiling after forty clean tries", "upper"],
+    ["P", "example", {}, "without it, 4.00", "the mean with the outlier out", "meanWithout", 4, 0.005],
+    ["P", "example", {}, "median stays at 4.00", "the median", "median", 4, 0.005],
+    ["Q", "example", {}, "0.870", "the judge's rate on the sample", "qSample"],
+    ["Q", "example", { a: 161, b: 3, c: 3, d: 33 }, "about 820", "what the two hundred are worth with six disagreements, split evenly, and the photographer's 164 unchanged", "worth", 820, 5],
+    ["Q", "exam 2", {}, "0.810", "the corrected estimate", "corrected"],
+  ];
+  const stated = (over) => Object.keys(over).length ? "at " + Object.entries(over).map(([k, v]) => `${k} = ${v}`).join(", ") : "at its defaults";
+  second.forEach(([id, where, over, phrase, what, of, means, tol]) => {
+    const l = lesson(id), text = l && textOf(l, where);
+    if (!l || !l.calc || text === null) { fail(`Lesson ${id}'s ${where} is pinned as a second case, and the lesson, its calculator or that part is missing`); return; }
+    // a plain number has to stand alone: no digit, point or comma before it, no digit or decimal after
+    const there = means === undefined
+      ? new RegExp("(?<![\\d.,])" + phrase.replace(/[.*+?^${}()|[\]\\]/g, "\\$&") + "(?!\\d|[.,]\\d)").test(text)
+      : text.includes(phrase);
+    if (!there) { fail(`Lesson ${id}'s ${where} no longer says "${phrase}" for ${what}; update the pin in tools/check.js with the prose`); return; }
+    let got; try { const r = run(id, over); got = typeof of === "function" ? of(r) : r[of]; } catch (e) { fail(`Lesson ${id}'s calculator threw ${stated(over)}: ${e.message}`); return; }
+    if (typeof got !== "number" || !isFinite(got)) { fail(`Lesson ${id}'s ${where} says "${phrase}" for ${what}; the calculator gives no number ${stated(over)}`); return; }
+    if (means === undefined) { // a plain number, held to the decimals it is printed with
+      const want = phrase.replace(/−/g, "-").replace(/,/g, ""), d = (want.split(".")[1] || "").length;
+      if (fmt(got, d) !== want) fail(`Lesson ${id}'s ${where} says ${phrase} for ${what}; the calculator gives ${fmt(got, d + 2)} ${stated(over)}`);
+    } else if (Math.abs(got - means) > tol) fail(`Lesson ${id}'s ${where} says "${phrase}" for ${what}; the calculator gives ${fmt(got, 4)} ${stated(over)}`);
   });
 }
 

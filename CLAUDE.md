@@ -165,6 +165,50 @@ the calculator agrees, and vice versa.** Resampling calculators are
 seeded (`mulberry32`, seed 20240914) so their intervals are reproducible;
 get their numbers by running the engine under Node, never by estimating.
 
+**The second cases are pinned too** (added 14 November 2026 on the
+next-improvement question). `expect` reaches the example part at the
+default inputs and nothing else, and the prose quotes the calculators well
+beyond that: a contrast case inside an example (Lesson B's 405 of 500), a
+pitfall's slice (48 of 50), a diagnostic's answer, an exam's reason, and
+the cases a calculator's note invites (*Try 1,000 rows in 6 clusters*).
+One of them runs a branch the defaults never reach (Lesson O's bound once
+a failure has got through), so nothing in CI had run that branch for its
+answer. `tools/check.js`, *the second cases*, is a
+table of such figures: lesson, part, the inputs the prose states, the
+phrase, and the output it must equal, to its printed decimals or, for a
+phrase that rounds in words, within a tolerance. It is a chosen list like
+the words-first pins above it, not a sweep. A new second case in the prose
+gets a row; a number no calculator produces (Lesson H's Simpson table,
+for one) stays outside it and is checked by hand.
+
+The read that built the table recomputed every such figure and found the
+calculators right throughout and four statements in the prose wrong, all
+repaired the same day: Lesson E's diagnostic said a Cohen's h table gives
+*nearer 80* frames per arm where it gives about 162, the same as the
+lesson's own formula (80 is the one-sample figure); Lesson I's example
+called the weighted standard error 37% larger than a set drawn in the
+right proportions would have given, which is its margin over the naive
+standard error, and the margin over a 200/300 set is 27% (it now says
+both); Lesson D glossed the relative difference in accuracy as *3.7% more
+errors*; and Lesson B's fourth exam reason halved Wilson's pseudo-count.
+
+Two things the read found are Dermot's to decide and are left as they
+were; each sentence here is struck when its matter is settled. **Lesson
+L's example says *hold*** for the candidate at `d = −0.030`,
+where the lesson's own rule, its figure and its calculator (the caption
+invites the reader to enter that value) say *collect evidence*: the upper
+bound, −0.006, is not below `−δ_harm`. The table pins the two bounds and
+not the word. **Reference Set 1's one truth has leaks** that the 28
+September pass did not reach or that arrived after it: Lesson K's
+candidate scores 0.85 on the shared 500 frames and Lessons A, F and L's
+0.81; Lesson M's calibration table sums to 276 correct of 500, not 420;
+Lesson Q's live month is 4,000 frames against Lesson D's 2,000; Lesson C
+finds 64 of the 80 keepers and Lesson H's table 60; and Lesson A's
+diagnostic has a 60-frame safari slice at 0.95 where Lesson I's set is 350
+safari frames at 0.88. Each is internally correct, and which side moves is
+a change to the case. Nothing pins the one truth yet; a check can once the
+leaks are settled.
+
 Register: expert to expert, plain, no hedging beyond what the statistics
 require and no claims beyond what they support. Every lesson points at
 at least one other lesson (the check requires it), because the course is
