@@ -188,8 +188,15 @@ says it has none):
   another, and every mention of a lesson in the prose rendered as a link
   to it —
   `tools/check.js`, the *lessons* and *exams* sections.
-- Every calculator reproduces the numbers its worked example quotes —
-  `tools/check.js`, *calculator reproduces the worked example*.
+- The figures each calculator's `expect` names are what it gives at its
+  default inputs, and the worked example quotes each of them —
+  `tools/check.js`, *calculator reproduces the worked example*. A chosen
+  list of further figures the prose quotes from a calculator (an
+  example's contrast case, a pitfall's slice, a diagnostic's answer, an
+  exam's reason, the cases a calculator's note invites), at the defaults
+  or at the inputs the prose states, is held to the calculator —
+  `tools/check.js`, *the second cases*. A number on neither list, or one
+  no calculator produces, has no check.
 - Every calculator comes back within ten seconds under Node at each
   input's minimum and maximum, and with every input at either end —
   `tools/check.js`, *every calculator answers at the edges of its own
