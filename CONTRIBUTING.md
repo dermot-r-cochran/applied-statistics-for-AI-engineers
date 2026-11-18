@@ -4,7 +4,7 @@ Contributions are welcome: corrections to the statistics or the prose, fixes to 
 
 ## Before you start
 
-- For anything beyond a small fix, open an issue first describing the problem and the change you have in mind, so the approach can be agreed before you spend time on it.
+- For anything beyond a small fix, you may find it useful to open an issue first describing the problem and the change you have in mind, before you spend time on it.
 - Read the prime directive in `README.md`: one `index.html`, data on top and engine below, no dependencies, no build, no network. A change that adds any of these will not be accepted.
 - Changes to the case, the course's rules or the lesson format are the author's decision; propose them in an issue.
 - Every worked example is synthetic and says so, apart from the two real reference sets the README describes.
