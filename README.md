@@ -102,8 +102,8 @@ two coin-toss humps of Lesson A, the frames of the confusion table, the
 disagreements that carry a paired comparison, the mosaic that shows what
 an average is made of, the zones a release decision falls into, the
 reliability diagram: each is inline SVG with a caption, in words on the
-gentle track and in the lesson's notation on the standard one, and the
-check draws every one of them in CI. The home page carries one of its
+words-first track and in the lesson's notation on the straight-in one,
+and the check draws every one of them in CI. The home page carries one of its
 own, which is the only figure here not about a statistical object: it
 contrasts a test verdict with the four steps an evaluation
 takes instead.
@@ -147,7 +147,9 @@ disagreeing editors need it. The case is described in full on the site's
 - `data/reference-set-2.csv`, `data/reference-set-3.csv` — the two real
   companion datasets the exercises fall back to, both described on the
   site's **The case** page. Neither is loaded by the page, which keeps the
-  no-network rule. The second is rebuilt by `tools/build-reference-set-3.js`
+  no-network rule, and the hosted page is `index.html` alone, so that page
+  links each csv to its file here: a link is the reader's to follow, not
+  something the page fetches. The second is rebuilt by `tools/build-reference-set-3.js`
   from a sibling photography checkout — a local tool CI never runs.
 - `examples/keeper-model.js` and `examples/keeper-model.md` — a worked
   delegate model: a small logistic regression on Reference Set 2, built
@@ -210,6 +212,14 @@ says it has none):
 - Ten rules, cards and glossary entries that point at lessons, a reading
   list that points at real lessons — `tools/check.js`, *rules, cards,
   glossary, session*.
+- Every file of this repository the page names (the two csv files, the
+  keeper model's page and folder, the tool that rebuilds Reference Set 3)
+  is a link to it here, each of them exists, the case page links every csv
+  in `data/`, and the footer's *Source* is the same address —
+  `tools/check.js`, *repository files named on the page*; the case view
+  carries the two csv links — `tools/check-page.js`, the *case* view. That
+  the links answer on github.com has no check, because CI stays off the
+  network; the five answered a request on 23 November 2026.
 - One file, no network, no replaced name — `tools/check.js`, its last two
   sections, and the *one file* step of `.github/workflows/ci.yml`.
 - The counts and the lesson table on this page — `tools/check-docs.js`;
@@ -224,7 +234,10 @@ says it has none):
   right, wrong or unanswered with its reason, and passes at three of
   four and not at two; the start page suggests words first below its
   pass mark or on the self-report and straight in from the pass mark up;
-  the track switches at the top of a lesson; and progress, best scores,
+  the track switches at the top of a lesson; no static view says *the
+  gentle track* or *the standard track*, which are the code's keys, and
+  the second button under a suggestion names the other track as the page
+  does; and progress, best scores,
   the scorecard, the chosen track and the session note are kept in the
   browser's localStorage and survive reopening the page —
   `tools/check-page.js`, by the comment each section sits under.

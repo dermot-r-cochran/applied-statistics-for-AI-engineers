@@ -204,7 +204,10 @@ const views = {
     if (main().querySelectorAll(".track-btn").length !== 2) fail("the start page does not offer both tracks"); if (!main().querySelector("figure svg")) fail("the start page has no figure"); },
   leaders: () => { const lis = main().querySelectorAll("ol.leaders li"); if (lis.length !== LESSONS.length) fail("the leaders page carries " + lis.length + " questions of " + LESSONS.length);
     lis.forEach((li, i) => { if (!li.textContent.includes(LESSONS[i].business.replace(/\*\*|`/g, "").slice(0, 40))) fail("the leaders page's entry " + (i + 1) + " is not Lesson " + LESSONS[i].id + "'s business question"); }); },
-  case: () => { if (!h2().startsWith("The case: " + B.CASE.name)) fail("the case page's heading: " + h2()); if (!main().querySelector("figure svg")) fail("the case page has no figure"); },
+  case: () => { if (!h2().startsWith("The case: " + B.CASE.name)) fail("the case page's heading: " + h2()); if (!main().querySelector("figure svg")) fail("the case page has no figure");
+    // the two real datasets are not served beside the page, so the case view carries a link to each in the repository
+    const out = main().querySelectorAll("a").map((a) => a.href);
+    for (const f of fs.readdirSync(path.join(root, "data")).filter((f) => f.endsWith(".csv"))) if (!out.includes(SITE.source + "/blob/main/data/" + f)) fail("the case view has no link to data/" + f); },
   rules: () => { if (main().querySelectorAll(".rule").length !== RULES.length) fail("the rules page carries " + main().querySelectorAll(".rule").length + " rules of " + RULES.length); },
   cards: () => { const cs = main().querySelectorAll(".card"); if (cs.length !== CARDS.length) fail("the cards page carries " + cs.length + " cards of " + CARDS.length);
     cs.forEach((c, i) => { if (c.id !== "card-" + CARDS[i].id) fail("card " + (i + 1) + " has id " + c.id); if (!c.querySelector(`a[href="#/lesson/${CARDS[i].lesson}"]`)) fail("card " + CARDS[i].id + " does not link to Lesson " + CARDS[i].lesson); if (c.querySelectorAll("li").length !== CARDS[i].lines.length) fail("card " + CARDS[i].id + " does not carry all its lines"); }); },
@@ -220,6 +223,8 @@ for (const v of Object.keys(views)) {
     go("#/" + v);
     if (!h2()) fail(v + ": no heading"); if (doc.title !== SITE.title) fail(v + ": the title is " + doc.title);
     views[v]();
+    // the page calls the tracks words first and straight in; a static view that says gentle track or standard track has used the code's keys
+    if (/\b(gentle|standard) (track|page)\b/i.test(main().textContent)) fail(v + " names a track by its key in the code, not by its name on the page");
     for (const href of lessonLinks(main())) if (!LESSONS.some((l) => l.id === lessonOf(href))) fail(v + " links to " + href + ", which is no lesson");
     if (side().querySelector(".now")) fail(v + ": the sidebar lights a lesson");
     ok();
@@ -402,6 +407,7 @@ try {
   if (scrolled[scrolled.length - 1] !== "start-rec") fail("the suggestion was not scrolled to");
   let btns = rec.querySelectorAll(".track-btn");
   if (btns.length !== 2 || btns[0].dataset.track !== "gentle" || btns[0].textContent !== "Words first") fail("a low score does not offer words first first: " + texts(btns).join(" | "));
+  if (btns[1].dataset.track !== "standard" || btns[1].textContent !== "Take the straight-in track instead") fail("a low score does not offer straight in second, by its name on the page: " + texts(btns).join(" | "));
   let cal = stored(store, "asai:calib"); if (!cal || cal.score !== 0 || cal.wordsFirst !== false) fail("the low score was not kept: " + JSON.stringify(cal));
   click(btns[0]);
   if (stored(store, "asai:track") !== "gentle" || h2() !== SITE.tagline) fail("the words-first button did not set the track and go home");
@@ -424,6 +430,7 @@ try {
   btns = $("start-rec").querySelectorAll(".track-btn");
   if (!$("start-rec").textContent.startsWith(q.length + " of " + q.length + ".") || btns[0].dataset.track !== "standard" || btns[0].textContent !== "Straight in") fail("a full score does not offer straight in first: " + $("start-rec").textContent.slice(0, 60));
   if (!$("start-rec").textContent.includes(c.verdict.standard.replace(/\*\*|\*/g, "").slice(0, 40))) fail("a full score did not bring the straight-in verdict");
+  if (btns[1].dataset.track !== "gentle" || btns[1].textContent !== "Take the words-first track instead") fail("a full score does not offer words first second, by its name on the page: " + texts(btns).join(" | "));
   click(btns[0]);
   if (stored(store, "asai:track") !== "standard" || h2() !== SITE.tagline) fail("the straight-in button did not set the track and go home");
   ok();

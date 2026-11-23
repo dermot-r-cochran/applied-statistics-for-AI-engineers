@@ -141,6 +141,9 @@ footer{border-top:1px solid var(--line);color:var(--mute);font-size:.82rem;paddi
 const SITE = {
   title: "Applied Statistics for AI Engineers",
   tagline: "Evaluation metrics and confidence intervals for people who ship AI systems.",
+  // Where the repository is. The footer's Source link goes here, and a file
+  // of the repository named in the prose links to its place under it.
+  source: "https://github.com/dermot-r-cochran/applied-statistics-for-AI-engineers",
   intro: `This is a course in applied statistics, not in any AI framework. It reactivates the statistics you already met and connects each idea to one recurring engineering question: **is what I am seeing a real change in the system, or something else** — sampling variation, sampling bias, measurement error, a change in the test set, a change in the class mix, drift, or an aggregation that hides the story?
 
 It assumes you have met probability and statistics before and have shipped or evaluated an AI system of some kind: a trained model, a fine-tuned one, a prompt sent to a hosted language model, or a workflow that chains retrieval, several model calls and a parser. The course does not care which. **A system is whatever produces the output being scored**, and a change to it — new weights, a reworded prompt, a model version swapped behind an API, a different temperature, an extra step in the chain — is evaluated the same way: run it on a fixed set, score the outputs against ground truth, and ask whether the difference is real. Where you read *model* below, read *whichever of these you ship*.
@@ -234,7 +237,7 @@ const CALIBRATION = {
 
 **Straight in.** Each lesson is its nine parts, expert to expert: the engineering question, the principle, the mathematics derived, the assumptions, a worked example with a live calculator, the common misreading, the application to the case, a diagnostic question and an exercise.
 
-**Words first.** The same nine parts, but each lesson opens with a plain-words page first: what the question is in everyday terms, the one idea, the worked example told in words with the same numbers, an everyday version of it, and a picture of it. Then the nine parts, which say the same thing exactly. Nothing is left out of the gentle track; it just starts softer.
+**Words first.** The same nine parts, but each lesson opens with a plain-words page first: what the question is in everyday terms, the one idea, the worked example told in words with the same numbers, an everyday version of it, and a picture of it. Then the nine parts, which say the same thing exactly. Nothing is left out of the words-first track; it just starts softer.
 
 You can switch tracks at the top of any lesson.`,
   questions: [
@@ -1522,7 +1525,16 @@ const esc = (s) => String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(
 // lesson stays as text.
 const linkLessons = (h) => h.replace(/\b(Lessons?\s+)([A-Z]\b(?:'s)?(?:\s*(?:,|and|or|to|through|[-–])\s*[A-Z]\b(?:'s)?)*)/g,
   (m, word, ids) => word + ids.replace(/\b([A-Z])\b/g, (id) => LESSONS.some(l => l.id === id) ? `<a href="#/lesson/${id}">${id}</a>` : id));
-const inline = (s) => linkLessons(esc(s).replace(/`([^`]+)`/g,"<code>$1</code>").replace(/\*\*([^*]+)\*\*/g,"<b>$1</b>").replace(/\*([^*]+)\*/g,"<i>$1</i>"));
+// A file of this repository named in the prose (`data/reference-set-2.csv`,
+// `examples/keeper-model.md`) renders as a link to it in the repository. The
+// page served from GitHub Pages is this file alone, so without the link the
+// datasets the exercises fall back to are a path in code type and nothing to
+// follow. The page still loads nothing: the link is the reader's to take.
+// Only a whole code span that is a path under data/, examples/ or tools/ is
+// one, and the check holds every such path to a file that exists.
+const linkFiles = (h) => h.replace(/<code>((?:data|examples|tools)\/[\w.\/-]*)<\/code>/g,
+  (m, p) => `<a href="${SITE.source}/${p.endsWith("/") ? "tree" : "blob"}/main/${p}">${m}</a>`);
+const inline = (s) => linkLessons(linkFiles(esc(s).replace(/`([^`]+)`/g,"<code>$1</code>")).replace(/\*\*([^*]+)\*\*/g,"<b>$1</b>").replace(/\*([^*]+)\*/g,"<i>$1</i>"));
 // The lessons page shows the first sentence of each lesson's question, so both
 // of these work on the small markup rather than around it. `plain` strips it to
 // text instead of rendering it, and `firstSentence` ends at a full stop,
@@ -1784,7 +1796,7 @@ if (typeof document !== "undefined") (function page(){
       const sp=sf.querySelector('input[name="self"]:checked'); const wordsFirst = !!sp && Number(sp.value)>=c.self.gentleAt;
       const gentle = score < c.passAt || wordsFirst; store.set("calib",{score,wordsFirst,when:Date.now()});
       const rec=document.getElementById("start-rec"); rec.hidden=false;
-      rec.innerHTML = `<p>${score} of ${c.questions.length}${wordsFirst?", and words first":""}.</p>${md(gentle?c.verdict.gentle:c.verdict.standard)}<button type="button" class="track-btn" data-track="${gentle?"gentle":"standard"}">${gentle?"Words first":"Straight in"}</button><button type="button" class="track-btn" data-track="${gentle?"standard":"gentle"}">Take the ${gentle?"standard":"gentle"} track instead</button>`;
+      rec.innerHTML = `<p>${score} of ${c.questions.length}${wordsFirst?", and words first":""}.</p>${md(gentle?c.verdict.gentle:c.verdict.standard)}<button type="button" class="track-btn" data-track="${gentle?"gentle":"standard"}">${gentle?"Words first":"Straight in"}</button><button type="button" class="track-btn" data-track="${gentle?"standard":"gentle"}">Take the ${gentle?"straight-in":"words-first"} track instead</button>`;
       wireTrack(); rec.scrollIntoView(); });
     const wireTrack = () => main.querySelectorAll(".track-btn").forEach(b => b.addEventListener("click", () => { store.set("track", b.dataset.track); location.hash = "#/"; }));
     wireTrack();
