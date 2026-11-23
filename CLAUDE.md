@@ -331,6 +331,12 @@ would claim a depth the straight-in track does not have). `TRACK_NAMES`
 in the data section holds the page names; the keys stay `gentle` and
 `standard` everywhere in the code and in localStorage, so a saved
 preference survives the rename. The paragraphs below use the keys.
+Two places the rename missed were repaired on 23 November 2026: the
+second button under a suggestion still read *Take the standard track
+instead* (or *the gentle track*), and one sentence of the start page's
+intro still said *the gentle track*. `tools/check-page.js` now fails a
+static view that says *gentle track* or *standard track*, and holds that
+button to the other track's name on the page.
 
 Added 2026-09-19 at Dermot's direction (*a lighter, gentler optional
 introduction track based on a few calibration questions at the start*).
@@ -370,6 +376,36 @@ exercise quotes Reference Set 2's sharpness tail (mean about 375, median
 about 121, the top one per cent 127 frames moving the mean by about 39),
 and `tools/check.js` pins those four to the csv like the other Reference
 Set 2 figures.
+
+## Files of the repository, named on the page
+
+Added 23 November 2026 on the next-improvement question. The way through
+without an evaluation of your own rests, in sixteen exercises of
+seventeen, on `data/reference-set-2.csv` or `data/reference-set-3.csv`,
+and GitHub Pages serves `index.html` alone: `pages.yml` stages nothing
+else, and the csv's path under the site's address answers 404. The case
+page named both files in code type and linked neither, so a reader of the
+hosted page reached the data only by finding *Source* in the footer and
+walking the repository from there. The engine now renders a whole code
+span that is a path under `data/`, `examples/` or `tools/` as a link to
+that file under `SITE.source` (`blob/main/` for a file, `tree/main/` for a
+folder, which is why a folder is written with its closing slash), as it
+has rendered every *Lesson X* since 4 November. A formula or a command in
+code type is never one. **The page still loads nothing**: a link is the
+reader's to follow, as the footer's always was. `tools/check.js`,
+*repository files named on the page*, holds every such path in the book to
+a file or folder that exists, the case page to a link for every csv in
+`data/`, and the footer's *Source* to `SITE.source`; `tools/check-page.js`
+reads the two csv links off the case view. Nothing in CI follows a link,
+since CI stays off the network; each of the five on the page answered a
+request that day.
+
+Two neighbouring things were left as they are, and are Dermot's if he
+wants them. The exercises name *Reference Set 2* and *Reference Set 3*
+without linking the case page; the header, the home page's intro and each
+lesson's first line already lead there. And Pages could serve the two csv
+files beside the page, which would make the links same-origin and would
+end the README's *the same file and nothing else*.
 
 ## Adding a lesson
 

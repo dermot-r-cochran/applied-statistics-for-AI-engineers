@@ -478,6 +478,43 @@ if (BOOK) {
     if (n !== BOOK.LESSONS.length) fail(`${where} says ${m[1]} lessons; the book has ${BOOK.LESSONS.length}`); });
 }
 
+// ---- repository files named on the page ------------------------------
+// The page served from GitHub Pages is index.html alone, so a file the
+// prose names (the two csv files sixteen of the seventeen fallback exercises
+// rest on, the keeper model's page) can be reached from the page only if
+// its name is a link. The engine renders a whole code span that is a path
+// under data/, examples/ or tools/ as a link into the repository at
+// SITE.source. Held here: the engine still does that, and leaves a formula
+// and a command alone; every such path in the book is a file or a folder
+// that exists, so a file renamed or removed fails by name instead of
+// leaving a dead link on the page; the case page links every csv in data/;
+// and the footer's Source link and SITE.source are one address.
+if (BOOK) {
+  const { SITE, CASE, md } = BOOK;
+  const src = SITE.source;
+  if (typeof src !== "string" || !/^https:\/\/github\.com\/[\w.-]+\/[\w.-]+$/.test(src)) fail("SITE.source is not the repository's address");
+  else {
+    const file = md("the rows are in `data/reference-set-2.csv`"), folder = md("the `examples/` folder");
+    if (!file.includes(`<a href="${src}/blob/main/data/reference-set-2.csv"><code>data/reference-set-2.csv</code></a>`)) fail("the engine no longer renders a repository file named in the prose as a link to it");
+    if (!folder.includes(`<a href="${src}/tree/main/examples/"><code>examples/</code></a>`)) fail("the engine no longer renders a repository folder named in the prose as a link to it");
+    if (md("`SE = s/√n`, or `node tools/check.js`, or `x/n`").includes("href=")) fail("the engine links a formula or a command; only a whole code span that is a repository path is a link");
+    const strings = (v) => typeof v === "string" ? [v] : v && typeof v === "object" ? Object.values(v).flatMap(strings) : [];
+    const named = new Set();
+    for (const key of Object.keys(BOOK)) // every literal the book exports; a function carries no prose
+      for (const s of strings(BOOK[key])) for (const m of s.matchAll(/`((?:data|examples|tools)\/[\w.\/-]*)`/g)) named.add(m[1]);
+    for (const p of named) {
+      const at = path.join(root, p);
+      if (!fs.existsSync(at)) fail(`the page names ${p} and links it, and the repository has no such ${p.endsWith("/") ? "folder" : "file"}`);
+      else if (fs.statSync(at).isDirectory() !== p.endsWith("/")) fail(`the page names ${p}: a folder is written with its closing slash and a file without one, since the link is built from that`);
+    }
+    const caseBody = md(CASE.body);
+    for (const f of fs.readdirSync(path.join(root, "data")).filter(f => f.endsWith(".csv")))
+      if (!caseBody.includes(`href="${src}/blob/main/data/${f}"`)) fail(`the case page does not link data/${f}, so a reader of the hosted page has no way to it`);
+    const footer = (html.match(/<footer>[\s\S]*?<\/footer>/) || [""])[0];
+    if (!footer.includes(`<a href="${src}">Source</a>`)) fail("the footer's Source link and SITE.source are not the same address");
+  }
+}
+
 // ---- the page is one file with no network --------------------------
 if (/<script[^>]+src=/i.test(html) || /fetch\(|XMLHttpRequest|<link[^>]+href="(https?:|\/\/)/i.test(html)) fail("index.html reaches for the network");
 if (!/WORLD DATA/.test(html) || !/ENGINE/.test(html)) fail("index.html has lost its two section markers");
